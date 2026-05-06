@@ -8,6 +8,7 @@ import BuildingModal from "@/components/BuildingModal";
 import AgentsList from "@/components/AgentsList";
 import AgentDetailHeader from "@/components/AgentDetailHeader";
 import IntelligenceTab from "@/components/IntelligenceTab";
+import UpgradeModal from "@/components/UpgradeModal";
 
 type FlowStep = "website" | "usecase" | "nextgen" | "building" | null;
 type Plan = "standard" | "premium" | "enterprise";
@@ -22,8 +23,9 @@ const FLOW_STEPS = [
 export default function Home() {
   const [step, setStep]     = useState<FlowStep>(null);
   const [result, setResult] = useState<"enabled" | "skipped" | null>(null);
-  const [activeTab, setActiveTab] = useState("Intelligence");
-  const [plan, setPlan] = useState<Plan>("standard");
+  const [activeTab, setActiveTab]       = useState("Intelligence");
+  const [plan, setPlan]                 = useState<Plan>("standard");
+  const [showFlowUpgrade, setShowFlowUpgrade] = useState(false);
 
   const close = () => setStep(null);
 
@@ -200,11 +202,19 @@ export default function Home() {
 
       {step === "website"  && <WebsiteInputModal onNext={() => setStep("usecase")} onClose={close} />}
       {step === "usecase"  && <UseCaseModal      onNext={() => setStep("nextgen")} onClose={close} />}
-      {step === "nextgen"  && <NextGenModal
+      {step === "nextgen"  && !showFlowUpgrade && <NextGenModal
+        plan={plan}
         onEnable={() => { setResult("enabled"); setStep("building"); }}
         onSkip={()   => { setResult("skipped"); setStep("building"); }}
         onClose={close}
+        onUpgrade={() => setShowFlowUpgrade(true)}
       />}
+      {step === "nextgen" && showFlowUpgrade && (
+        <UpgradeModal
+          targetPlan={plan === "standard" ? "premium" : "enterprise"}
+          onClose={() => setShowFlowUpgrade(false)}
+        />
+      )}
       {step === "building" && <BuildingModal onClose={close} onDone={close} />}
     </div>
   );

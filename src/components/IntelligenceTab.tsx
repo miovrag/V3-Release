@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import NextGenBadge from "./NextGenBadge";
+import UpgradeModal from "./UpgradeModal";
 
 const SYSTEM_MAX = 15;
 const PLAN_LIMITS = { standard: 5, premium: 10, enterprise: 15 } as const;
@@ -16,6 +17,12 @@ const PLAN_LABELS: Record<Plan, string> = {
 const NEXT_PLAN: Partial<Record<Plan, { name: string; limit: number }>> = {
   standard: { name: "Premium",    limit: 10 },
   premium:  { name: "Enterprise", limit: 15 },
+};
+
+const PLAN_START: Record<Plan, number> = {
+  standard:  1,
+  premium:   5,
+  enterprise: 10,
 };
 
 const TIER_MARKS = [
@@ -44,14 +51,15 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
   const limit = PLAN_LIMITS[plan];
 
   const [nextGenEnabled, setNextGenEnabled] = useState(initialNextGen);
-  const [maxTasks, setMaxTasks]             = useState<number>(limit);
+  const [maxTasks, setMaxTasks]             = useState<number>(PLAN_START[plan]);
   const [saved, setSaved]                   = useState(false);
   const [justEnabled, setJustEnabled]       = useState(false);
+  const [showUpgrade, setShowUpgrade]       = useState(false);
 
   const wasInitiallyOff = useRef(!initialNextGen);
   const saveTimer       = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => { setMaxTasks(limit); }, [limit]);
+  useEffect(() => { setMaxTasks(PLAN_START[plan]); }, [plan]);
 
   const atPlanMax   = maxTasks === limit;
   const nextPlan    = NEXT_PLAN[plan];
@@ -310,7 +318,11 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
                     <strong>Upgrade to {nextPlan!.name}</strong> to unlock up to {nextPlan!.limit} tasks per query.
                   </span>
                 </div>
-                <button className="btn btn-secondary btn-sm" style={{ flexShrink: 0 }}>
+                <button
+                  className="btn btn-secondary btn-sm"
+                  style={{ flexShrink: 0 }}
+                  onClick={() => setShowUpgrade(true)}
+                >
                   Upgrade
                 </button>
               </div>
@@ -348,6 +360,13 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
             Higher task limits allow more thorough reasoning but increase response time and token usage. Start at the default and adjust based on your use case.
           </p>
         </div>
+      )}
+
+      {showUpgrade && nextPlan && (
+        <UpgradeModal
+          targetPlan={nextPlan.name.toLowerCase() as "premium" | "enterprise"}
+          onClose={() => setShowUpgrade(false)}
+        />
       )}
 
     </div>
