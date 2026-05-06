@@ -346,6 +346,24 @@ input, select { font-family: inherit; }
   margin-top: var(--spacing-sm);
 }
 
+/* Standard confirm modal (single white surface) */
+.modal-confirm {
+  position: relative;
+  width: min(540px, 100%);
+  background: var(--bg-surface);
+  border-radius: var(--radius-xxl);
+  box-shadow: var(--shadow-default);
+  padding: var(--spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  animation: modal-enter 280ms cubic-bezier(.2,.7,.3,1) both;
+}
+.modal-confirm-header { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+.modal-confirm-title  { font-size: var(--text-2xl); font-weight: var(--weight-bold); color: var(--text-heading); line-height: var(--leading-tight); }
+.modal-confirm-desc   { font-size: var(--text-sm);  color: var(--text-muted); line-height: var(--leading-normal); }
+.modal-confirm-actions { display: flex; justify-content: flex-end; gap: var(--spacing-sm); }
+
 /* ═══════════════════════════════════════
    SIDEBAR NAV
 ═══════════════════════════════════════ */
