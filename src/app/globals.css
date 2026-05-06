@@ -76,6 +76,55 @@
 }
 
 /* ═══════════════════════════════════════
+   WIDE-GAMUT (Display P3)
+   Activates on P3-capable displays:
+   MacBook Pro, iMac, iPhone, iPad Pro,
+   most modern HDR monitors.
+   sRGB values above are unchanged as
+   fallback for non-P3 screens.
+═══════════════════════════════════════ */
+@media (color-gamut: p3) {
+  :root {
+    /* Brand purple — more saturated, no hue shift */
+    --brand-primary-default: color(display-p3 0.40 0.36 0.96);
+    --brand-primary-hover:   color(display-p3 0.36 0.32 0.87);
+    --brand-primary-active:  color(display-p3 0.31 0.28 0.78);
+    --brand-primary-tint:    color(display-p3 0.90 0.89 0.99);
+    --text-link:             color(display-p3 0.40 0.36 0.96);
+
+    /* Status colors — perceptually richer */
+    --color-success: color(display-p3 0.10 0.79 0.42);
+    --color-warning: color(display-p3 1.00 0.62 0.24);
+    --color-error:   color(display-p3 0.93 0.31 0.32);
+    --color-info:    color(display-p3 0.00 0.83 0.93);
+
+    /* CTA shadow — vivid purple glow */
+    --shadow-cta: 0 4px 24px color(display-p3 0.40 0.36 0.96 / 0.40);
+  }
+}
+
+/* ═══════════════════════════════════════
+   HDR (High Dynamic Range)
+   Activates only on true HDR displays:
+   iPhone 12+, Pro Display XDR,
+   HDR-capable monitors.
+   Adds luminance above SDR white (1.0)
+   for the primary CTA glow.
+═══════════════════════════════════════ */
+@media (dynamic-range: high) {
+  :root {
+    --brand-primary-default: color(display-p3 0.40 0.36 0.96);
+    --shadow-cta: 0 4px 32px color(display-p3 0.40 0.36 0.96 / 0.55);
+  }
+
+  /* Primary button glow on HDR */
+  .btn.btn-primary,
+  .btn-upgrade {
+    box-shadow: var(--shadow-cta);
+  }
+}
+
+/* ═══════════════════════════════════════
    BASE
 ═══════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
