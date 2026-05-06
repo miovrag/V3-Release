@@ -5,11 +5,13 @@ interface Props {
   agentName: string;
   isNextGen: boolean;
   onNextGenClick?: () => void;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
 const TABS = ["Overview", "Sources", "Customize", "Intelligence", "Deploy", "Analytics"];
 
-export default function AgentDetailHeader({ agentName, isNextGen, onNextGenClick }: Props) {
+export default function AgentDetailHeader({ agentName, isNextGen, onNextGenClick, activeTab = "Intelligence", onTabChange }: Props) {
   return (
     <div style={{
       background: "var(--bg-surface)",
@@ -71,7 +73,11 @@ export default function AgentDetailHeader({ agentName, isNextGen, onNextGenClick
 
       <div className="tabs">
         {TABS.map((tab) => (
-          <button key={tab} className={`tab${tab === "Intelligence" ? " is-active" : ""}`}>
+          <button
+            key={tab}
+            className={`tab${tab === activeTab ? " is-active" : ""}`}
+            onClick={() => onTabChange?.(tab)}
+          >
             {tab}
           </button>
         ))}

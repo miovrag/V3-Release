@@ -7,8 +7,10 @@ import NextGenModal from "@/components/NextGenModal";
 import BuildingModal from "@/components/BuildingModal";
 import AgentsList from "@/components/AgentsList";
 import AgentDetailHeader from "@/components/AgentDetailHeader";
+import IntelligenceTab from "@/components/IntelligenceTab";
 
 type FlowStep = "website" | "usecase" | "nextgen" | "building" | null;
+type Plan = "standard" | "premium" | "enterprise";
 
 const FLOW_STEPS = [
   { id: "website",  label: "1. Enter URL",  note: "Existing" },
@@ -20,6 +22,8 @@ const FLOW_STEPS = [
 export default function Home() {
   const [step, setStep]     = useState<FlowStep>(null);
   const [result, setResult] = useState<"enabled" | "skipped" | null>(null);
+  const [activeTab, setActiveTab] = useState("Intelligence");
+  const [plan, setPlan] = useState<Plan>("standard");
 
   const close = () => setStep(null);
 
@@ -120,20 +124,62 @@ export default function Home() {
           <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
             NextGen badge in agent header
           </h2>
-          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-xl)" }}>
             Badge sits inline with the agent name. Click it to go to the Intelligence tab.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-md)" }}>
-            <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border-default)" }}>
-              <AgentDetailHeader
-                agentName="Support Agent"
-                isNextGen={true}
-                onNextGenClick={() => alert("→ Navigates to Intelligence tab")}
-              />
-            </div>
-            <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border-default)" }}>
-              <AgentDetailHeader agentName="Docs Search" isNextGen={false} />
+          {/* ── Agent WITH NextGen ── */}
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>With NextGen enabled</p>
+
+          {/* Plan switcher */}
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)", marginBottom: "var(--spacing-md)" }}>
+            <span style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>Demo plan:</span>
+            {(["standard", "premium", "enterprise"] as Plan[]).map(p => (
+              <button
+                key={p}
+                onClick={() => setPlan(p)}
+                className={`btn btn-sm ${plan === p ? "btn-primary" : "btn-ghost"}`}
+                style={{ textTransform: "capitalize" }}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border-default)", marginBottom: "var(--spacing-2xl)" }}>
+            <AgentDetailHeader
+              agentName="Support Agent"
+              isNextGen={true}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              onNextGenClick={() => setActiveTab("Intelligence")}
+            />
+            {activeTab === "Intelligence" && (
+              <div style={{ padding: "var(--spacing-xl)", background: "var(--bg-canvas)" }}>
+                <IntelligenceTab key={plan} initialNextGen={true} plan={plan} />
+              </div>
+            )}
+            {activeTab !== "Intelligence" && (
+              <div style={{ padding: "var(--spacing-xl)", background: "var(--bg-canvas)", minHeight: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>{activeTab} tab content</span>
+              </div>
+            )}
+          </div>
+
+          {/* ── Agent WITHOUT NextGen — discovery state ── */}
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Without NextGen — discovery state in Intelligence tab</p>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-md)" }}>
+            Existing agents that never had NextGen see a feature callout instead of settings. Clicking "Enable NextGen" transitions to the configured state.
+          </p>
+
+          <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border-default)" }}>
+            <AgentDetailHeader
+              agentName="Docs Search"
+              isNextGen={false}
+              activeTab="Intelligence"
+            />
+            <div style={{ padding: "var(--spacing-xl)", background: "var(--bg-canvas)" }}>
+              <IntelligenceTab initialNextGen={false} plan={plan} />
             </div>
           </div>
         </section>
