@@ -1,28 +1,164 @@
 @import "tailwindcss";
+@import "./design-tokens.css";
 
-:root {
-  --background: #f5f5f7;
-  --foreground: #1a1a2e;
-  --brand: #5B4FE8;
-  --brand-hover: #4A3ED6;
-  --brand-light: #EEF0FF;
-  --brand-border: #C7C3F8;
+/* =========================================================
+   Component classes — follows CustomGPT.ai design system
+   ========================================================= */
+
+/* ----- Reset ----- */
+*, *::before, *::after { box-sizing: border-box; }
+button { cursor: pointer; font-family: var(--cg-font-sans); }
+input  { font-family: var(--cg-font-sans); }
+
+/* ----- Overlay ----- */
+.cg-overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(23, 23, 23, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+/* ----- Modal ----- */
+.cg-modal {
+  position: relative;
+  background: var(--cg-bg-card);
+  border-radius: 16px;
+  box-shadow: var(--cg-shadow-modal);
+  width: 100%;
+  max-width: 560px;
+}
+.cg-modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--cg-gray-100);
+  border: none; display: flex; align-items: center; justify-content: center;
+  color: var(--cg-fg-3);
+  transition: background var(--cg-dur-fast);
+}
+.cg-modal-close:hover { background: var(--cg-gray-200); }
+
+/* ----- Buttons ----- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; border: 1px solid transparent;
+  font-family: var(--cg-font-sans); font-weight: 500;
+  transition: background var(--cg-dur-fast), box-shadow var(--cg-dur-fast),
+              color var(--cg-dur-fast), border-color var(--cg-dur-fast);
+  white-space: nowrap;
+}
+.btn.lg { font-size: 15px; line-height: 22px; padding: 11px 20px; border-radius: 8px; }
+.btn.md { font-size: 14px; line-height: 20px; padding: 9px 16px; border-radius: 7px; }
+.btn.sm { font-size: 13px; line-height: 18px; padding: 7px 12px; border-radius: 6px; }
+.btn.full { width: 100%; justify-content: center; }
+
+.btn.primary {
+  background: var(--cg-primary); color: #fff;
+  box-shadow: 0 2px 6px rgba(115,103,240,.30);
+}
+.btn.primary:hover { background: var(--cg-primary-hover); }
+.btn.primary:active { background: var(--cg-primary-active); }
+.btn.primary:disabled { background: var(--cg-gray-300); box-shadow: none; cursor: not-allowed; }
+
+.btn.secondary {
+  background: var(--cg-gray-100); color: var(--cg-fg-1);
+  border-color: var(--cg-gray-200);
+}
+.btn.secondary:hover { background: var(--cg-gray-200); }
+.btn.secondary:active { background: var(--cg-gray-300); }
+
+.btn.tertiary {
+  background: var(--cg-bg-card); color: var(--cg-primary);
+  border-color: var(--cg-primary);
+}
+.btn.tertiary:hover { background: var(--cg-primary-100); }
+
+.btn.ghost {
+  background: transparent; color: var(--cg-fg-3); border: none;
+}
+.btn.ghost:hover { color: var(--cg-fg-1); }
+
+/* ----- Badges ----- */
+.b {
+  display: inline-flex; align-items: center; gap: 4px;
+  font: 600 11px/16px var(--cg-font-sans);
+  letter-spacing: .02em; padding: 2px 10px; border-radius: 4px;
+}
+.b.filled-primary { background: var(--cg-primary); color: #fff; }
+.b.soft-primary    { background: rgba(115,103,240,.12); color: var(--cg-primary-active); }
+.b.soft-gray       { background: rgba(38,38,38,.08); color: var(--cg-fg-2); }
+.b.soft-success    { background: rgba(40,199,111,.12); color: var(--cg-success-700); }
+.b.soft-warn       { background: rgba(255,159,67,.12); color: var(--cg-warning-700); }
+
+/* Chip (pill badge) */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 1000px;
+  background: var(--cg-primary-100); color: var(--cg-primary-active);
+  font: 500 12px/16px var(--cg-font-sans);
+}
+.chip.new {
+  background: var(--cg-primary); color: #fff;
+  font-weight: 600;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
+/* ----- Card ----- */
+.card {
+  background: var(--cg-bg-card);
+  border: 1px solid var(--cg-gray-200);
+  border-radius: 16px;
+  box-shadow: var(--cg-shadow-card);
+  padding: 24px;
 }
 
-.modal-backdrop {
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(2px);
+/* ----- Input ----- */
+.cg-input {
+  width: 100%; height: 40px;
+  padding: 0 12px;
+  background: var(--cg-bg-card);
+  border: 1px solid var(--cg-gray-200);
+  border-radius: 8px;
+  font: 400 14px/20px var(--cg-font-sans);
+  color: var(--cg-fg-1);
+  outline: none;
+  transition: border-color var(--cg-dur-fast);
 }
+.cg-input::placeholder { color: var(--cg-gray-400); }
+.cg-input:hover  { border-color: var(--cg-gray-300); }
+.cg-input:focus  { border-color: var(--cg-primary); }
+
+/* ----- Divider ----- */
+.cg-divider { border: none; border-top: 1px solid var(--cg-gray-200); margin: 0; }
+
+/* ----- Tabs ----- */
+.cg-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--cg-gray-200); }
+.cg-tab {
+  padding: 8px 16px; font: 500 14px/20px var(--cg-font-sans);
+  color: var(--cg-fg-3); border-bottom: 2px solid transparent;
+  background: none; border-top: none; border-left: none; border-right: none;
+  transition: color var(--cg-dur-fast), border-color var(--cg-dur-fast);
+  margin-bottom: -1px;
+}
+.cg-tab:hover { color: var(--cg-fg-1); }
+.cg-tab.active { color: var(--cg-primary); border-bottom-color: var(--cg-primary); font-weight: 600; }
+
+/* ----- Spinner ----- */
+.cg-spinner {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--cg-primary-100);
+  border-top-color: var(--cg-primary);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ----- Step progress row ----- */
+.step-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px; background: var(--cg-gray-100);
+  border-radius: 8px;
+}
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--cg-gray-300);
+  display: flex; align-items: center; justify-content: center;
+}
+.step-circle.active { border-color: var(--cg-primary); }

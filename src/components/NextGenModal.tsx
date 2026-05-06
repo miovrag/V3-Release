@@ -6,134 +6,147 @@ interface Props {
   onClose: () => void;
 }
 
-function NextGenIllustration() {
+function Illustration() {
   return (
-    <svg width="100%" viewBox="0 0 480 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-      <rect width="480" height="160" rx="16" fill="#EEF0FF" />
+    <svg
+      width="100%"
+      viewBox="0 0 520 172"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Diagram showing a question being broken into multiple steps by NextGen agent"
+    >
+      <rect width="520" height="172" rx="12" fill="#EAE8FD"/>
 
       {/* Input node */}
-      <rect x="20" y="56" width="100" height="48" rx="10" fill="white" stroke="#C7C3F8" strokeWidth="1.5" />
-      <text x="70" y="77" textAnchor="middle" fill="#5B4FE8" fontSize="10" fontWeight="600" fontFamily="system-ui">Your</text>
-      <text x="70" y="92" textAnchor="middle" fill="#5B4FE8" fontSize="10" fontWeight="600" fontFamily="system-ui">Question</text>
+      <rect x="24" y="62" width="96" height="48" rx="8" fill="#FFFFFF" stroke="#D5D1FB" strokeWidth="1.5"/>
+      <text x="72" y="83" textAnchor="middle" fill="#737373" fontSize="10" fontFamily="Inter,system-ui" fontWeight="400">Your</text>
+      <text x="72" y="97" textAnchor="middle" fill="#404040" fontSize="11" fontFamily="Inter,system-ui" fontWeight="600">question</text>
 
-      {/* Arrow from input to brain */}
-      <line x1="120" y1="80" x2="166" y2="80" stroke="#A89EF5" strokeWidth="1.5" strokeDasharray="4 3" />
-      <polygon points="166,75 174,80 166,85" fill="#A89EF5" />
+      {/* Connector line */}
+      <line x1="120" y1="86" x2="160" y2="86" stroke="#A39BF6" strokeWidth="1.5" strokeDasharray="4 3"/>
+      <polygon points="159,81 168,86 159,91" fill="#A39BF6"/>
 
-      {/* Brain / agent node */}
-      <circle cx="210" cy="80" r="34" fill="#5B4FE8" opacity="0.12" />
-      <circle cx="210" cy="80" r="24" fill="#5B4FE8" opacity="0.2" />
-      <circle cx="210" cy="80" r="15" fill="#5B4FE8" />
-      {/* Lightning bolt icon */}
-      <path d="M213 71L206 81H211L208 89L215 79H210L213 71Z" fill="white" />
+      {/* Agent node */}
+      <circle cx="208" cy="86" r="36" fill="rgba(115,103,240,0.10)"/>
+      <circle cx="208" cy="86" r="26" fill="rgba(115,103,240,0.18)"/>
+      <circle cx="208" cy="86" r="17" fill="#7367F0"/>
+      {/* Lightning bolt */}
+      <path d="M211 77L204 87H209L206 95L213 85H208L211 77Z" fill="#FFFFFF"/>
 
-      {/* Label under brain */}
-      <text x="210" y="125" textAnchor="middle" fill="#5B4FE8" fontSize="9" fontWeight="700" fontFamily="system-ui" letterSpacing="0.5">NEXTGEN</text>
+      {/* NextGen label */}
+      <text x="208" y="134" textAnchor="middle" fill="#5C53C0" fontSize="9" fontFamily="Inter,system-ui" fontWeight="700" letterSpacing="0.08em">NEXTGEN</text>
 
       {/* Three output arrows */}
-      <line x1="225" y1="68" x2="268" y2="44" stroke="#A89EF5" strokeWidth="1.5" />
-      <polygon points="262,40 270,43 266,51" fill="#A89EF5" />
+      <line x1="226" y1="74" x2="268" y2="50"  stroke="#A39BF6" strokeWidth="1.5"/>
+      <polygon points="262,46 271,49 267,58" fill="#A39BF6"/>
 
-      <line x1="228" y1="80" x2="272" y2="80" stroke="#A89EF5" strokeWidth="1.5" />
-      <polygon points="271,75 279,80 271,85" fill="#A89EF5" />
+      <line x1="228" y1="86" x2="272" y2="86"  stroke="#A39BF6" strokeWidth="1.5"/>
+      <polygon points="271,81 280,86 271,91"    fill="#A39BF6"/>
 
-      <line x1="225" y1="92" x2="268" y2="116" stroke="#A89EF5" strokeWidth="1.5" />
-      <polygon points="262,112 270,117 264,124" fill="#A89EF5" />
+      <line x1="226" y1="98" x2="268" y2="122" stroke="#A39BF6" strokeWidth="1.5"/>
+      <polygon points="262,118 271,123 265,131" fill="#A39BF6"/>
 
-      {/* Output task boxes */}
-      <rect x="278" y="22" width="86" height="36" rx="8" fill="white" stroke="#C7C3F8" strokeWidth="1.5" />
-      <text x="321" y="36" textAnchor="middle" fill="#6B7280" fontSize="9" fontFamily="system-ui">Step 1</text>
-      <text x="321" y="49" textAnchor="middle" fill="#374151" fontSize="10" fontWeight="600" fontFamily="system-ui">Research</text>
+      {/* Step boxes */}
+      <rect x="280" y="28" width="92" height="36" rx="8" fill="#FFFFFF" stroke="#D5D1FB" strokeWidth="1.5"/>
+      <text x="326" y="43" textAnchor="middle" fill="#A3A3A3" fontSize="9"  fontFamily="Inter,system-ui">Step 1</text>
+      <text x="326" y="56" textAnchor="middle" fill="#404040" fontSize="10" fontFamily="Inter,system-ui" fontWeight="600">Research</text>
 
-      <rect x="278" y="62" width="86" height="36" rx="8" fill="white" stroke="#C7C3F8" strokeWidth="1.5" />
-      <text x="321" y="76" textAnchor="middle" fill="#6B7280" fontSize="9" fontFamily="system-ui">Step 2</text>
-      <text x="321" y="89" textAnchor="middle" fill="#374151" fontSize="10" fontWeight="600" fontFamily="system-ui">Analyze</text>
+      <rect x="280" y="68" width="92" height="36" rx="8" fill="#FFFFFF" stroke="#D5D1FB" strokeWidth="1.5"/>
+      <text x="326" y="83" textAnchor="middle" fill="#A3A3A3" fontSize="9"  fontFamily="Inter,system-ui">Step 2</text>
+      <text x="326" y="96" textAnchor="middle" fill="#404040" fontSize="10" fontFamily="Inter,system-ui" fontWeight="600">Analyze</text>
 
-      <rect x="278" y="102" width="86" height="36" rx="8" fill="white" stroke="#C7C3F8" strokeWidth="1.5" />
-      <text x="321" y="116" textAnchor="middle" fill="#6B7280" fontSize="9" fontFamily="system-ui">Step 3</text>
-      <text x="321" y="129" textAnchor="middle" fill="#374151" fontSize="10" fontWeight="600" fontFamily="system-ui">Synthesize</text>
+      <rect x="280" y="108" width="92" height="36" rx="8" fill="#FFFFFF" stroke="#D5D1FB" strokeWidth="1.5"/>
+      <text x="326" y="123" textAnchor="middle" fill="#A3A3A3" fontSize="9"  fontFamily="Inter,system-ui">Step 3</text>
+      <text x="326" y="136" textAnchor="middle" fill="#404040" fontSize="10" fontFamily="Inter,system-ui" fontWeight="600">Synthesize</text>
 
-      {/* Final answer arrow + box */}
-      <line x1="364" y1="80" x2="386" y2="80" stroke="#A89EF5" strokeWidth="1.5" />
-      <polygon points="385,75 393,80 385,85" fill="#A89EF5" />
+      {/* Final arrow */}
+      <line x1="372" y1="86" x2="396" y2="86" stroke="#A39BF6" strokeWidth="1.5"/>
+      <polygon points="395,81 404,86 395,91" fill="#A39BF6"/>
 
-      <rect x="392" y="56" width="72" height="48" rx="10" fill="#5B4FE8" />
-      <text x="428" y="76" textAnchor="middle" fill="white" fontSize="9" fontFamily="system-ui">Smart</text>
-      <text x="428" y="89" textAnchor="middle" fill="white" fontSize="9" fontFamily="system-ui">Answer</text>
-      <text x="428" y="102" textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="8" fontFamily="system-ui">✓ Done</text>
+      {/* Answer node */}
+      <rect x="404" y="58" width="92" height="56" rx="8" fill="#7367F0"/>
+      <text x="450" y="80"  textAnchor="middle" fill="rgba(255,255,255,0.80)" fontSize="10" fontFamily="Inter,system-ui">Smart</text>
+      <text x="450" y="94"  textAnchor="middle" fill="#FFFFFF" fontSize="11" fontFamily="Inter,system-ui" fontWeight="600">answer</text>
+      <text x="450" y="107" textAnchor="middle" fill="rgba(255,255,255,0.60)" fontSize="9" fontFamily="Inter,system-ui">Done</text>
     </svg>
   );
 }
 
+const FEATURES = ["Multi-step reasoning", "Autonomous task planning", "Deeper answers"];
+
 export default function NextGenModal({ onEnable, onSkip, onClose }: Props) {
   return (
-    <div className="fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden relative">
-        {/* Header accent */}
-        <div className="h-1 w-full bg-gradient-to-r from-[#5B4FE8] via-[#8B7FFF] to-[#5B4FE8]" />
+    <div className="cg-overlay">
+      <div className="cg-modal">
+        {/* Top accent strip */}
+        <div style={{
+          height: 3,
+          background: "var(--cg-grad-menu-active)",
+          borderRadius: "16px 16px 0 0",
+        }} />
 
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M1 1L13 13M13 1L1 13" stroke="#6B7280" strokeWidth="2" strokeLinecap="round"/>
+        <button className="cg-modal-close" onClick={onClose} aria-label="Close">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
         </button>
 
-        <div className="px-8 pt-6 pb-2">
-          {/* Badge */}
-          <div className="flex justify-center mb-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF0FF] text-[#5B4FE8] text-xs font-semibold tracking-wide uppercase">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M7 1L3 7H6L5 11L9 5H6L7 1Z" fill="#5B4FE8"/>
+        <div style={{ padding: "28px 32px 32px" }}>
+          {/* "New feature" chip */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <span className="chip new">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                <path d="M7 1L3 7H6L5 11L9 5H6L7 1Z" fill="currentColor"/>
               </svg>
-              New Feature
+              New feature
             </span>
           </div>
 
           {/* Headline */}
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-1">
+          <h3 className="cg-h3" style={{ textAlign: "center", marginBottom: 4 }}>
             Meet NextGen
-          </h2>
-          <p className="text-center text-[#5B4FE8] font-semibold text-base mb-4">
+          </h3>
+          <p style={{
+            font: "400 14px/20px var(--cg-font-sans)",
+            color: "var(--cg-primary)",
+            textAlign: "center",
+            fontWeight: 500,
+            marginBottom: 20,
+          }}>
             Your agent, supercharged
           </p>
 
           {/* Illustration */}
-          <div className="rounded-xl overflow-hidden mb-5">
-            <NextGenIllustration />
+          <div style={{ borderRadius: 12, overflow: "hidden", marginBottom: 20 }}>
+            <Illustration />
           </div>
 
           {/* Body copy */}
-          <p className="text-center text-gray-500 text-sm leading-relaxed mb-5">
+          <p style={{
+            font: "400 14px/22px var(--cg-font-sans)",
+            color: "var(--cg-fg-3)",
+            textAlign: "center",
+            marginBottom: 20,
+          }}>
             NextGen enables your agent to break down complex questions, plan multi-step tasks, and deliver smarter answers — automatically.
           </p>
 
-          {/* Feature pills */}
-          <div className="flex gap-2 justify-center flex-wrap mb-6">
-            {["Multi-step reasoning", "Autonomous task planning", "Deeper answers"].map((f) => (
-              <span
-                key={f}
-                className="px-3 py-1.5 rounded-full border border-[#C7C3F8] bg-[#F8F7FF] text-[#5B4FE8] text-xs font-medium"
-              >
-                {f}
-              </span>
+          {/* Feature chips */}
+          <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 28 }}>
+            {FEATURES.map((f) => (
+              <span key={f} className="chip" style={{ fontSize: 12 }}>{f}</span>
             ))}
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="px-8 pb-8 flex flex-col gap-3">
-          <button
-            onClick={onEnable}
-            className="w-full bg-[#5B4FE8] hover:bg-[#4A3ED6] text-white font-semibold py-3.5 rounded-xl transition-colors text-sm"
-          >
+          {/* Actions */}
+          <button className="btn primary lg full" onClick={onEnable}>
             Enable NextGen
           </button>
           <button
+            className="btn ghost md full"
+            style={{ marginTop: 8 }}
             onClick={onSkip}
-            className="w-full text-sm text-gray-400 hover:text-gray-600 transition-colors py-1"
           >
             Continue without NextGen
           </button>
