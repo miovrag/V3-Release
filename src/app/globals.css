@@ -98,26 +98,7 @@
     --color-error:   color(display-p3 0.93 0.31 0.32);
     --color-info:    color(display-p3 0.00 0.83 0.93);
 
-    /* CTA shadow — vivid purple glow */
-    --shadow-cta: 0 4px 24px color(display-p3 0.40 0.36 0.96 / 0.40);
   }
-}
-
-/* ═══════════════════════════════════════
-   HDR (High Dynamic Range)
-   Activates only on true HDR displays:
-   iPhone 12+, Pro Display XDR,
-   HDR-capable monitors.
-   Adds luminance above SDR white (1.0)
-   for the primary CTA glow.
-═══════════════════════════════════════ */
-@media (dynamic-range: high) {
-  :root {
-    --brand-primary-default: color(display-p3 0.40 0.36 0.96);
-    --shadow-cta: 0 4px 32px color(display-p3 0.40 0.36 0.96 / 0.55);
-  }
-
-
 }
 
 /* ═══════════════════════════════════════
