@@ -117,11 +117,7 @@
     --shadow-cta: 0 4px 32px color(display-p3 0.40 0.36 0.96 / 0.55);
   }
 
-  /* Primary button glow on HDR */
-  .btn.btn-primary,
-  .btn-upgrade {
-    box-shadow: var(--shadow-cta);
-  }
+
 }
 
 /* ═══════════════════════════════════════
