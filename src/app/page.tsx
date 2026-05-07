@@ -9,6 +9,10 @@ import AgentsList from "@/components/AgentsList";
 import AgentDetailHeader from "@/components/AgentDetailHeader";
 import IntelligenceTab from "@/components/IntelligenceTab";
 import UpgradeModal from "@/components/UpgradeModal";
+import DashboardBanner from "@/components/DashboardBanner";
+import NotificationsPanel from "@/components/NotificationsPanel";
+import ChatSurface from "@/components/ChatSurface";
+import AnalyticsCallout from "@/components/AnalyticsCallout";
 
 type FlowStep = "website" | "usecase" | "nextgen" | "building" | null;
 type Plan = "standard" | "premium" | "enterprise";
@@ -23,9 +27,10 @@ const FLOW_STEPS = [
 export default function Home() {
   const [step, setStep]     = useState<FlowStep>(null);
   const [result, setResult] = useState<"enabled" | "skipped" | null>(null);
-  const [activeTab, setActiveTab]       = useState("Intelligence");
-  const [plan, setPlan]                 = useState<Plan>("standard");
+  const [activeTab, setActiveTab]             = useState("Intelligence");
+  const [plan, setPlan]                       = useState<Plan>("standard");
   const [showFlowUpgrade, setShowFlowUpgrade] = useState(false);
+  const [showInlineUpgrade, setShowInlineUpgrade] = useState(false);
 
   const close = () => setStep(null);
 
@@ -193,9 +198,69 @@ export default function Home() {
             NextGen tag per agent row
           </h2>
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
-            NextGen badge appears alongside the Multi-Agent tag on each row.
+            Agents without NextGen show inline "Enable NextGen →" CTA next to the agent name.
           </p>
-          <AgentsList />
+          <AgentsList onEnableNextGen={() => setShowInlineUpgrade(true)} />
+        </section>
+
+        {/* ══════════════════════════════════════
+            DISCOVERY SURFACES
+        ══════════════════════════════════════ */}
+
+        {/* ── 1. Dashboard banner ── */}
+        <section>
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Dashboard</p>
+          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
+            Dismissable announcement banner
+          </h2>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
+            Shown above the agents list on login — highest reach. Dismisses permanently once clicked.
+          </p>
+          <DashboardBanner onEnable={() => setShowInlineUpgrade(true)} />
+        </section>
+
+        {/* ── 2. Notifications ── */}
+        <section>
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Notifications</p>
+          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
+            Bell notification
+          </h2>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
+            One-time notification in the bell. Catches users who log in but skip the dashboard.
+          </p>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "var(--spacing-md)" }}>
+            <NotificationsPanel />
+            <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", marginTop: "var(--spacing-sm)" }}>← click the bell</span>
+          </div>
+        </section>
+
+        {/* ── 3. Chat surface ── */}
+        <section>
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Chat preview</p>
+          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
+            In-chat hints and response footer
+          </h2>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
+            Empty state hint before first message. After response: contextual nudge + "Powered by Standard / NextGen" footer.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-md)" }}>
+            <p className="section-label" style={{ marginBottom: "var(--spacing-xs)" }}>Without NextGen</p>
+            <ChatSurface isNextGen={false} plan={plan} onUpgrade={() => setShowInlineUpgrade(true)} />
+            <p className="section-label" style={{ marginBottom: "var(--spacing-xs)", marginTop: "var(--spacing-sm)" }}>With NextGen</p>
+            <ChatSurface isNextGen={true} plan={plan} />
+          </div>
+        </section>
+
+        {/* ── 4. Analytics ── */}
+        <section>
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Analytics tab</p>
+          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
+            High-volume agents without NextGen
+          </h2>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
+            Analytics surface shows which high-traffic agents are missing NextGen — highest intent users are already thinking about performance.
+          </p>
+          <AnalyticsCallout onEnable={() => setShowInlineUpgrade(true)} />
         </section>
 
       </main>
@@ -216,6 +281,12 @@ export default function Home() {
         />
       )}
       {step === "building" && <BuildingModal onClose={close} onDone={close} />}
+      {showInlineUpgrade && (
+        <UpgradeModal
+          targetPlan={plan === "enterprise" ? "enterprise" : "premium"}
+          onClose={() => setShowInlineUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

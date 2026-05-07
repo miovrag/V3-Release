@@ -1,6 +1,10 @@
 "use client";
 import NextGenBadge from "./NextGenBadge";
 
+interface AgentsListProps {
+  onEnableNextGen?: (agentName: string) => void;
+}
+
 const AGENTS = [
   { id: 1, name: "Support Agent",  desc: "Customer support for our product",     queries: 1842, isNextGen: true,  isMulti: false, initials: "S", color: "var(--brand-primary-tint)",        textColor: "var(--brand-primary-default)" },
   { id: 2, name: "Sales Copilot",  desc: "Lead qualification and revenue flows",  queries: 934,  isNextGen: true,  isMulti: false, initials: "S", color: "var(--color-info-tint)",           textColor: "var(--color-info)" },
@@ -9,7 +13,7 @@ const AGENTS = [
   { id: 5, name: "HR Assistant",   desc: "Internal HR policies and onboarding",   queries: 289,  isNextGen: false, isMulti: false, initials: "H", color: "var(--color-error-tint)",          textColor: "var(--color-error)" },
 ];
 
-export default function AgentsList() {
+export default function AgentsList({ onEnableNextGen }: AgentsListProps = {}) {
   return (
     <div style={{
       background: "var(--bg-surface)",
@@ -71,6 +75,19 @@ export default function AgentsList() {
               {agent.isNextGen && <NextGenBadge />}
               {agent.isMulti && (
                 <span className="badge badge-primary">Multi-Agent</span>
+              )}
+              {!agent.isNextGen && onEnableNextGen && (
+                <button
+                  onClick={e => { e.stopPropagation(); onEnableNextGen(agent.name); }}
+                  style={{
+                    background: "none", border: "none", padding: 0, cursor: "pointer",
+                    fontSize: "var(--text-xs)", fontWeight: "var(--weight-medium)",
+                    color: "var(--brand-primary-default)", fontFamily: "inherit",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Enable NextGen →
+                </button>
               )}
             </div>
             <p style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
