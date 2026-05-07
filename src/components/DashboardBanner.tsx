@@ -13,7 +13,7 @@ export default function DashboardBanner({ onEnable }: Props) {
 
   return (
     <div className="alert alert-primary" style={{ alignItems: "center" }}>
-      <i className="ti ti-bolt" />
+      <i className="ti ti-bolt" style={{ fontSize: 18, flexShrink: 0, color: "var(--brand-primary-default)" }} />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
