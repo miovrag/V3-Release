@@ -12,10 +12,10 @@ export default function DashboardBanner({ onEnable }: Props) {
   if (dismissed) return null;
 
   return (
-    <div className="alert alert-primary" style={{ alignItems: "center" }}>
-      <i className="ti ti-bolt" style={{ fontSize: 18, flexShrink: 0, color: "var(--brand-primary-default)" }} />
+    <div className="alert alert-primary" style={{ alignItems: "flex-start" }}>
+      <i className="ti ti-bolt" style={{ fontSize: 18, flexShrink: 0, marginTop: 2, color: "var(--brand-primary-default)" }} />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
           <strong style={{ color: "var(--text-heading)" }}>NextGen is now available for all your agents</strong>
           <span className="badge-premium" style={{ flexShrink: 0 }}>
@@ -23,19 +23,18 @@ export default function DashboardBanner({ onEnable }: Props) {
             New
           </span>
         </div>
-        <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>
+        <span style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
           Enable multi-step reasoning on any existing agent — takes 10 seconds in the Intelligence tab.
         </span>
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)", flexShrink: 0 }}>
-        <button className="btn btn-primary btn-sm" onClick={onEnable}>
-          <i className="ti ti-bolt" />
-          Enable on agents
-        </button>
-        <button className="btn-notnow" onClick={() => setDismissed(true)}>
-          Dismiss
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)", marginTop: "var(--spacing-xs)" }}>
+          <button className="btn btn-primary btn-sm" onClick={onEnable}>
+            <i className="ti ti-bolt" style={{ fontSize: 13 }} />
+            Enable on agents
+          </button>
+          <button className="btn-notnow" onClick={() => setDismissed(true)}>
+            Dismiss
+          </button>
+        </div>
       </div>
     </div>
   );

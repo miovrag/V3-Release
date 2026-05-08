@@ -12,7 +12,6 @@ import UpgradeModal from "@/components/UpgradeModal";
 import DashboardBanner from "@/components/DashboardBanner";
 import NotificationsPanel from "@/components/NotificationsPanel";
 import ChatSurface from "@/components/ChatSurface";
-import AnalyticsCallout from "@/components/AnalyticsCallout";
 
 type FlowStep = "website" | "usecase" | "nextgen" | "building" | null;
 type Plan = "standard" | "premium" | "enterprise";
@@ -243,24 +242,7 @@ export default function Home() {
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
             Empty state hint before first message. After response: contextual nudge + "Powered by Standard / NextGen" footer.
           </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-md)" }}>
-            <p className="section-label" style={{ marginBottom: "var(--spacing-xs)" }}>Without NextGen</p>
-            <ChatSurface isNextGen={false} plan={plan} onUpgrade={() => setShowInlineUpgrade(true)} />
-            <p className="section-label" style={{ marginBottom: "var(--spacing-xs)", marginTop: "var(--spacing-sm)" }}>With NextGen</p>
-            <ChatSurface isNextGen={true} plan={plan} />
-          </div>
-        </section>
-
-        {/* ── 4. Analytics ── */}
-        <section>
-          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Analytics tab</p>
-          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
-            High-volume agents without NextGen
-          </h2>
-          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
-            Analytics surface shows which high-traffic agents are missing NextGen — highest intent users are already thinking about performance.
-          </p>
-          <AnalyticsCallout onEnable={() => setShowInlineUpgrade(true)} />
+          <ChatSurface isNextGen={true} plan={plan} />
         </section>
 
       </main>

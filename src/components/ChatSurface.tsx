@@ -136,15 +136,44 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
               }}>S</div>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)" }}>
                 <div style={{
-                  padding: "var(--spacing-md)",
                   background: "var(--bg-surface)",
                   borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--spacing-xs)",
                   border: "1px solid var(--border-default)",
-                  fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
-                  color: "var(--text-body)",
-                  whiteSpace: "pre-line",
+                  overflow: "hidden",
                 }}>
-                  {isNextGen ? MOCK_ANSWER_NEXTGEN : MOCK_ANSWER_STANDARD}
+                  <div style={{
+                    padding: "var(--spacing-md)",
+                    fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
+                    color: "var(--text-body)",
+                    whiteSpace: "pre-line",
+                  }}>
+                    {isNextGen ? MOCK_ANSWER_NEXTGEN : MOCK_ANSWER_STANDARD}
+                  </div>
+                  <div style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    padding: "var(--spacing-sm) var(--spacing-md)",
+                    borderTop: "1px solid var(--border-default)",
+                    background: "var(--bg-canvas)",
+                  }}>
+                    <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
+                      {isNextGen
+                        ? <><i className="ti ti-bolt" style={{ color: "var(--brand-primary-default)", fontSize: 12 }} />Powered by NextGen · {PLAN_LABEL}</>
+                        : <>Powered by Standard</>
+                      }
+                    </span>
+                    {!isNextGen && (
+                      <button
+                        onClick={onUpgrade}
+                        style={{
+                          background: "none", border: "none", padding: 0, cursor: "pointer",
+                          fontSize: "var(--text-xs)", fontWeight: "var(--weight-medium)",
+                          color: "var(--brand-primary-default)", fontFamily: "inherit",
+                        }}
+                      >
+                        Upgrade to NextGen →
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Contextual hint — Standard only */}
@@ -179,33 +208,6 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
               </div>
             </div>
           </>
-        )}
-      </div>
-
-      {/* Footer — powered by */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "var(--spacing-sm) var(--spacing-lg)",
-        borderTop: "1px solid var(--border-default)",
-        background: "var(--bg-surface)",
-      }}>
-        <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>
-          {isNextGen
-            ? <><i className="ti ti-bolt" style={{ color: "var(--brand-primary-default)", fontSize: 12, marginRight: 4 }} />Powered by NextGen · {PLAN_LABEL}</>
-            : <>Powered by Standard</>
-          }
-        </span>
-        {!isNextGen && (
-          <button
-            onClick={onUpgrade}
-            style={{
-              background: "none", border: "none", padding: 0, cursor: "pointer",
-              fontSize: "var(--text-xs)", fontWeight: "var(--weight-medium)",
-              color: "var(--brand-primary-default)", fontFamily: "inherit",
-            }}
-          >
-            Upgrade to NextGen →
-          </button>
         )}
       </div>
 
