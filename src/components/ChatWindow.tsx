@@ -2,16 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import PostCreationRail from "./PostCreationRail";
-import ToolCallCard from "./ToolCallCard";
 
-type Phase = "idle" | "typing" | "tool_call" | "responded";
+type Phase = "idle" | "typing" | "responded";
 
 interface Message {
   id: string;
-  role: "agent" | "user" | "tool_call";
+  role: "agent" | "user";
   text: string;
-  action?: string;
-  toolStatus?: "pending" | "approved" | "denied";
   showRail?: boolean;
 }
 
@@ -30,7 +27,6 @@ const WELCOME =
 const MOCK_ANSWER =
   "Here's a quick overview of CustomGPT.ai plans:\n\n**Standard — $49/month**\n- 10 AI agents, 1,000 training pages\n- 100 chat sessions/day, basic integrations\n\n**Premium — $99/month**\n- 25 agents, 5,000 pages, unlimited sessions\n- Priority support, full API access\n\n**Enterprise — Custom pricing**\n- Unlimited agents, SSO, custom data volumes, dedicated SLA\n\nAll plans include a 7-day free trial. Want me to connect you with the sales team?";
 
-const MOCK_TOOL_ACTION = 'search_knowledge_base("customgpt pricing plans")';
 
 const AVATAR_STYLE = {
   width: 28, height: 28, flexShrink: 0 as const,
@@ -74,6 +70,8 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   ]);
   const [input, setInput] = useState("");
   const [railKey, setRailKey] = useState(0);
+  const [streamingId, setStreamingId] = useState<string | null>(null);
+  const [streamedChars, setStreamedChars] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const msgEndRef = useRef<HTMLDivElement>(null);
 
@@ -85,46 +83,38 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     target?.scrollIntoView({ behavior: "smooth" });
   }, [messages, phase]);
 
+  useEffect(() => {
+    if (!streamingId) return;
+    const msg = messages.find(m => m.id === streamingId);
+    if (!msg) return;
+    if (streamedChars >= msg.text.length) {
+      setStreamingId(null);
+      return;
+    }
+    const t = setTimeout(() => setStreamedChars(c => Math.min(c + 2, msg.text.length)), 12);
+    return () => clearTimeout(t);
+  }, [streamingId, streamedChars, messages]);
+
   const send = (text: string) => {
     if (phase !== "idle" || !text.trim()) return;
     setMessages(prev => [...prev, { id: `u-${Date.now()}`, role: "user", text }]);
     setInput("");
     setPhase("typing");
     setTimeout(() => {
-      const toolId = `tc-${Date.now()}`;
-      setMessages(prev => [
-        ...prev,
-        { id: toolId, role: "tool_call", text: "", action: MOCK_TOOL_ACTION, toolStatus: "pending" },
-      ]);
-      setPhase("tool_call");
-    }, 1500);
-  };
-
-  const approve = (toolId: string) => {
-    setMessages(prev =>
-      prev.map(m => m.id === toolId ? { ...m, toolStatus: "approved" as const } : m)
-    );
-    setPhase("typing");
-    setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        { id: `a-${Date.now()}`, role: "agent", text: MOCK_ANSWER, showRail: true },
-      ]);
+      const id = `a-${Date.now()}`;
+      setMessages(prev => [...prev, { id, role: "agent", text: MOCK_ANSWER, showRail: true }]);
       setPhase("responded");
-    }, 1200);
-  };
-
-  const deny = (toolId: string) => {
-    setMessages(prev =>
-      prev.map(m => m.id === toolId ? { ...m, toolStatus: "denied" as const } : m)
-    );
-    setPhase("idle");
+      setStreamingId(id);
+      setStreamedChars(0);
+    }, 1500);
   };
 
   const reset = () => {
     setPhase("idle");
     setMessages([{ id: "welcome", role: "agent", text: WELCOME }]);
     setRailKey(k => k + 1);
+    setStreamingId(null);
+    setStreamedChars(0);
   };
 
   return (
@@ -188,15 +178,6 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 {msg.text}
               </div>
             </div>
-          ) : msg.role === "tool_call" ? (
-            <div key={msg.id}>
-              <ToolCallCard
-                action={msg.action!}
-                status={msg.toolStatus!}
-                onAllow={() => approve(msg.id)}
-                onDeny={() => deny(msg.id)}
-              />
-            </div>
           ) : (
             <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
               <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
@@ -207,9 +188,10 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                     fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
                     color: "var(--text-body)", whiteSpace: "pre-line", width: "100%",
                   }}>
-                    {msg.text}
+                    {msg.id === streamingId ? msg.text.slice(0, streamedChars) : msg.text}
+                    {msg.id === streamingId && <span className="stream-cursor" />}
                   </div>
-                  {msg.id !== "welcome" && (
+                  {msg.id !== "welcome" && msg.id !== streamingId && (
                     <div style={{
                       display: "flex", alignItems: "center", gap: 4,
                       borderTop: "1px solid var(--border-default)",
@@ -223,7 +205,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                   )}
                 </div>
 
-                {msg.showRail && (
+                {msg.showRail && msg.id !== streamingId && (
                   <>
                     <div ref={msgEndRef} />
                     <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
@@ -289,17 +271,17 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter") send(input); }}
           placeholder="Ask anything…"
-          disabled={phase === "typing" || phase === "tool_call"}
+          disabled={phase === "typing"}
         />
         <button
           onClick={() => send(input)}
-          disabled={phase !== "idle" || !input.trim()}
+          disabled={phase === "typing" || !input.trim()}
           style={{
             width: 36, height: 36, flexShrink: 0,
             borderRadius: "var(--radius-full)",
-            background: input.trim() && phase === "idle" ? "#fff" : "rgba(255,255,255,0.2)",
+            background: input.trim() && phase !== "typing" ? "#fff" : "rgba(255,255,255,0.2)",
             border: "none",
-            cursor: input.trim() && phase === "idle" ? "pointer" : "default",
+            cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
             display: "flex", alignItems: "center", justifyContent: "center",
             transition: "background var(--t-state)",
             color: "var(--brand-primary-default)",
