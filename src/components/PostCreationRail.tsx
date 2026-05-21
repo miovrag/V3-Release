@@ -96,9 +96,6 @@ export default function PostCreationRail({ onDismissAll }: Props) {
           <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
             Unlock more from your agent
           </span>
-          <span className="badge badge-default">
-            {visible.length} tip{visible.length !== 1 ? "s" : ""}
-          </span>
         </div>
         <button className="btn-link" onClick={dismissAll} style={{ fontSize: "var(--text-xs)" }}>
           Dismiss all
