@@ -672,7 +672,7 @@ input, select { font-family: inherit; }
 .action-card:hover {
   box-shadow: var(--shadow-card);
   border-color: var(--border-default);
-  background: var(--brand-primary-tint) !important;
+  background: rgba(115,103,240,0.08) !important;
 }
 
 /* Ghost CTA button inside action cards */
