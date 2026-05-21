@@ -594,3 +594,36 @@ input, select { font-family: inherit; }
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+
+/* ═══════════════════════════════════════
+   POST-CREATION RAIL
+═══════════════════════════════════════ */
+@keyframes rail-slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.rail-container {
+  animation: rail-slide-in var(--t-entry) cubic-bezier(.2,.7,.3,1) both;
+}
+
+.tip-row {
+  max-height: 200px;
+  overflow: hidden;
+  transition:
+    background var(--t-state),
+    opacity     150ms cubic-bezier(.2,.7,.3,1),
+    max-height  150ms cubic-bezier(.2,.7,.3,1),
+    padding-top    150ms cubic-bezier(.2,.7,.3,1),
+    padding-bottom 150ms cubic-bezier(.2,.7,.3,1);
+}
+.tip-row:hover { background: var(--bg-canvas); }
+.tip-row.tip-exiting {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.tip-dismiss { color: var(--text-muted); transition: color var(--t-state); }
+.tip-dismiss:hover { color: var(--text-body); }

@@ -36,7 +36,7 @@ const TIPS: Tip[] = [
     icon: "ti-calendar-event",
     iconColor: "var(--color-warning)",
     iconBg: "var(--color-warning-tint)",
-    title: "Automate with Smart Tasks",
+    title: "Get automatic reports",
     description: "Turn any question into a scheduled task — reports, summaries, or alerts on autopilot.",
     cta: "Try Smart Tasks →",
   },
@@ -48,25 +48,43 @@ interface Props {
 
 export default function PostCreationRail({ onDismissAll }: Props) {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [dismissing, setDismissing] = useState<Set<string>>(new Set());
 
   const visible = TIPS.filter(t => !dismissed.has(t.id));
 
   const dismiss = (id: string) => {
-    const next = new Set(dismissed).add(id);
-    setDismissed(next);
-    if (next.size === TIPS.length) onDismissAll?.();
+    setDismissing(prev => new Set(prev).add(id));
+    setTimeout(() => {
+      setDismissed(prev => {
+        const next = new Set(prev).add(id);
+        if (next.size === TIPS.length) onDismissAll?.();
+        return next;
+      });
+      setDismissing(prev => { const s = new Set(prev); s.delete(id); return s; });
+    }, 150);
   };
 
   const dismissAll = () => {
-    setDismissed(new Set(TIPS.map(t => t.id)));
-    onDismissAll?.();
+    const ids = visible.map(t => t.id);
+    ids.forEach((id, i) => {
+      setTimeout(() => setDismissing(prev => new Set(prev).add(id)), i * 50);
+    });
+    setTimeout(() => {
+      setDismissed(new Set(TIPS.map(t => t.id)));
+      setDismissing(new Set());
+      onDismissAll?.();
+    }, (ids.length - 1) * 50 + 150);
   };
 
   if (visible.length === 0) return null;
 
   return (
-    <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-
+    <div
+      className="card rail-container"
+      style={{ padding: 0, overflow: "hidden" }}
+      role="complementary"
+      aria-label="Getting started tips"
+    >
       {/* Header */}
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -92,6 +110,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
         {visible.map((tip, i) => (
           <div
             key={tip.id}
+            className={`tip-row${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
             style={{
               display: "flex", alignItems: "flex-start", gap: "var(--spacing-md)",
               padding: "var(--spacing-lg)",
@@ -123,13 +142,10 @@ export default function PostCreationRail({ onDismissAll }: Props) {
 
             {/* Dismiss */}
             <button
+              className="tip-dismiss"
               onClick={() => dismiss(tip.id)}
               aria-label={`Dismiss ${tip.title}`}
-              style={{
-                flexShrink: 0,
-                fontSize: "var(--text-sm)", color: "var(--text-muted)",
-                lineHeight: 1, padding: 0,
-              }}
+              style={{ flexShrink: 0, fontSize: "var(--text-sm)", lineHeight: 1, padding: 0 }}
             >
               <i className="ti ti-x" />
             </button>
