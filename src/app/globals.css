@@ -663,16 +663,18 @@ input, select { font-family: inherit; }
 .chat-input:focus  { border-color: rgba(255,255,255,0.5); }
 .chat-input:disabled { opacity: 0.6; }
 
-/* White action card (ToolCallCard + PostCreationRail tips) */
+/* Glass action card (PostCreationRail tips + starter questions) */
 .action-card {
-  border: 1px solid transparent;
+  border: 1px solid rgba(255,255,255,0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   cursor: pointer;
   transition: box-shadow var(--t-state), border-color var(--t-state), background var(--t-state);
 }
 .action-card:hover {
-  box-shadow: var(--shadow-card);
-  border-color: var(--border-default);
-  background: rgba(115,103,240,0.08) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  border-color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.55) !important;
 }
 
 /* Ghost CTA button inside action cards */

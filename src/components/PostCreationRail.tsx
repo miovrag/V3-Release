@@ -98,7 +98,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
             alignItems: "flex-start",
             gap: 8,
             borderRadius: 8,
-            background: "rgba(255,255,255,0.35)",
+            background: "rgba(255,255,255,0.22)",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>

@@ -250,7 +250,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                   style={{
                     display: "flex", alignItems: "center", gap: 8,
                     width: 574, padding: "8px 16px",
-                    borderRadius: 8, background: "rgba(255,255,255,0.35)",
+                    borderRadius: 8, background: "rgba(255,255,255,0.22)",
                     fontFamily: "inherit", textAlign: "left", cursor: "pointer",
                   }}
                 >
