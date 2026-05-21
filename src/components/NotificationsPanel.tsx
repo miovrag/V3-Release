@@ -20,7 +20,7 @@ const NOTIFICATIONS: Notification[] = [
     icon: "ti-bolt",
     iconColor: "var(--brand-primary-default)",
     iconBg: "var(--brand-primary-tint)",
-    title: "NextGen is now available",
+    title: "Enterprise Agents is now available",
     body: "Enable multi-step reasoning on your agents for deeper, more accurate answers.",
     time: "Just now",
     unread: true,

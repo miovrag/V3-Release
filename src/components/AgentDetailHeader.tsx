@@ -1,17 +1,17 @@
 "use client";
-import NextGenBadge from "./NextGenBadge";
+import EnterpriseAgentsBadge from "./EnterpriseAgentsBadge";
 
 interface Props {
   agentName: string;
-  isNextGen: boolean;
-  onNextGenClick?: () => void;
+  isEnterpriseAgents: boolean;
+  onEnterpriseAgentsClick?: () => void;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
 }
 
 const TABS = ["Overview", "Sources", "Customize", "Intelligence", "Deploy", "Analytics"];
 
-export default function AgentDetailHeader({ agentName, isNextGen, onNextGenClick, activeTab = "Intelligence", onTabChange }: Props) {
+export default function AgentDetailHeader({ agentName, isEnterpriseAgents, onEnterpriseAgentsClick, activeTab = "Intelligence", onTabChange }: Props) {
   return (
     <div style={{
       background: "var(--bg-surface)",
@@ -52,8 +52,8 @@ export default function AgentDetailHeader({ agentName, isNextGen, onNextGenClick
             {agentName}
           </h1>
 
-          {isNextGen
-            ? <NextGenBadge onClick={onNextGenClick} />
+          {isEnterpriseAgents
+            ? <EnterpriseAgentsBadge onClick={onEnterpriseAgentsClick} />
             : <span className="badge badge-default">Standard</span>
           }
         </div>

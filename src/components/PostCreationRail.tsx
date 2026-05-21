@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Tip {
   id: string;
   icon: string;
-  iconColor: string;
-  iconBg: string;
   title: string;
   description: string;
   cta: string;
@@ -16,8 +14,6 @@ const TIPS: Tip[] = [
   {
     id: "mcps",
     icon: "ti-plug-connected",
-    iconColor: "var(--brand-primary-default)",
-    iconBg: "var(--brand-primary-tint)",
     title: "Connect real-world tools",
     description: "Give your agent access to Slack, GitHub, databases, and more. MCPs turn chat into action.",
     cta: "Add MCPs →",
@@ -25,8 +21,6 @@ const TIPS: Tip[] = [
   {
     id: "persona",
     icon: "ti-user-circle",
-    iconColor: "var(--color-success)",
-    iconBg: "var(--color-success-tint)",
     title: "Make it sound like you",
     description: "Set tone, name, response style, and guardrails so every reply feels on-brand.",
     cta: "Set persona →",
@@ -34,22 +28,51 @@ const TIPS: Tip[] = [
   {
     id: "smart-tasks",
     icon: "ti-calendar-event",
-    iconColor: "var(--color-warning)",
-    iconBg: "var(--color-warning-tint)",
     title: "Get automatic reports",
     description: "Turn any question into a scheduled task — reports, summaries, or alerts on autopilot.",
     cta: "Try Smart Tasks →",
   },
 ];
 
-interface Props {
-  onDismissAll?: () => void;
+function hexLuminance(hex: string): number {
+  const c = hex.replace("#", "");
+  if (c.length !== 6) return 0;
+  const toLinear = (x: number) =>
+    x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+  const r = toLinear(parseInt(c.slice(0, 2), 16) / 255);
+  const g = toLinear(parseInt(c.slice(2, 4), 16) / 255);
+  const b = toLinear(parseInt(c.slice(4, 6), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-export default function PostCreationRail({ onDismissAll }: Props) {
+interface Props {
+  onDismissAll?: () => void;
+  bgColor?: string;
+}
+
+export default function PostCreationRail({ onDismissAll, bgColor = "#7367F0" }: Props) {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [dismissing, setDismissing] = useState<Set<string>>(new Set());
+  const [inView, setInView] = useState(false);
+  const railRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const light = hexLuminance(bgColor) > 0.4;
   const visible = TIPS.filter(t => !dismissed.has(t.id));
 
   const dismiss = (id: string) => {
@@ -64,84 +87,93 @@ export default function PostCreationRail({ onDismissAll }: Props) {
     }, 150);
   };
 
-  const dismissAll = () => {
-    const ids = visible.map(t => t.id);
-    ids.forEach((id, i) => {
-      setTimeout(() => setDismissing(prev => new Set(prev).add(id)), i * 50);
-    });
-    setTimeout(() => {
-      setDismissed(new Set(TIPS.map(t => t.id)));
-      setDismissing(new Set());
-      onDismissAll?.();
-    }, (ids.length - 1) * 50 + 150);
-  };
-
   if (visible.length === 0) return null;
+
+  const t = light ? {
+    container:    "rgba(0,0,0,0.07)",
+    border:       "1px solid rgba(0,0,0,0.1)",
+    divider:      "1px solid rgba(0,0,0,0.07)",
+    iconBg:       "rgba(0,0,0,0.07)",
+    iconColor:    "var(--text-body)",
+    title:        "var(--text-heading)",
+    description:  "var(--text-muted)",
+    ctaBg:        "var(--brand-primary-default)",
+    ctaColor:     "#fff",
+    ctaBorder:    "none",
+    dismissColor: "var(--text-muted)",
+  } : {
+    container:    "rgba(255,255,255,0.15)",
+    border:       "1px solid rgba(255,255,255,0.18)",
+    divider:      "1px solid rgba(255,255,255,0.1)",
+    iconBg:       "rgba(255,255,255,0.15)",
+    iconColor:    "#fff",
+    title:        "#fff",
+    description:  "rgba(255,255,255,0.65)",
+    ctaBg:        "rgba(255,255,255,0.2)",
+    ctaColor:     "#fff",
+    ctaBorder:    "1px solid rgba(255,255,255,0.35)",
+    dismissColor: "rgba(255,255,255,0.45)",
+  };
 
   return (
     <div
-      className="card rail-container"
-      style={{ padding: 0, overflow: "hidden" }}
+      ref={railRef}
+      className={`rail-container${inView ? " rail-visible" : ""}`}
+      style={{
+        background: t.container,
+        border: t.border,
+        borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)",
+        overflow: "hidden",
+      }}
       role="complementary"
       aria-label="Getting started tips"
     >
-      {/* Header */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "var(--spacing-sm) var(--spacing-md)",
-        borderBottom: "1px solid var(--border-default)",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-          <i className="ti ti-sparkles" style={{ fontSize: "var(--text-sm)", color: "var(--brand-primary-default)" }} />
-          <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
-            What to set up next
-          </span>
-        </div>
-      </div>
-
-      {/* Tip rows */}
       <div style={{ display: "flex", flexDirection: "column" }}>
         {visible.map((tip, i) => (
           <div
             key={tip.id}
-            className={`tip-row${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
+            className={`tip-row${dismissing.has(tip.id) ? " tip-exiting" : ""}${light ? " tip-row-light" : ""}`}
             style={{
-              display: "flex", alignItems: "flex-start", gap: "var(--spacing-sm)",
-              padding: "var(--spacing-md)",
-              borderBottom: i < visible.length - 1 ? "1px solid var(--border-default)" : "none",
+              display: "flex", alignItems: "center", gap: "var(--spacing-sm)",
+              padding: "var(--spacing-sm) var(--spacing-md)",
+              borderBottom: i < visible.length - 1 ? t.divider : "none",
             }}
           >
             {/* Icon */}
             <div style={{
-              width: 28, height: 28, flexShrink: 0,
+              width: 24, height: 24, flexShrink: 0,
               borderRadius: "var(--radius-sm)",
-              background: tip.iconBg,
+              background: t.iconBg,
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <i className={`ti ${tip.icon}`} style={{ fontSize: "var(--text-sm)", color: tip.iconColor }} />
+              <i className={`ti ${tip.icon}`} style={{ fontSize: 12, color: t.iconColor }} />
             </div>
 
-            {/* Text + CTA */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
-              <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
+            {/* Title + description */}
+            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
+              <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: t.title, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {tip.title}
               </span>
-              <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", lineHeight: "var(--leading-normal)" }}>
+              <span style={{ fontSize: "var(--text-xs)", color: t.description, lineHeight: "var(--leading-normal)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {tip.description}
               </span>
-              <button className="btn-link" style={{ fontSize: "var(--text-xs)", paddingTop: "var(--spacing-xs)" }}>
-                {tip.cta}
-              </button>
             </div>
 
-            {/* Dismiss */}
+            {/* CTA */}
             <button
-              className="tip-dismiss"
-              onClick={() => dismiss(tip.id)}
-              aria-label={`Dismiss ${tip.title}`}
-              style={{ flexShrink: 0, fontSize: "var(--text-sm)", lineHeight: 1, padding: 0 }}
+              style={{
+                flexShrink: 0,
+                background: t.ctaBg,
+                border: t.ctaBorder,
+                borderRadius: "var(--radius-full)",
+                padding: "3px var(--spacing-sm)",
+                color: t.ctaColor,
+                fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)",
+                cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap",
+                transition: "opacity var(--t-state)",
+              }}
             >
-              <i className="ti ti-x" />
+              {tip.cta}
             </button>
           </div>
         ))}

@@ -17,7 +17,7 @@ export default function DashboardBanner({ onEnable }: Props) {
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-          <strong style={{ color: "var(--text-heading)" }}>NextGen is now available for all your agents</strong>
+          <strong style={{ color: "var(--text-heading)" }}>Enterprise Agents is now available for all your agents</strong>
           <span className="badge-premium" style={{ flexShrink: 0 }}>
             <i className="ti ti-sparkles" style={{ fontSize: 11 }} />
             New

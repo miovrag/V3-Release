@@ -35,7 +35,22 @@ const AVATAR_STYLE = {
   fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)" as const,
 };
 
-export default function ChatWindow() {
+function hexLuminance(hex: string): number {
+  const c = hex.replace("#", "");
+  if (c.length !== 6) return 0;
+  const toLinear = (x: number) =>
+    x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+  const r = toLinear(parseInt(c.slice(0, 2), 16) / 255);
+  const g = toLinear(parseInt(c.slice(2, 4), 16) / 255);
+  const b = toLinear(parseInt(c.slice(4, 6), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+interface ChatWindowProps {
+  bgColor?: string;
+}
+
+export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [messages, setMessages] = useState<Message[]>([
     { id: "welcome", role: "agent", text: WELCOME },
@@ -43,9 +58,14 @@ export default function ChatWindow() {
   const [input, setInput] = useState("");
   const [railKey, setRailKey] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const msgEndRef = useRef<HTMLDivElement>(null);
+
+  const lightBg = hexLuminance(bgColor) > 0.4;
+  const labelColor = lightBg ? "var(--text-muted)" : "rgba(255,255,255,0.45)";
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const target = msgEndRef.current ?? bottomRef.current;
+    target?.scrollIntoView({ behavior: "smooth" });
   }, [messages, phase]);
 
   const send = (text: string) => {
@@ -72,7 +92,7 @@ export default function ChatWindow() {
     <div style={{
       display: "flex", flexDirection: "column",
       height: "calc(100vh - 104px)",
-      background: "var(--brand-primary-default)",
+      background: bgColor,
       borderRadius: "var(--radius-xl)",
       overflow: "hidden",
     }}>
@@ -159,15 +179,25 @@ export default function ChatWindow() {
                       fontSize: "var(--text-xs)", color: "var(--text-muted)",
                     }}>
                       <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
-                      Powered by NextGen
+                      Powered by Enterprise Agents
                     </div>
                   )}
                 </div>
 
                 {msg.showRail && (
-                  <div style={{ maxWidth: "85%" }}>
-                    <PostCreationRail key={railKey} />
-                  </div>
+                  <>
+                    {/* Scroll stops here — rail stays below the fold until user scrolls */}
+                    <div ref={msgEndRef} />
+                    <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
+                      <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
+                      <span style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
+                        What to set up next
+                      </span>
+                    </div>
+                    <div style={{ maxWidth: "85%" }}>
+                      <PostCreationRail key={railKey} bgColor={bgColor} />
+                    </div>
+                  </>
                 )}
               </div>
             </div>

@@ -16,7 +16,7 @@ interface Props {
   onUpgrade?: () => void;
 }
 
-export default function NextGenModal({ onEnable, onSkip, onClose, plan = "standard", onUpgrade }: Props) {
+export default function EnterpriseAgentsModal({ onEnable, onSkip, onClose, plan = "standard", onUpgrade }: Props) {
   const cfg = PLAN_CONFIG[plan];
 
   return (
@@ -35,9 +35,9 @@ export default function NextGenModal({ onEnable, onSkip, onClose, plan = "standa
 
         {/* Heading + description */}
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-sm)" }}>
-          <h2 className="modal-confirm-title">Meet NextGen</h2>
+          <h2 className="modal-confirm-title">Meet Enterprise Agents</h2>
           <p className="modal-desc">
-            NextGen lets your agent break down complex questions, plan multi-step tasks, and deliver smarter answers — automatically.
+            Enterprise Agents lets your agent break down complex questions, plan multi-step tasks, and deliver smarter answers — automatically.
           </p>
         </div>
 
@@ -82,10 +82,10 @@ export default function NextGenModal({ onEnable, onSkip, onClose, plan = "standa
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-sm)" }}>
           <button className="btn btn-primary btn-lg btn-full" onClick={onEnable}>
             <i className="ti ti-bolt" />
-            Enable NextGen
+            Enable Enterprise Agents
           </button>
           <button className="btn-notnow" style={{ textAlign: "center" }} onClick={onSkip}>
-            Continue without NextGen
+            Continue without Enterprise Agents
           </button>
         </div>
 

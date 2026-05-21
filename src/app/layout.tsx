@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NextGen — CustomGPT.ai V3 Release",
-  description: "NextGen feature UI components for CustomGPT.ai V3",
+  title: "Enterprise Agents — CustomGPT.ai V3 Release",
+  description: "Enterprise Agents feature UI components for CustomGPT.ai V3",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

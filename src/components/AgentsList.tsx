@@ -1,19 +1,19 @@
 "use client";
-import NextGenBadge from "./NextGenBadge";
+import EnterpriseAgentsBadge from "./EnterpriseAgentsBadge";
 
 interface AgentsListProps {
-  onEnableNextGen?: (agentName: string) => void;
+  onEnableEnterpriseAgents?: (agentName: string) => void;
 }
 
 const AGENTS = [
-  { id: 1, name: "Support Agent",  desc: "Customer support for our product",     queries: 1842, isNextGen: true,  isMulti: false, initials: "S", color: "var(--brand-primary-tint)",        textColor: "var(--brand-primary-default)" },
-  { id: 2, name: "Sales Copilot",  desc: "Lead qualification and revenue flows",  queries: 934,  isNextGen: true,  isMulti: false, initials: "S", color: "var(--color-info-tint)",           textColor: "var(--color-info)" },
-  { id: 3, name: "Docs Search",    desc: "Enterprise documentation search",       queries: 3201, isNextGen: false, isMulti: false, initials: "D", color: "var(--color-success-tint)",        textColor: "var(--color-success)" },
-  { id: 4, name: "Research Hub",   desc: "Deep research across all sources",      queries: 567,  isNextGen: true,  isMulti: true,  initials: "R", color: "var(--color-warning-tint)",        textColor: "var(--color-warning)" },
-  { id: 5, name: "HR Assistant",   desc: "Internal HR policies and onboarding",   queries: 289,  isNextGen: false, isMulti: false, initials: "H", color: "var(--color-error-tint)",          textColor: "var(--color-error)" },
+  { id: 1, name: "Support Agent",  desc: "Customer support for our product",     queries: 1842, isEnterpriseAgents: true,  isMulti: false, initials: "S", color: "var(--brand-primary-tint)",        textColor: "var(--brand-primary-default)" },
+  { id: 2, name: "Sales Copilot",  desc: "Lead qualification and revenue flows",  queries: 934,  isEnterpriseAgents: true,  isMulti: false, initials: "S", color: "var(--color-info-tint)",           textColor: "var(--color-info)" },
+  { id: 3, name: "Docs Search",    desc: "Enterprise documentation search",       queries: 3201, isEnterpriseAgents: false, isMulti: false, initials: "D", color: "var(--color-success-tint)",        textColor: "var(--color-success)" },
+  { id: 4, name: "Research Hub",   desc: "Deep research across all sources",      queries: 567,  isEnterpriseAgents: true,  isMulti: true,  initials: "R", color: "var(--color-warning-tint)",        textColor: "var(--color-warning)" },
+  { id: 5, name: "HR Assistant",   desc: "Internal HR policies and onboarding",   queries: 289,  isEnterpriseAgents: false, isMulti: false, initials: "H", color: "var(--color-error-tint)",          textColor: "var(--color-error)" },
 ];
 
-export default function AgentsList({ onEnableNextGen }: AgentsListProps = {}) {
+export default function AgentsList({ onEnableEnterpriseAgents }: AgentsListProps = {}) {
   return (
     <div style={{
       background: "var(--bg-surface)",
@@ -72,13 +72,13 @@ export default function AgentsList({ onEnableNextGen }: AgentsListProps = {}) {
               <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
                 {agent.name}
               </span>
-              {agent.isNextGen && <NextGenBadge />}
+              {agent.isEnterpriseAgents && <EnterpriseAgentsBadge />}
               {agent.isMulti && (
                 <span className="badge badge-primary">Multi-Agent</span>
               )}
-              {!agent.isNextGen && onEnableNextGen && (
+              {!agent.isEnterpriseAgents && onEnableEnterpriseAgents && (
                 <button
-                  onClick={e => { e.stopPropagation(); onEnableNextGen(agent.name); }}
+                  onClick={e => { e.stopPropagation(); onEnableEnterpriseAgents(agent.name); }}
                   style={{
                     background: "none", border: "none", padding: 0, cursor: "pointer",
                     fontSize: "var(--text-xs)", fontWeight: "var(--weight-medium)",
@@ -86,7 +86,7 @@ export default function AgentsList({ onEnableNextGen }: AgentsListProps = {}) {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  Enable NextGen →
+                  Enable Enterprise Agents →
                 </button>
               )}
             </div>

@@ -6,16 +6,16 @@ import PostCreationRail from "./PostCreationRail";
 type View = "empty" | "response";
 
 interface Props {
-  isNextGen?: boolean;
+  isEnterpriseAgents?: boolean;
   plan?: "standard" | "premium" | "enterprise";
   onUpgrade?: () => void;
 }
 
 const MOCK_QUESTION = "What are our top 3 cancellation reasons and how do they compare to last quarter?";
 const MOCK_ANSWER_STANDARD = "Based on your knowledge base, the top cancellation reasons are: 1) Pricing (34%), 2) Missing features (28%), 3) Switching to competitor (21%). I don't have last quarter's data available to make a direct comparison.";
-const MOCK_ANSWER_NEXTGEN  = "I analysed your support tickets, CRM export, and last quarter's churn report across 3 reasoning steps:\n\n**Top 3 cancellation reasons this quarter:**\n1. Pricing — 34% (↑8pp vs Q4, driven by plan price increase in Jan)\n2. Missing features — 28% (stable, same feature gaps: bulk export, SSO)\n3. Competitor switch — 21% (↓4pp, mostly to Intercom)\n\n**Key shift vs last quarter:** Pricing complaints nearly doubled following the January repricing. Feature gap complaints remained flat, suggesting the roadmap is holding retention there.";
+const MOCK_ANSWER_ENTERPRISE_AGENTS  = "I analysed your support tickets, CRM export, and last quarter's churn report across 3 reasoning steps:\n\n**Top 3 cancellation reasons this quarter:**\n1. Pricing — 34% (↑8pp vs Q4, driven by plan price increase in Jan)\n2. Missing features — 28% (stable, same feature gaps: bulk export, SSO)\n3. Competitor switch — 21% (↓4pp, mostly to Intercom)\n\n**Key shift vs last quarter:** Pricing complaints nearly doubled following the January repricing. Feature gap complaints remained flat, suggesting the roadmap is holding retention there.";
 
-export default function ChatSurface({ isNextGen = false, plan = "standard", onUpgrade }: Props) {
+export default function ChatSurface({ isEnterpriseAgents = false, plan = "standard", onUpgrade }: Props) {
   const [view, setView] = useState<View>("empty");
   const [railKey, setRailKey] = useState(0);
 
@@ -92,8 +92,8 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
               </span>
             </div>
 
-            {/* Hint for non-NextGen */}
-            {!isNextGen && (
+            {/* Hint for non-Enterprise Agents */}
+            {!isEnterpriseAgents && (
               <div style={{
                 display: "flex", alignItems: "center", gap: "var(--spacing-sm)",
                 padding: "var(--spacing-sm) var(--spacing-md)",
@@ -103,7 +103,7 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
               }}>
                 <i className="ti ti-bolt" style={{ color: "var(--brand-primary-default)", fontSize: 13 }} />
                 <span style={{ fontSize: "var(--text-xs)", color: "var(--brand-primary-active)" }}>
-                  Enable NextGen for multi-step reasoning
+                  Enable Enterprise Agents for multi-step reasoning
                 </span>
                 <button
                   onClick={onUpgrade}
@@ -158,7 +158,7 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
                     color: "var(--text-body)",
                     whiteSpace: "pre-line",
                   }}>
-                    {isNextGen ? MOCK_ANSWER_NEXTGEN : MOCK_ANSWER_STANDARD}
+                    {isEnterpriseAgents ? MOCK_ANSWER_ENTERPRISE_AGENTS : MOCK_ANSWER_STANDARD}
                   </div>
                   <div style={{
                     display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -167,12 +167,12 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
                     background: "var(--bg-canvas)",
                   }}>
                     <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
-                      {isNextGen
-                        ? <><i className="ti ti-bolt" style={{ color: "var(--brand-primary-default)", fontSize: 12 }} />Powered by NextGen · {PLAN_LABEL}</>
+                      {isEnterpriseAgents
+                        ? <><i className="ti ti-bolt" style={{ color: "var(--brand-primary-default)", fontSize: 12 }} />Powered by Enterprise Agents · {PLAN_LABEL}</>
                         : <>Powered by Standard</>
                       }
                     </span>
-                    {!isNextGen && (
+                    {!isEnterpriseAgents && (
                       <button
                         onClick={onUpgrade}
                         style={{
@@ -181,14 +181,14 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
                           color: "var(--brand-primary-default)", fontFamily: "inherit",
                         }}
                       >
-                        Upgrade to NextGen →
+                        Upgrade to Enterprise Agents →
                       </button>
                     )}
                   </div>
                 </div>
 
                 {/* Contextual hint — Standard only */}
-                {!isNextGen && (
+                {!isEnterpriseAgents && (
                   <div style={{
                     display: "flex", alignItems: "center", justifyContent: "space-between",
                     gap: "var(--spacing-sm)",
@@ -200,7 +200,7 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
                     <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
                       <i className="ti ti-bolt" style={{ color: "var(--brand-primary-default)", fontSize: 14, flexShrink: 0 }} />
                       <span style={{ fontSize: "var(--text-xs)", color: "var(--brand-primary-active)", lineHeight: "var(--leading-relaxed)" }}>
-                        NextGen could cross-reference multiple sources and compare quarters automatically.
+                        Enterprise Agents could cross-reference multiple sources and compare quarters automatically.
                       </span>
                     </div>
                     <button

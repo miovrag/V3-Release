@@ -3,7 +3,7 @@
 import { useState } from "react";
 import WebsiteInputModal from "@/components/WebsiteInputModal";
 import UseCaseModal from "@/components/UseCaseModal";
-import NextGenModal from "@/components/NextGenModal";
+import EnterpriseAgentsModal from "@/components/EnterpriseAgentsModal";
 import BuildingModal from "@/components/BuildingModal";
 import AgentsList from "@/components/AgentsList";
 import AgentDetailHeader from "@/components/AgentDetailHeader";
@@ -14,13 +14,13 @@ import NotificationsPanel from "@/components/NotificationsPanel";
 import ChatSurface from "@/components/ChatSurface";
 import MultiAgentAgentsList from "@/components/MultiAgentAgentsList";
 
-type FlowStep = "website" | "usecase" | "nextgen" | "building" | null;
+type FlowStep = "website" | "usecase" | "enterprise-agents" | "building" | null;
 type Plan = "standard" | "premium" | "enterprise";
 
 const FLOW_STEPS = [
   { id: "website",  label: "1. Enter URL",  note: "Existing" },
   { id: "usecase",  label: "2. Use case",   note: "Existing" },
-  { id: "nextgen",  label: "3. NextGen",    note: "New" },
+  { id: "enterprise-agents",  label: "3. Enterprise Agents",    note: "New" },
   { id: "building", label: "4. Building",   note: "Existing" },
 ] as const;
 
@@ -60,7 +60,7 @@ export default function Home() {
         <section>
           <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Agent creation flow</p>
           <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
-            NextGen prompt in the creation flow
+            Enterprise Agents prompt in the creation flow
           </h2>
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-xl)" }}>
             Modal is injected between use case selection and the building screen — impossible to skip, zero added friction.
@@ -79,8 +79,8 @@ export default function Home() {
                       padding: "var(--spacing-md) var(--spacing-lg)",
                       borderRadius: "var(--radius-md)",
                       minWidth: 120,
-                      border: `2px solid ${s.id === "nextgen" ? "var(--brand-primary-default)" : "var(--border-default)"}`,
-                      background: s.id === "nextgen" ? "var(--brand-primary-tint)" : "var(--bg-surface)",
+                      border: `2px solid ${s.id === "enterprise-agents" ? "var(--brand-primary-default)" : "var(--border-default)"}`,
+                      background: s.id === "enterprise-agents" ? "var(--brand-primary-tint)" : "var(--bg-surface)",
                       cursor: "pointer",
                       fontFamily: "inherit",
                       transition: "all var(--t-state)",
@@ -89,11 +89,11 @@ export default function Home() {
                     <span style={{
                       fontSize: "var(--text-sm)",
                       fontWeight: "var(--weight-semibold)",
-                      color: s.id === "nextgen" ? "var(--brand-primary-active)" : "var(--text-body)",
+                      color: s.id === "enterprise-agents" ? "var(--brand-primary-active)" : "var(--text-body)",
                     }}>
                       {s.label}
                     </span>
-                    <span className={`badge ${s.id === "nextgen" ? "badge-primary" : "badge-default"}`}>
+                    <span className={`badge ${s.id === "enterprise-agents" ? "badge-primary" : "badge-default"}`}>
                       {s.note}
                     </span>
                   </button>
@@ -119,7 +119,7 @@ export default function Home() {
             </button>
             {result && (
               <span style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
-                {result === "enabled" ? "NextGen enabled — agent is building" : "Continued without NextGen"}
+                {result === "enabled" ? "Enterprise Agents enabled — agent is building" : "Continued without Enterprise Agents"}
               </span>
             )}
           </div>
@@ -129,14 +129,14 @@ export default function Home() {
         <section>
           <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Agent detail — H1 row</p>
           <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
-            NextGen badge in agent header
+            Enterprise Agents badge in agent header
           </h2>
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-xl)" }}>
             Badge sits inline with the agent name. Click it to go to the Intelligence tab.
           </p>
 
-          {/* ── Agent WITH NextGen ── */}
-          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>With NextGen enabled</p>
+          {/* ── Agent WITH Enterprise Agents ── */}
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>With Enterprise Agents enabled</p>
 
           {/* Plan switcher */}
           <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)", marginBottom: "var(--spacing-md)" }}>
@@ -156,14 +156,14 @@ export default function Home() {
           <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border-default)", marginBottom: "var(--spacing-2xl)" }}>
             <AgentDetailHeader
               agentName="Support Agent"
-              isNextGen={true}
+              isEnterpriseAgents={true}
               activeTab={activeTab}
               onTabChange={setActiveTab}
-              onNextGenClick={() => setActiveTab("Intelligence")}
+              onEnterpriseAgentsClick={() => setActiveTab("Intelligence")}
             />
             {activeTab === "Intelligence" && (
               <div style={{ padding: "var(--spacing-xl)", background: "var(--bg-canvas)" }}>
-                <IntelligenceTab key={plan} initialNextGen={true} plan={plan} />
+                <IntelligenceTab key={plan} initialEnterpriseAgents={true} plan={plan} />
               </div>
             )}
             {activeTab !== "Intelligence" && (
@@ -173,20 +173,20 @@ export default function Home() {
             )}
           </div>
 
-          {/* ── Agent WITHOUT NextGen — discovery state ── */}
-          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Without NextGen — discovery state in Intelligence tab</p>
+          {/* ── Agent WITHOUT Enterprise Agents — discovery state ── */}
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Without Enterprise Agents — discovery state in Intelligence tab</p>
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-md)" }}>
-            Existing agents that never had NextGen see a feature callout instead of settings. Clicking "Enable NextGen" transitions to the configured state.
+            Existing agents that never had Enterprise Agents see a feature callout instead of settings. Clicking "Enable Enterprise Agents" transitions to the configured state.
           </p>
 
           <div style={{ borderRadius: "var(--radius-xl)", overflow: "hidden", border: "1px solid var(--border-default)" }}>
             <AgentDetailHeader
               agentName="Docs Search"
-              isNextGen={false}
+              isEnterpriseAgents={false}
               activeTab="Intelligence"
             />
             <div style={{ padding: "var(--spacing-xl)", background: "var(--bg-canvas)" }}>
-              <IntelligenceTab initialNextGen={false} plan={plan} />
+              <IntelligenceTab initialEnterpriseAgents={false} plan={plan} />
             </div>
           </div>
         </section>
@@ -207,12 +207,12 @@ export default function Home() {
         <section>
           <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Agents list</p>
           <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
-            NextGen tag per agent row
+            Enterprise Agents tag per agent row
           </h2>
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
-            Agents without NextGen show inline "Enable NextGen →" CTA next to the agent name.
+            Agents without Enterprise Agents show inline "Enable Enterprise Agents →" CTA next to the agent name.
           </p>
-          <AgentsList onEnableNextGen={() => setShowInlineUpgrade(true)} />
+          <AgentsList onEnableEnterpriseAgents={() => setShowInlineUpgrade(true)} />
         </section>
 
         {/* ══════════════════════════════════════
@@ -255,21 +255,21 @@ export default function Home() {
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
             After the agent answers its first Starter Question, a 3-card rail appears inline: MCPs, Persona, Smart Tasks. Cards dismiss individually. Adding future tips is a one-liner in the <code style={{ fontSize: "var(--text-xs)", background: "var(--bg-selected)", padding: "1px 5px", borderRadius: "var(--radius-sm)" }}>TIPS</code> array. Hit <i className="ti ti-refresh" style={{ fontSize: 11 }} /> to reset the rail.
           </p>
-          <ChatSurface isNextGen={true} plan={plan} />
+          <ChatSurface isEnterpriseAgents={true} plan={plan} />
         </section>
 
       </main>
 
       {step === "website"  && <WebsiteInputModal onNext={() => setStep("usecase")} onClose={close} />}
-      {step === "usecase"  && <UseCaseModal      onNext={() => setStep("nextgen")} onClose={close} />}
-      {step === "nextgen"  && !showFlowUpgrade && <NextGenModal
+      {step === "usecase"  && <UseCaseModal      onNext={() => setStep("enterprise-agents")} onClose={close} />}
+      {step === "enterprise-agents"  && !showFlowUpgrade && <EnterpriseAgentsModal
         plan={plan}
         onEnable={() => { setResult("enabled"); setStep("building"); }}
         onSkip={()   => { setResult("skipped"); setStep("building"); }}
         onClose={close}
         onUpgrade={() => setShowFlowUpgrade(true)}
       />}
-      {step === "nextgen" && showFlowUpgrade && (
+      {step === "enterprise-agents" && showFlowUpgrade && (
         <UpgradeModal
           targetPlan={plan === "standard" ? "premium" : "enterprise"}
           onClose={() => setShowFlowUpgrade(false)}

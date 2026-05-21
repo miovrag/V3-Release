@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import NextGenBadge from "./NextGenBadge";
+import EnterpriseAgentsBadge from "./EnterpriseAgentsBadge";
 import UpgradeModal from "./UpgradeModal";
 
 const SYSTEM_MAX = 15;
@@ -39,7 +39,7 @@ const FEATURES = [
 ];
 
 interface Props {
-  initialNextGen?: boolean;
+  initialEnterpriseAgents?: boolean;
   plan?: Plan;
 }
 
@@ -47,16 +47,16 @@ function pct(value: number) {
   return ((value - 1) / (SYSTEM_MAX - 1)) * 100;
 }
 
-export default function IntelligenceTab({ initialNextGen = true, plan = "standard" }: Props) {
+export default function IntelligenceTab({ initialEnterpriseAgents = true, plan = "standard" }: Props) {
   const limit = PLAN_LIMITS[plan];
 
-  const [nextGenEnabled, setNextGenEnabled] = useState(initialNextGen);
+  const [enterpriseAgentsEnabled, setEnterpriseAgentsEnabled] = useState(initialEnterpriseAgents);
   const [maxTasks, setMaxTasks]             = useState<number>(PLAN_START[plan]);
   const [saved, setSaved]                   = useState(false);
   const [justEnabled, setJustEnabled]       = useState(false);
   const [showUpgrade, setShowUpgrade]       = useState(false);
 
-  const wasInitiallyOff = useRef(!initialNextGen);
+  const wasInitiallyOff = useRef(!initialEnterpriseAgents);
   const saveTimer       = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => { setMaxTasks(PLAN_START[plan]); }, [plan]);
@@ -77,7 +77,7 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
         var(--bg-selected)           ${limitPct}% 100%)`;
 
   function handleToggle(checked: boolean) {
-    setNextGenEnabled(checked);
+    setEnterpriseAgentsEnabled(checked);
     if (checked && wasInitiallyOff.current) setJustEnabled(true);
     if (saveTimer.current) clearTimeout(saveTimer.current);
     setSaved(true);
@@ -89,7 +89,7 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
   }
 
   /* ── Discovery state ── */
-  if (!nextGenEnabled && wasInitiallyOff.current) {
+  if (!enterpriseAgentsEnabled && wasInitiallyOff.current) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xl)" }}>
         <div className="card" style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xl)", alignItems: "flex-start" }}>
@@ -100,10 +100,10 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
               New feature
             </span>
             <h3 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", lineHeight: "var(--leading-tight)" }}>
-              Unlock NextGen for this agent
+              Unlock Enterprise Agents for this agent
             </h3>
             <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", maxWidth: 460 }}>
-              NextGen lets this agent break down complex questions, plan multi-step tasks, and deliver smarter answers — automatically.
+              Enterprise Agents lets this agent break down complex questions, plan multi-step tasks, and deliver smarter answers — automatically.
             </p>
           </div>
 
@@ -126,7 +126,7 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
             <button className="btn btn-primary btn-lg" onClick={() => handleToggle(true)}>
               <i className="ti ti-bolt" />
-              Enable NextGen
+              Enable Enterprise Agents
             </button>
             <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>
               You can turn this off at any time from this tab.
@@ -153,9 +153,9 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
         }}>
           <i className="ti ti-check" style={{ color: "var(--color-success)", fontSize: 18, flexShrink: 0, marginTop: 1 }} />
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
-            <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--color-success)" }}>NextGen is on</span>
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--color-success)" }}>Enterprise Agents is on</span>
             <p style={{ fontSize: "var(--text-sm)", color: "var(--text-body)", lineHeight: "var(--leading-relaxed)" }}>
-              Try asking your agent a complex, multi-part question to see NextGen in action.
+              Try asking your agent a complex, multi-part question to see Enterprise Agents in action.
             </p>
           </div>
         </div>
@@ -167,8 +167,8 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "var(--spacing-xl)" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-              <span style={{ fontSize: "var(--text-md)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>NextGen</span>
-              <NextGenBadge />
+              <span style={{ fontSize: "var(--text-md)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>Enterprise Agents</span>
+              <EnterpriseAgentsBadge />
               <span style={{
                 fontSize: "var(--text-xs)", color: "var(--color-success)", fontWeight: "var(--weight-medium)",
                 display: "flex", alignItems: "center", gap: 4,
@@ -184,12 +184,12 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
             </p>
           </div>
 
-          <label className="toggle-label" style={{ flexShrink: 0, marginTop: 2 }} aria-label="Enable NextGen">
+          <label className="toggle-label" style={{ flexShrink: 0, marginTop: 2 }} aria-label="Enable Enterprise Agents">
             <input
               type="checkbox"
               role="switch"
-              aria-checked={nextGenEnabled}
-              checked={nextGenEnabled}
+              aria-checked={enterpriseAgentsEnabled}
+              checked={enterpriseAgentsEnabled}
               onChange={e => handleToggle(e.target.checked)}
             />
             <span className="toggle-track" />
@@ -197,7 +197,7 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
         </div>
 
         {/* Slider section */}
-        {nextGenEnabled && (
+        {enterpriseAgentsEnabled && (
           <div style={{
             borderTop: "1px solid var(--border-default)",
             paddingTop: "var(--spacing-xl)",
@@ -347,7 +347,7 @@ export default function IntelligenceTab({ initialNextGen = true, plan = "standar
         )}
       </div>
 
-      {nextGenEnabled && !atPlanMax && (
+      {enterpriseAgentsEnabled && !atPlanMax && (
         <div style={{
           display: "flex", alignItems: "flex-start", gap: "var(--spacing-md)",
           padding: "var(--spacing-lg)",

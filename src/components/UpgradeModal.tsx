@@ -7,7 +7,7 @@ interface Props {
 
 const PLAN_CONFIG = {
   premium: {
-    badge: "Premium · NextGen",
+    badge: "Premium · Enterprise Agents",
     heading: "Unlock deeper reasoning with Premium",
     desc: "Get up to 10 tasks per query — twice the depth of Standard. Your agent reasons through complex questions step by step.",
     features: [
@@ -20,7 +20,7 @@ const PLAN_CONFIG = {
     mediaGradient: "linear-gradient(140deg, var(--brand-primary-tint) 0%, #c8c3f9 100%)",
   },
   enterprise: {
-    badge: "Enterprise · NextGen",
+    badge: "Enterprise · Enterprise Agents",
     heading: "Maximum reasoning depth with Enterprise",
     desc: "Unlock all 15 tasks per query for the most thorough AI responses — with custom limits and dedicated support.",
     features: [

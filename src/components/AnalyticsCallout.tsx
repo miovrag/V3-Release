@@ -6,18 +6,18 @@ interface Agent {
   color: string;
   textColor: string;
   queries: number;
-  isNextGen: boolean;
+  isEnterpriseAgents: boolean;
 }
 
 const AGENTS: Agent[] = [
-  { name: "Support Agent",  initials: "S", color: "var(--brand-primary-tint)",   textColor: "var(--brand-primary-default)", queries: 1842, isNextGen: true },
-  { name: "Sales Copilot",  initials: "S", color: "var(--color-info-tint)",      textColor: "var(--color-info)",            queries: 934,  isNextGen: true },
-  { name: "Docs Search",    initials: "D", color: "var(--color-success-tint)",   textColor: "var(--color-success)",         queries: 3201, isNextGen: false },
-  { name: "Research Hub",   initials: "R", color: "var(--color-warning-tint)",   textColor: "var(--color-warning)",         queries: 567,  isNextGen: true },
-  { name: "HR Assistant",   initials: "H", color: "var(--color-error-tint)",     textColor: "var(--color-error)",           queries: 289,  isNextGen: false },
+  { name: "Support Agent",  initials: "S", color: "var(--brand-primary-tint)",   textColor: "var(--brand-primary-default)", queries: 1842, isEnterpriseAgents: true },
+  { name: "Sales Copilot",  initials: "S", color: "var(--color-info-tint)",      textColor: "var(--color-info)",            queries: 934,  isEnterpriseAgents: true },
+  { name: "Docs Search",    initials: "D", color: "var(--color-success-tint)",   textColor: "var(--color-success)",         queries: 3201, isEnterpriseAgents: false },
+  { name: "Research Hub",   initials: "R", color: "var(--color-warning-tint)",   textColor: "var(--color-warning)",         queries: 567,  isEnterpriseAgents: true },
+  { name: "HR Assistant",   initials: "H", color: "var(--color-error-tint)",     textColor: "var(--color-error)",           queries: 289,  isEnterpriseAgents: false },
 ];
 
-const TOP_NON_NEXTGEN = AGENTS.filter(a => !a.isNextGen).sort((a, b) => b.queries - a.queries);
+const TOP_NON_ENTERPRISE_AGENTS = AGENTS.filter(a => !a.isEnterpriseAgents).sort((a, b) => b.queries - a.queries);
 
 interface Props {
   onEnable?: (agentName: string) => void;
@@ -32,7 +32,7 @@ export default function AnalyticsCallout({ onEnable }: Props) {
         {[
           { label: "Total queries", value: "6,833", icon: "ti-message" },
           { label: "Agents", value: "5", icon: "ti-robot" },
-          { label: "NextGen agents", value: "3 / 5", icon: "ti-bolt" },
+          { label: "Enterprise Agents", value: "3 / 5", icon: "ti-bolt" },
         ].map(stat => (
           <div key={stat.label} className="card" style={{ flex: 1, padding: "var(--spacing-lg)", display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
@@ -46,7 +46,7 @@ export default function AnalyticsCallout({ onEnable }: Props) {
         ))}
       </div>
 
-      {/* NextGen upsell callout — for high-volume agents without NextGen */}
+      {/* Enterprise Agents upsell callout — for high-volume agents without Enterprise Agents */}
       <div style={{
         padding: "var(--spacing-lg)",
         background: "var(--brand-primary-tint)",
@@ -57,12 +57,12 @@ export default function AnalyticsCallout({ onEnable }: Props) {
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
           <i className="ti ti-bolt" style={{ color: "var(--brand-primary-default)", fontSize: 16, flexShrink: 0 }} />
           <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
-            These agents could answer better with NextGen
+            These agents could answer better with Enterprise Agents
           </span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-sm)" }}>
-          {TOP_NON_NEXTGEN.map(agent => (
+          {TOP_NON_ENTERPRISE_AGENTS.map(agent => (
             <div key={agent.name} style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
               padding: "var(--spacing-sm) var(--spacing-md)",
@@ -93,7 +93,7 @@ export default function AnalyticsCallout({ onEnable }: Props) {
                   className="btn btn-primary btn-sm"
                 >
                   <i className="ti ti-bolt" />
-                  Enable NextGen
+                  Enable Enterprise Agents
                 </button>
               </div>
             </div>
@@ -101,7 +101,7 @@ export default function AnalyticsCallout({ onEnable }: Props) {
         </div>
 
         <span style={{ fontSize: "var(--text-xs)", color: "var(--brand-primary-active)" }}>
-          High-volume agents benefit most — more queries means more complex questions NextGen can handle better.
+          High-volume agents benefit most — more queries means more complex questions Enterprise Agents can handle better.
         </span>
       </div>
 
