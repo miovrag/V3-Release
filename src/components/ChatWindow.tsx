@@ -19,18 +19,18 @@ const AGENT_INITIAL = "S";
 const AGENT_NAME = "Support Agent";
 
 const STARTER_QUESTIONS = [
-  "What are our top 3 cancellation reasons?",
-  "Summarise last quarter's support tickets",
-  "Which features are users requesting most?",
+  "How does it work?",
+  "See pricing",
+  "Talk to sales",
 ];
 
 const WELCOME =
-  "Hi! I've processed your knowledge base and I'm ready to help. Try one of the questions below or ask your own.";
+  "Hi! I'm trained on CustomGPT.ai's knowledge base and ready to help. Try one of the questions below or ask your own.";
 
 const MOCK_ANSWER =
-  "I analysed your support tickets and CRM data across 3 reasoning steps:\n\n**Top 3 cancellation reasons:**\n1. Pricing — 34% (↑8pp vs Q4, driven by January repricing)\n2. Missing features — 28% (stable; top gaps: bulk export, SSO)\n3. Competitor switch — 21% (↓4pp, mostly to Intercom)\n\n**Key shift:** Pricing complaints nearly doubled after the January repricing. Feature gap complaints stayed flat, suggesting the roadmap is holding retention there.";
+  "Here's a quick overview of CustomGPT.ai plans:\n\n**Standard — $49/month**\n- 10 AI agents, 1,000 training pages\n- 100 chat sessions/day, basic integrations\n\n**Premium — $99/month**\n- 25 agents, 5,000 pages, unlimited sessions\n- Priority support, full API access\n\n**Enterprise — Custom pricing**\n- Unlimited agents, SSO, custom data volumes, dedicated SLA\n\nAll plans include a 7-day free trial. Want me to connect you with the sales team?";
 
-const MOCK_TOOL_ACTION = 'query_crm(tickets, range="Q3", limit=500)';
+const MOCK_TOOL_ACTION = 'search_knowledge_base("customgpt pricing plans")';
 
 const AVATAR_STYLE = {
   width: 28, height: 28, flexShrink: 0 as const,
