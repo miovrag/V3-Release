@@ -12,8 +12,8 @@ interface Message {
   showRail?: boolean;
 }
 
-const AGENT_NAME = "Support Agent";
 const AGENT_INITIAL = "S";
+const AGENT_NAME = "Support Agent";
 
 const STARTER_QUESTIONS = [
   "What are our top 3 cancellation reasons?",
@@ -25,7 +25,15 @@ const WELCOME =
   "Hi! I've processed your knowledge base and I'm ready to help. Try one of the questions below or ask your own.";
 
 const MOCK_ANSWER =
-  "I analysed your support tickets and CRM data across 3 reasoning steps:\n\n**Top 3 cancellation reasons:**\n1. Pricing — 34% (↑8pp vs Q4, driven by January repricing)\n2. Missing features — 28% (stable; top gaps: bulk export, SSO)\n3. Competitor switch — 21% (↓4pp, mostly to Intercom)\n\n**Key shift vs last quarter:** Pricing complaints nearly doubled after the January repricing. Feature gap complaints stayed flat, suggesting the roadmap is holding retention there.";
+  "I analysed your support tickets and CRM data across 3 reasoning steps:\n\n**Top 3 cancellation reasons:**\n1. Pricing — 34% (↑8pp vs Q4, driven by January repricing)\n2. Missing features — 28% (stable; top gaps: bulk export, SSO)\n3. Competitor switch — 21% (↓4pp, mostly to Intercom)\n\n**Key shift:** Pricing complaints nearly doubled after the January repricing. Feature gap complaints stayed flat, suggesting the roadmap is holding retention there.";
+
+const AVATAR_STYLE = {
+  width: 28, height: 28, flexShrink: 0 as const,
+  borderRadius: "var(--radius-full)",
+  background: "rgba(255,255,255,0.25)", color: "#fff",
+  display: "flex", alignItems: "center", justifyContent: "center",
+  fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)" as const,
+};
 
 export default function ChatWindow() {
   const [phase, setPhase] = useState<Phase>("idle");
@@ -64,8 +72,7 @@ export default function ChatWindow() {
     <div style={{
       display: "flex", flexDirection: "column",
       height: "calc(100vh - 104px)",
-      background: "var(--bg-surface)",
-      border: "1px solid var(--border-default)",
+      background: "var(--brand-primary-default)",
       borderRadius: "var(--radius-xl)",
       overflow: "hidden",
     }}>
@@ -74,30 +81,28 @@ export default function ChatWindow() {
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "var(--spacing-md) var(--spacing-lg)",
-        borderBottom: "1px solid var(--border-default)",
-        background: "var(--bg-surface)",
         flexShrink: 0,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-          {/* Avatar */}
-          <div style={{
-            width: 32, height: 32, flexShrink: 0,
-            borderRadius: "var(--radius-md)",
-            background: "var(--brand-primary-tint)",
-            color: "var(--brand-primary-default)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "var(--text-sm)", fontWeight: "var(--weight-bold)",
-          }}>
+          <div style={{ ...AVATAR_STYLE, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
             {AGENT_INITIAL}
           </div>
-          <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
+          <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "#fff" }}>
             {AGENT_NAME}
           </span>
         </div>
-
         {phase === "responded" && (
-          <button className="btn btn-ghost btn-sm" onClick={reset}>
-            <i className="ti ti-refresh" />
+          <button
+            onClick={reset}
+            style={{
+              background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)",
+              borderRadius: "var(--radius-md)", padding: "var(--spacing-xs) var(--spacing-sm)",
+              color: "#fff", fontSize: "var(--text-xs)", cursor: "pointer", fontFamily: "inherit",
+              display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
+              transition: "background var(--t-state)",
+            }}
+          >
+            <i className="ti ti-refresh" style={{ fontSize: 12 }} />
             Reset
           </button>
         )}
@@ -106,44 +111,34 @@ export default function ChatWindow() {
       {/* ── Messages ── */}
       <div style={{
         flex: 1, overflowY: "auto",
-        padding: "var(--spacing-xl)",
-        display: "flex", flexDirection: "column", gap: "var(--spacing-lg)",
-        background: "var(--bg-canvas)",
+        padding: "var(--spacing-md) var(--spacing-lg)",
+        display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
       }}>
 
         {messages.map(msg =>
           msg.role === "user" ? (
-            /* User bubble */
+            /* User bubble — frosted right */
             <div key={msg.id} style={{ display: "flex", justifyContent: "flex-end" }}>
               <div style={{
                 maxWidth: "75%",
                 padding: "var(--spacing-sm) var(--spacing-md)",
-                background: "var(--brand-primary-default)",
+                background: "rgba(255,255,255,0.2)",
                 color: "#fff",
-                borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg)",
+                borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl)",
                 fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
               }}>
                 {msg.text}
               </div>
             </div>
           ) : (
-            /* Agent bubble */
+            /* Agent bubble — white left */
             <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
-              <div style={{
-                width: 28, height: 28, flexShrink: 0,
-                borderRadius: "var(--radius-md)",
-                background: "var(--brand-primary-tint)", color: "var(--brand-primary-default)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)",
-              }}>
-                {AGENT_INITIAL}
-              </div>
+              <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
 
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
                 <div style={{
-                  background: "var(--bg-surface)",
-                  border: "1px solid var(--border-default)",
-                  borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm)",
+                  background: "#fff",
+                  borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)",
                   overflow: "hidden",
                   alignSelf: "flex-start",
                   maxWidth: "85%",
@@ -182,19 +177,10 @@ export default function ChatWindow() {
         {/* Typing indicator */}
         {phase === "typing" && (
           <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+            <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
             <div style={{
-              width: 28, height: 28, flexShrink: 0,
-              borderRadius: "var(--radius-md)",
-              background: "var(--brand-primary-tint)", color: "var(--brand-primary-default)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)",
-            }}>
-              {AGENT_INITIAL}
-            </div>
-            <div style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border-default)",
-              borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm)",
+              background: "#fff",
+              borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)",
               padding: "var(--spacing-md)",
               display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
             }}>
@@ -205,25 +191,17 @@ export default function ChatWindow() {
           </div>
         )}
 
-        {/* Starter questions — agent-style bubbles */}
+        {/* Starter question bubbles */}
         {phase === "idle" && messages.length === 1 && (
           <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
-            <div style={{
-              width: 28, height: 28, flexShrink: 0,
-              borderRadius: "var(--radius-md)",
-              background: "var(--brand-primary-tint)", color: "var(--brand-primary-default)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)",
-            }}>
-              {AGENT_INITIAL}
-            </div>
+            <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
               {STARTER_QUESTIONS.map(q => (
                 <button
                   key={q}
                   className="starter-q"
                   onClick={() => send(q)}
-                  style={{ borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm)" }}
+                  style={{ borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)" }}
                 >
                   {q}
                 </button>
@@ -239,13 +217,10 @@ export default function ChatWindow() {
       <div style={{
         display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
         padding: "var(--spacing-md) var(--spacing-lg)",
-        borderTop: "1px solid var(--border-default)",
-        background: "var(--bg-surface)",
         flexShrink: 0,
       }}>
         <input
-          className="field-input"
-          style={{ flex: 1 }}
+          className="chat-input"
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter") send(input); }}
@@ -253,11 +228,20 @@ export default function ChatWindow() {
           disabled={phase === "typing"}
         />
         <button
-          className="btn btn-primary btn-sm"
           onClick={() => send(input)}
           disabled={phase === "typing" || !input.trim()}
+          style={{
+            width: 36, height: 36, flexShrink: 0,
+            borderRadius: "var(--radius-full)",
+            background: input.trim() && phase !== "typing" ? "#fff" : "rgba(255,255,255,0.2)",
+            border: "none",
+            cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "background var(--t-state)",
+            color: "var(--brand-primary-default)",
+          }}
         >
-          <i className="ti ti-send" />
+          <i className="ti ti-send" style={{ fontSize: 16 }} />
         </button>
       </div>
 

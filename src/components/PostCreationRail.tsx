@@ -88,7 +88,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
       {/* Header */}
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "var(--spacing-md) var(--spacing-lg)",
+        padding: "var(--spacing-sm) var(--spacing-md)",
         borderBottom: "1px solid var(--border-default)",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
@@ -106,30 +106,30 @@ export default function PostCreationRail({ onDismissAll }: Props) {
             key={tip.id}
             className={`tip-row${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
             style={{
-              display: "flex", alignItems: "flex-start", gap: "var(--spacing-md)",
-              padding: "var(--spacing-lg)",
+              display: "flex", alignItems: "flex-start", gap: "var(--spacing-sm)",
+              padding: "var(--spacing-md)",
               borderBottom: i < visible.length - 1 ? "1px solid var(--border-default)" : "none",
             }}
           >
             {/* Icon */}
             <div style={{
-              width: 36, height: 36, flexShrink: 0,
-              borderRadius: "var(--radius-md)",
+              width: 28, height: 28, flexShrink: 0,
+              borderRadius: "var(--radius-sm)",
               background: tip.iconBg,
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <i className={`ti ${tip.icon}`} style={{ fontSize: "var(--text-lg)", color: tip.iconColor }} />
+              <i className={`ti ${tip.icon}`} style={{ fontSize: "var(--text-sm)", color: tip.iconColor }} />
             </div>
 
             {/* Text + CTA */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)", flex: 1 }}>
-              <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
+              <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
                 {tip.title}
               </span>
-              <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)" }}>
+              <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", lineHeight: "var(--leading-normal)" }}>
                 {tip.description}
               </span>
-              <button className="btn-link" style={{ fontSize: "var(--text-xs)", marginTop: "var(--spacing-xs)" }}>
+              <button className="btn-link" style={{ fontSize: "var(--text-xs)", paddingTop: "var(--spacing-xs)" }}>
                 {tip.cta}
               </button>
             </div>
