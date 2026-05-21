@@ -665,16 +665,16 @@ input, select { font-family: inherit; }
 
 /* Glass action card (PostCreationRail tips + starter questions) */
 .action-card {
-  border: 1px solid rgba(255,255,255,0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.5);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
   cursor: pointer;
   transition: box-shadow var(--t-state), border-color var(--t-state), background var(--t-state);
 }
 .action-card:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  border-color: rgba(255,255,255,0.7);
-  background: rgba(255,255,255,0.55) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14);
+  border-color: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.95) !important;
 }
 
 /* Ghost CTA button inside action cards */
@@ -685,7 +685,7 @@ input, select { font-family: inherit; }
   font-family: inherit;
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
-  color: var(--brand-primary-default);
+  color: var(--brand-primary-active);
   cursor: pointer;
   white-space: nowrap;
   transition: color var(--t-state), gap var(--t-state);
@@ -694,7 +694,7 @@ input, select { font-family: inherit; }
   gap: 4px;
 }
 .cta-btn:hover {
-  color: var(--brand-primary-hover);
+  color: var(--brand-primary-default);
   gap: 7px;
 }
 

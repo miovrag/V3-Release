@@ -250,15 +250,15 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                   style={{
                     display: "flex", alignItems: "center", gap: 8,
                     width: 574, padding: "8px 16px",
-                    borderRadius: 8, background: "rgba(255,255,255,0.22)",
+                    borderRadius: 8, background: "rgba(255,255,255,0.82)",
                     fontFamily: "inherit", textAlign: "left", cursor: "pointer",
                   }}
                 >
-                  <i className="ti ti-message-question" style={{ fontSize: 16, color: "var(--brand-primary-default)", flexShrink: 0 }} />
+                  <i className="ti ti-message-question" style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }} />
                   <span style={{ flex: 1, fontSize: "var(--text-sm)", color: "var(--text-body)", fontWeight: "var(--weight-medium)" }}>
                     {q}
                   </span>
-                  <span style={{ color: "var(--text-muted)", fontSize: 14, flexShrink: 0 }}>→</span>
+                  <span style={{ color: "var(--text-body)", fontSize: 14, flexShrink: 0 }}>→</span>
                 </button>
               ))}
             </div>
