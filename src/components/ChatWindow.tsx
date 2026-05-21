@@ -189,9 +189,9 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                     {/* Scroll stops here — rail stays below the fold until user scrolls */}
                     <div ref={msgEndRef} />
                     <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
-                      <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
+                      <i className="ti ti-sparkles" style={{ fontSize: 11, color: labelColor }} />
                       <span style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
-                        What to set up next
+                        Your agent can do even more
                       </span>
                     </div>
                     <div style={{ maxWidth: "85%" }}>

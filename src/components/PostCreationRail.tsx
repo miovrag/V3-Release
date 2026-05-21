@@ -14,23 +14,23 @@ const TIPS: Tip[] = [
   {
     id: "mcps",
     icon: "ti-plug-connected",
-    title: "Connect real-world tools",
-    description: "Give your agent access to Slack, GitHub, databases, and more. MCPs turn chat into action.",
-    cta: "Add MCPs →",
+    title: "I can act, not just answer",
+    description: "Connect me to Slack, GitHub, or your database — I'll take actions, not just give advice.",
+    cta: "Connect tools →",
   },
   {
     id: "persona",
     icon: "ti-user-circle",
-    title: "Make it sound like you",
-    description: "Set tone, name, response style, and guardrails so every reply feels on-brand.",
-    cta: "Set persona →",
+    title: "I can sound exactly like you",
+    description: "Give me a tone, a name, and guardrails — every reply will feel like it came from your team.",
+    cta: "Set my voice →",
   },
   {
     id: "smart-tasks",
     icon: "ti-calendar-event",
-    title: "Get automatic reports",
-    description: "Turn any question into a scheduled task — reports, summaries, or alerts on autopilot.",
-    cta: "Try Smart Tasks →",
+    title: "I can send this to you automatically",
+    description: "Turn any question into a recurring report — daily, weekly, or whenever something changes.",
+    cta: "Schedule it →",
   },
 ];
 
@@ -93,25 +93,17 @@ export default function PostCreationRail({ onDismissAll, bgColor = "#7367F0" }: 
     container:    "rgba(0,0,0,0.07)",
     border:       "1px solid rgba(0,0,0,0.1)",
     divider:      "1px solid rgba(0,0,0,0.07)",
-    iconBg:       "rgba(0,0,0,0.07)",
     iconColor:    "var(--text-body)",
     title:        "var(--text-heading)",
     description:  "var(--text-muted)",
-    ctaBg:        "var(--brand-primary-default)",
-    ctaColor:     "#fff",
-    ctaBorder:    "none",
     dismissColor: "var(--text-muted)",
   } : {
     container:    "rgba(255,255,255,0.15)",
     border:       "1px solid rgba(255,255,255,0.18)",
     divider:      "1px solid rgba(255,255,255,0.1)",
-    iconBg:       "rgba(255,255,255,0.15)",
     iconColor:    "#fff",
     title:        "#fff",
     description:  "rgba(255,255,255,0.65)",
-    ctaBg:        "rgba(255,255,255,0.2)",
-    ctaColor:     "#fff",
-    ctaBorder:    "1px solid rgba(255,255,255,0.35)",
     dismissColor: "rgba(255,255,255,0.45)",
   };
 
@@ -134,27 +126,20 @@ export default function PostCreationRail({ onDismissAll, bgColor = "#7367F0" }: 
             key={tip.id}
             className={`tip-row${dismissing.has(tip.id) ? " tip-exiting" : ""}${light ? " tip-row-light" : ""}`}
             style={{
-              display: "flex", alignItems: "center", gap: "var(--spacing-sm)",
+              display: "flex", alignItems: "flex-start", gap: "var(--spacing-sm)",
               padding: "var(--spacing-sm) var(--spacing-md)",
               borderBottom: i < visible.length - 1 ? t.divider : "none",
             }}
           >
             {/* Icon */}
-            <div style={{
-              width: 24, height: 24, flexShrink: 0,
-              borderRadius: "var(--radius-sm)",
-              background: t.iconBg,
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <i className={`ti ${tip.icon}`} style={{ fontSize: 12, color: t.iconColor }} />
-            </div>
+            <i className={`ti ${tip.icon}`} style={{ fontSize: 18, color: t.iconColor, flexShrink: 0, marginTop: 1 }} />
 
             {/* Title + description */}
             <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
-              <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: t.title, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: t.title }}>
                 {tip.title}
               </span>
-              <span style={{ fontSize: "var(--text-xs)", color: t.description, lineHeight: "var(--leading-normal)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <span style={{ fontSize: "var(--text-xs)", color: t.description, lineHeight: "var(--leading-normal)" }}>
                 {tip.description}
               </span>
             </div>
@@ -162,15 +147,11 @@ export default function PostCreationRail({ onDismissAll, bgColor = "#7367F0" }: 
             {/* CTA */}
             <button
               style={{
-                flexShrink: 0,
-                background: t.ctaBg,
-                border: t.ctaBorder,
-                borderRadius: "var(--radius-full)",
-                padding: "3px var(--spacing-sm)",
-                color: t.ctaColor,
+                flexShrink: 0, whiteSpace: "nowrap",
+                background: "none", border: "none", padding: 0,
                 fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)",
-                cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap",
-                transition: "opacity var(--t-state)",
+                color: light ? "var(--brand-primary-default)" : "#fff",
+                cursor: "pointer", fontFamily: "inherit",
               }}
             >
               {tip.cta}
