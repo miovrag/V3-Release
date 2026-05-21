@@ -97,9 +97,6 @@ export default function PostCreationRail({ onDismissAll }: Props) {
             Unlock more from your agent
           </span>
         </div>
-        <button className="btn-link" onClick={dismissAll} style={{ fontSize: "var(--text-xs)" }}>
-          Dismiss all
-        </button>
       </div>
 
       {/* Tip rows */}
