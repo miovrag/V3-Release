@@ -663,6 +663,17 @@ input, select { font-family: inherit; }
 .chat-input:focus  { border-color: rgba(255,255,255,0.5); }
 .chat-input:disabled { opacity: 0.6; }
 
+/* White action card (ToolCallCard + PostCreationRail tips) */
+.action-card {
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: box-shadow var(--t-state), border-color var(--t-state);
+}
+.action-card:hover {
+  box-shadow: var(--shadow-card);
+  border-color: var(--border-default);
+}
+
 /* Stream cursor */
 @keyframes blink {
   0%, 100% { opacity: 1; }

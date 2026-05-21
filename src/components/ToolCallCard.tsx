@@ -9,7 +9,7 @@ interface Props {
 
 export default function ToolCallCard({ action, status, onAllow, onDeny }: Props) {
   return (
-    <div style={{
+    <div className="action-card" style={{
       display: "flex",
       width: 574,
       padding: "8px 16px",

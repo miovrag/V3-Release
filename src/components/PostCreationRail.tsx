@@ -88,7 +88,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
       {visible.map((tip) => (
         <div
           key={tip.id}
-          className={`tip-row${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
+          className={`tip-row action-card${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
           style={{
             display: "flex",
             width: 574,
