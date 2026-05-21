@@ -210,7 +210,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                     <div ref={msgEndRef} />
                     <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
                       <i className="ti ti-sparkles" style={{ fontSize: 11, color: labelColor }} />
-                      <span style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
+                      <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
                         Your agent can do even more
                       </span>
                     </div>
