@@ -116,16 +116,9 @@ export default function PostCreationRail({ onDismissAll }: Props) {
               </span>
             </div>
 
-            <button
-              style={{
-                flexShrink: 0, whiteSpace: "nowrap",
-                background: "none", border: "none", padding: 0,
-                fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)",
-                color: "var(--brand-primary-default)",
-                cursor: "pointer", fontFamily: "inherit",
-              }}
-            >
-              {tip.cta}
+            <button className="cta-btn" style={{ flexShrink: 0 }}>
+              <span>{tip.cta.replace(" →", "")}</span>
+              <span>→</span>
             </button>
           </div>
         </div>
