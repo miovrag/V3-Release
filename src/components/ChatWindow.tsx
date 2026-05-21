@@ -169,7 +169,11 @@ export default function ChatWindow() {
                   )}
                 </div>
 
-                {msg.showRail && <PostCreationRail key={railKey} />}
+                {msg.showRail && (
+                  <div style={{ maxWidth: "85%" }}>
+                    <PostCreationRail key={railKey} />
+                  </div>
+                )}
               </div>
             </div>
           )
