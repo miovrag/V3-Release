@@ -16,16 +16,16 @@ const AGENT_INITIAL = "S";
 const AGENT_NAME = "Support Agent";
 
 const STARTER_QUESTIONS = [
-  "How does it work?",
-  "See pricing",
-  "Talk to sales",
+  "How do I connect my tools?",
+  "How do I set a persona?",
+  "How do Smart Tasks work?",
 ];
 
 const WELCOME =
   "Hi! I'm trained on CustomGPT.ai's knowledge base and ready to help. Try one of the questions below or ask your own.";
 
 const MOCK_ANSWER =
-  "Here's a quick overview of CustomGPT.ai plans:\n\n**Standard — $49/month**\n- 10 AI agents, 1,000 training pages\n- 100 chat sessions/day, basic integrations\n\n**Premium — $99/month**\n- 25 agents, 5,000 pages, unlimited sessions\n- Priority support, full API access\n\n**Enterprise — Custom pricing**\n- Unlimited agents, SSO, custom data volumes, dedicated SLA\n\nAll plans include a 7-day free trial. Want me to connect you with the sales team?";
+  "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click "Add integration"\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
 
 
 const AVATAR_STYLE = {
@@ -237,7 +237,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
           </div>
         )}
 
-        {/* Starter question bubbles */}
+        {/* Starter question cards */}
         {phase === "idle" && messages.length === 1 && (
           <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
             <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
@@ -245,11 +245,20 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
               {STARTER_QUESTIONS.map(q => (
                 <button
                   key={q}
-                  className="starter-q"
+                  className="action-card"
                   onClick={() => send(q)}
-                  style={{ borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)" }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    width: 574, padding: "8px 16px",
+                    borderRadius: 8, background: "#FFF",
+                    fontFamily: "inherit", textAlign: "left", cursor: "pointer",
+                  }}
                 >
-                  {q}
+                  <i className="ti ti-message-question" style={{ fontSize: 16, color: "var(--brand-primary-default)", flexShrink: 0 }} />
+                  <span style={{ flex: 1, fontSize: "var(--text-sm)", color: "var(--text-body)", fontWeight: "var(--weight-medium)" }}>
+                    {q}
+                  </span>
+                  <span style={{ color: "var(--text-muted)", fontSize: 14, flexShrink: 0 }}>→</span>
                 </button>
               ))}
             </div>
