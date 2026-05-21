@@ -25,7 +25,7 @@ const WELCOME =
   "Hi! I'm trained on CustomGPT.ai's knowledge base and ready to help. Try one of the questions below or ask your own.";
 
 const MOCK_ANSWER =
-  "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click "Add integration"\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
+  "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click 'Add integration'\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
 
 
 const AVATAR_STYLE = {
