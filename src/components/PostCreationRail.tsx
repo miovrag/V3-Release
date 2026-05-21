@@ -101,10 +101,10 @@ export default function PostCreationRail({ onDismissAll }: Props) {
             background: "#FFF",
           }}
         >
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 8, width: "100%" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
             <i
               className={`ti ${tip.icon}`}
-              style={{ fontSize: 16, color: "var(--brand-primary-default)", flexShrink: 0, marginTop: 2 }}
+              style={{ fontSize: 16, color: "var(--brand-primary-default)", flexShrink: 0 }}
             />
 
             <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
