@@ -16,8 +16,8 @@ const TIPS: Tip[] = [
   {
     id: "mcps",
     icon: "ti-plug-connected",
-    iconColor: "#7367F0",
-    iconBg: "#EAE8FD",
+    iconColor: "var(--brand-primary-default)",
+    iconBg: "var(--brand-primary-tint)",
     title: "Connect real-world tools",
     description: "Give your agent access to Slack, GitHub, databases, and more. MCPs turn chat into action.",
     cta: "Add MCPs →",
@@ -25,8 +25,8 @@ const TIPS: Tip[] = [
   {
     id: "persona",
     icon: "ti-user-circle",
-    iconColor: "#28C76F",
-    iconBg: "#E8F8EF",
+    iconColor: "var(--color-success)",
+    iconBg: "var(--color-success-tint)",
     title: "Make it sound like you",
     description: "Set tone, name, response style, and guardrails so every reply feels on-brand.",
     cta: "Set persona →",
@@ -34,8 +34,8 @@ const TIPS: Tip[] = [
   {
     id: "smart-tasks",
     icon: "ti-calendar-event",
-    iconColor: "#FF9F43",
-    iconBg: "#FFF3E5",
+    iconColor: "var(--color-warning)",
+    iconBg: "var(--color-warning-tint)",
     title: "Automate with Smart Tasks",
     description: "Turn any question into a scheduled task — reports, summaries, or alerts on autopilot.",
     cta: "Try Smart Tasks →",
@@ -65,12 +65,8 @@ export default function PostCreationRail({ onDismissAll }: Props) {
   if (visible.length === 0) return null;
 
   return (
-    <div style={{
-      border: "1px solid var(--border-default)",
-      borderRadius: "var(--radius-lg)",
-      background: "var(--bg-surface)",
-      overflow: "hidden",
-    }}>
+    <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+
       {/* Header */}
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -78,53 +74,38 @@ export default function PostCreationRail({ onDismissAll }: Props) {
         borderBottom: "1px solid var(--border-default)",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-          <i className="ti ti-sparkles" style={{ fontSize: 14, color: "var(--brand-primary-default)" }} />
+          <i className="ti ti-sparkles" style={{ fontSize: "var(--text-sm)", color: "var(--brand-primary-default)" }} />
           <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
             Unlock more from your agent
           </span>
-          <span style={{
-            fontSize: "var(--text-xs)", color: "var(--text-muted)",
-            background: "var(--bg-selected)",
-            borderRadius: "var(--radius-full)",
-            padding: "1px 7px",
-          }}>
+          <span className="badge badge-default">
             {visible.length} tip{visible.length !== 1 ? "s" : ""}
           </span>
         </div>
-        <button
-          onClick={dismissAll}
-          style={{
-            background: "none", border: "none", padding: 0, cursor: "pointer",
-            fontSize: "var(--text-xs)", color: "var(--text-muted)", fontFamily: "inherit",
-          }}
-        >
+        <button className="btn-link" onClick={dismissAll} style={{ fontSize: "var(--text-xs)" }}>
           Dismiss all
         </button>
       </div>
 
-      {/* Cards */}
+      {/* Tip rows */}
       <div style={{ display: "flex", flexDirection: "column" }}>
         {visible.map((tip, i) => (
           <div
             key={tip.id}
             style={{
+              display: "flex", alignItems: "flex-start", gap: "var(--spacing-md)",
               padding: "var(--spacing-lg)",
               borderBottom: i < visible.length - 1 ? "1px solid var(--border-default)" : "none",
-              display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "var(--spacing-md)",
-              position: "relative",
             }}
           >
-            {/* Dismiss × */}
             {/* Icon */}
             <div style={{
-              width: 36, height: 36,
+              width: 36, height: 36, flexShrink: 0,
               borderRadius: "var(--radius-md)",
               background: tip.iconBg,
               display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-              marginTop: 2,
             }}>
-              <i className={`ti ${tip.icon}`} style={{ fontSize: 18, color: tip.iconColor }} />
+              <i className={`ti ${tip.icon}`} style={{ fontSize: "var(--text-lg)", color: tip.iconColor }} />
             </div>
 
             {/* Text + CTA */}
@@ -135,26 +116,19 @@ export default function PostCreationRail({ onDismissAll }: Props) {
               <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)" }}>
                 {tip.description}
               </span>
-              <button
-                style={{
-                  background: "none", border: "none", padding: 0, cursor: "pointer",
-                  fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)",
-                  color: "var(--brand-primary-default)", fontFamily: "inherit",
-                  textAlign: "left", marginTop: "var(--spacing-xs)",
-                }}
-              >
+              <button className="btn-link" style={{ fontSize: "var(--text-xs)", marginTop: "var(--spacing-xs)" }}>
                 {tip.cta}
               </button>
             </div>
 
-            {/* Dismiss × */}
+            {/* Dismiss */}
             <button
               onClick={() => dismiss(tip.id)}
               aria-label={`Dismiss ${tip.title}`}
               style={{
-                background: "none", border: "none", padding: 0, cursor: "pointer",
-                fontSize: 13, color: "var(--text-muted)", lineHeight: 1,
-                fontFamily: "inherit", flexShrink: 0, marginTop: 2,
+                flexShrink: 0,
+                fontSize: "var(--text-sm)", color: "var(--text-muted)",
+                lineHeight: 1, padding: 0,
               }}
             >
               <i className="ti ti-x" />
