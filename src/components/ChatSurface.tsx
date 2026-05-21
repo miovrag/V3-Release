@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PostCreationRail from "./PostCreationRail";
 
 type View = "empty" | "response";
 
@@ -16,6 +17,7 @@ const MOCK_ANSWER_NEXTGEN  = "I analysed your support tickets, CRM export, and l
 
 export default function ChatSurface({ isNextGen = false, plan = "standard", onUpgrade }: Props) {
   const [view, setView] = useState<View>("empty");
+  const [railKey, setRailKey] = useState(0);
 
   const PLAN_LABEL = { standard: "Standard", premium: "Premium", enterprise: "Enterprise" }[plan];
 
@@ -57,6 +59,15 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
               {v === "empty" ? "Empty state" : "After response"}
             </button>
           ))}
+          {view === "response" && (
+            <button
+              onClick={() => setRailKey(k => k + 1)}
+              className="btn btn-xs btn-ghost"
+              title="Reset post-creation rail"
+            >
+              <i className="ti ti-refresh" style={{ fontSize: 12 }} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -207,6 +218,9 @@ export default function ChatSurface({ isNextGen = false, plan = "standard", onUp
                 )}
               </div>
             </div>
+
+            {/* Post-creation discovery rail */}
+            <PostCreationRail key={railKey} />
           </>
         )}
       </div>

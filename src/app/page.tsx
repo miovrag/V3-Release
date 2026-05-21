@@ -12,6 +12,7 @@ import UpgradeModal from "@/components/UpgradeModal";
 import DashboardBanner from "@/components/DashboardBanner";
 import NotificationsPanel from "@/components/NotificationsPanel";
 import ChatSurface from "@/components/ChatSurface";
+import MultiAgentAgentsList from "@/components/MultiAgentAgentsList";
 
 type FlowStep = "website" | "usecase" | "nextgen" | "building" | null;
 type Plan = "standard" | "premium" | "enterprise";
@@ -190,6 +191,18 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── Multi-agent: Select primary agent ── */}
+        <section>
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Multi-agent</p>
+          <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
+            Select primary agent
+          </h2>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
+            Inside a multi-agent project, builders designate one agent as primary — the entry point that receives every user message and routes to others. Click any radio or "Set as primary" to change it.
+          </p>
+          <MultiAgentAgentsList />
+        </section>
+
         {/* ── Agents list ── */}
         <section>
           <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Agents list</p>
@@ -233,14 +246,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 3. Chat surface ── */}
+        {/* ── 3. Chat surface + post-creation rail ── */}
         <section>
-          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Chat preview</p>
+          <p className="section-label" style={{ marginBottom: "var(--spacing-sm)" }}>Chat — post-creation flow</p>
           <h2 style={{ fontSize: "var(--text-xl)", fontWeight: "var(--weight-bold)", color: "var(--text-heading)", marginBottom: "var(--spacing-xs)" }}>
-            In-chat hints and response footer
+            Discovery rail after first response
           </h2>
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
-            Empty state hint before first message. After response: contextual nudge + "Powered by Standard / NextGen" footer.
+            After the agent answers its first Starter Question, a 3-card rail appears inline: MCPs, Persona, Smart Tasks. Cards dismiss individually. Adding future tips is a one-liner in the <code style={{ fontSize: "var(--text-xs)", background: "var(--bg-selected)", padding: "1px 5px", borderRadius: "var(--radius-sm)" }}>TIPS</code> array. Hit <i className="ti ti-refresh" style={{ fontSize: 11 }} /> to reset the rail.
           </p>
           <ChatSurface isNextGen={true} plan={plan} />
         </section>
