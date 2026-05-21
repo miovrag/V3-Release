@@ -1,0 +1,258 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import PostCreationRail from "./PostCreationRail";
+
+type Phase = "idle" | "typing" | "responded";
+
+interface Message {
+  id: string;
+  role: "agent" | "user";
+  text: string;
+  showRail?: boolean;
+}
+
+const AGENT_NAME = "Support Agent";
+const AGENT_INITIAL = "S";
+
+const STARTER_QUESTIONS = [
+  "What are our top 3 cancellation reasons?",
+  "Summarise last quarter's support tickets",
+  "Which features are users requesting most?",
+];
+
+const WELCOME =
+  "Hi! I've processed your knowledge base and I'm ready to help. Try one of the questions below or ask your own.";
+
+const MOCK_ANSWER =
+  "I analysed your support tickets and CRM data across 3 reasoning steps:\n\n**Top 3 cancellation reasons:**\n1. Pricing — 34% (↑8pp vs Q4, driven by January repricing)\n2. Missing features — 28% (stable; top gaps: bulk export, SSO)\n3. Competitor switch — 21% (↓4pp, mostly to Intercom)\n\n**Key shift vs last quarter:** Pricing complaints nearly doubled after the January repricing. Feature gap complaints stayed flat, suggesting the roadmap is holding retention there.";
+
+export default function ChatWindow() {
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [messages, setMessages] = useState<Message[]>([
+    { id: "welcome", role: "agent", text: WELCOME },
+  ]);
+  const [input, setInput] = useState("");
+  const [railKey, setRailKey] = useState(0);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, phase]);
+
+  const send = (text: string) => {
+    if (phase !== "idle" || !text.trim()) return;
+    setMessages(prev => [...prev, { id: `u-${Date.now()}`, role: "user", text }]);
+    setInput("");
+    setPhase("typing");
+    setTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        { id: `a-${Date.now()}`, role: "agent", text: MOCK_ANSWER, showRail: true },
+      ]);
+      setPhase("responded");
+    }, 1500);
+  };
+
+  const reset = () => {
+    setPhase("idle");
+    setMessages([{ id: "welcome", role: "agent", text: WELCOME }]);
+    setRailKey(k => k + 1);
+  };
+
+  return (
+    <div style={{
+      display: "flex", flexDirection: "column",
+      height: "calc(100vh - 104px)",
+      background: "var(--bg-surface)",
+      border: "1px solid var(--border-default)",
+      borderRadius: "var(--radius-xl)",
+      overflow: "hidden",
+    }}>
+
+      {/* ── Header ── */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "var(--spacing-md) var(--spacing-lg)",
+        borderBottom: "1px solid var(--border-default)",
+        background: "var(--bg-surface)",
+        flexShrink: 0,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
+          {/* Avatar with online dot */}
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <div style={{
+              width: 32, height: 32,
+              borderRadius: "var(--radius-md)",
+              background: "var(--brand-primary-tint)",
+              color: "var(--brand-primary-default)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "var(--text-sm)", fontWeight: "var(--weight-bold)",
+            }}>
+              {AGENT_INITIAL}
+            </div>
+            <span style={{
+              position: "absolute", bottom: -2, right: -2,
+              width: 9, height: 9,
+              borderRadius: "var(--radius-full)",
+              background: "var(--color-success)",
+              border: "2px solid var(--bg-surface)",
+            }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)", lineHeight: "var(--leading-tight)" }}>
+              {AGENT_NAME}
+            </span>
+            <span style={{ fontSize: "var(--text-xs)", color: "var(--color-success)", lineHeight: "var(--leading-tight)" }}>
+              Online
+            </span>
+          </div>
+        </div>
+
+        {phase === "responded" && (
+          <button className="btn btn-ghost btn-sm" onClick={reset}>
+            <i className="ti ti-refresh" />
+            Reset
+          </button>
+        )}
+      </div>
+
+      {/* ── Messages ── */}
+      <div style={{
+        flex: 1, overflowY: "auto",
+        padding: "var(--spacing-xl)",
+        display: "flex", flexDirection: "column", gap: "var(--spacing-lg)",
+        background: "var(--bg-canvas)",
+      }}>
+
+        {messages.map(msg =>
+          msg.role === "user" ? (
+            /* User bubble */
+            <div key={msg.id} style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div style={{
+                maxWidth: "75%",
+                padding: "var(--spacing-sm) var(--spacing-md)",
+                background: "var(--brand-primary-default)",
+                color: "#fff",
+                borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg)",
+                fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
+              }}>
+                {msg.text}
+              </div>
+            </div>
+          ) : (
+            /* Agent bubble */
+            <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+              <div style={{
+                width: 28, height: 28, flexShrink: 0,
+                borderRadius: "var(--radius-md)",
+                background: "var(--brand-primary-tint)", color: "var(--brand-primary-default)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)",
+              }}>
+                {AGENT_INITIAL}
+              </div>
+
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
+                <div style={{
+                  background: "var(--bg-surface)",
+                  border: "1px solid var(--border-default)",
+                  borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm)",
+                  overflow: "hidden",
+                }}>
+                  <div style={{
+                    padding: "var(--spacing-md)",
+                    fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
+                    color: "var(--text-body)", whiteSpace: "pre-line",
+                  }}>
+                    {msg.text}
+                  </div>
+                  {msg.id !== "welcome" && (
+                    <div style={{
+                      display: "flex", alignItems: "center", gap: 4,
+                      padding: "var(--spacing-sm) var(--spacing-md)",
+                      borderTop: "1px solid var(--border-default)",
+                      background: "var(--bg-canvas)",
+                      fontSize: "var(--text-xs)", color: "var(--text-muted)",
+                    }}>
+                      <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
+                      Powered by NextGen
+                    </div>
+                  )}
+                </div>
+
+                {msg.showRail && <PostCreationRail key={railKey} />}
+              </div>
+            </div>
+          )
+        )}
+
+        {/* Typing indicator */}
+        {phase === "typing" && (
+          <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+            <div style={{
+              width: 28, height: 28, flexShrink: 0,
+              borderRadius: "var(--radius-md)",
+              background: "var(--brand-primary-tint)", color: "var(--brand-primary-default)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)",
+            }}>
+              {AGENT_INITIAL}
+            </div>
+            <div style={{
+              background: "var(--bg-surface)",
+              border: "1px solid var(--border-default)",
+              borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm)",
+              padding: "var(--spacing-md)",
+              display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
+            }}>
+              <span className="typing-dot" />
+              <span className="typing-dot" />
+              <span className="typing-dot" />
+            </div>
+          </div>
+        )}
+
+        {/* Starter questions — shown before first user message */}
+        {phase === "idle" && messages.length === 1 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+            {STARTER_QUESTIONS.map(q => (
+              <button key={q} className="starter-q" onClick={() => send(q)}>
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div ref={bottomRef} />
+      </div>
+
+      {/* ── Composer ── */}
+      <div style={{
+        display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
+        padding: "var(--spacing-md) var(--spacing-lg)",
+        borderTop: "1px solid var(--border-default)",
+        background: "var(--bg-surface)",
+        flexShrink: 0,
+      }}>
+        <input
+          className="field-input"
+          style={{ flex: 1 }}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter") send(input); }}
+          placeholder="Ask anything…"
+          disabled={phase === "typing"}
+        />
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => send(input)}
+          disabled={phase === "typing" || !input.trim()}
+        >
+          <i className="ti ti-send" />
+        </button>
+      </div>
+
+    </div>
+  );
+}
