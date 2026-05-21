@@ -103,35 +103,18 @@ export default function PostCreationRail({ onDismissAll }: Props) {
       </div>
 
       {/* Cards */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${visible.length}, 1fr)`,
-        gap: 0,
-      }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         {visible.map((tip, i) => (
           <div
             key={tip.id}
             style={{
               padding: "var(--spacing-lg)",
-              borderRight: i < visible.length - 1 ? "1px solid var(--border-default)" : "none",
-              display: "flex", flexDirection: "column", gap: "var(--spacing-sm)",
+              borderBottom: i < visible.length - 1 ? "1px solid var(--border-default)" : "none",
+              display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "var(--spacing-md)",
               position: "relative",
             }}
           >
             {/* Dismiss × */}
-            <button
-              onClick={() => dismiss(tip.id)}
-              aria-label={`Dismiss ${tip.title}`}
-              style={{
-                position: "absolute", top: "var(--spacing-md)", right: "var(--spacing-md)",
-                background: "none", border: "none", padding: 0, cursor: "pointer",
-                fontSize: 13, color: "var(--text-muted)", lineHeight: 1,
-                fontFamily: "inherit",
-              }}
-            >
-              <i className="ti ti-x" />
-            </button>
-
             {/* Icon */}
             <div style={{
               width: 36, height: 36,
@@ -139,33 +122,42 @@ export default function PostCreationRail({ onDismissAll }: Props) {
               background: tip.iconBg,
               display: "flex", alignItems: "center", justifyContent: "center",
               flexShrink: 0,
+              marginTop: 2,
             }}>
               <i className={`ti ${tip.icon}`} style={{ fontSize: 18, color: tip.iconColor }} />
             </div>
 
-            {/* Text */}
+            {/* Text + CTA */}
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)", flex: 1 }}>
-              <span style={{
-                fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)",
-                paddingRight: "var(--spacing-xl)",
-              }}>
+              <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
                 {tip.title}
               </span>
               <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)" }}>
                 {tip.description}
               </span>
+              <button
+                style={{
+                  background: "none", border: "none", padding: 0, cursor: "pointer",
+                  fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)",
+                  color: "var(--brand-primary-default)", fontFamily: "inherit",
+                  textAlign: "left", marginTop: "var(--spacing-xs)",
+                }}
+              >
+                {tip.cta}
+              </button>
             </div>
 
-            {/* CTA */}
+            {/* Dismiss × */}
             <button
+              onClick={() => dismiss(tip.id)}
+              aria-label={`Dismiss ${tip.title}`}
               style={{
                 background: "none", border: "none", padding: 0, cursor: "pointer",
-                fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)",
-                color: "var(--brand-primary-default)", fontFamily: "inherit",
-                textAlign: "left",
+                fontSize: 13, color: "var(--text-muted)", lineHeight: 1,
+                fontFamily: "inherit", flexShrink: 0, marginTop: 2,
               }}
             >
-              {tip.cta}
+              <i className="ti ti-x" />
             </button>
           </div>
         ))}
