@@ -232,9 +232,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                         Your agent can do even more
                       </span>
                     </div>
-                    <div style={{ maxWidth: "85%" }}>
-                      <PostCreationRail key={railKey} bgColor={bgColor} />
-                    </div>
+                    <PostCreationRail key={railKey} bgColor={bgColor} />
                   </>
                 )}
               </div>
