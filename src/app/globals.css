@@ -85,19 +85,14 @@
 ═══════════════════════════════════════ */
 @media (color-gamut: p3) {
   :root {
-    /* Brand purple — more saturated, no hue shift */
-    --brand-primary-default: color(display-p3 0.40 0.36 0.96);
-    --brand-primary-hover:   color(display-p3 0.36 0.32 0.87);
-    --brand-primary-active:  color(display-p3 0.31 0.28 0.78);
-    --brand-primary-tint:    color(display-p3 0.90 0.89 0.99);
-    --text-link:             color(display-p3 0.40 0.36 0.96);
+    --brand-primary-default: color(display-p3 0.45 0.40 0.94);
+    --brand-primary-hover:   color(display-p3 0.41 0.36 0.85);
+    --brand-primary-active:  color(display-p3 0.36 0.32 0.75);
 
-    /* Status colors — perceptually richer */
-    --color-success: color(display-p3 0.10 0.79 0.42);
-    --color-warning: color(display-p3 1.00 0.62 0.24);
-    --color-error:   color(display-p3 0.93 0.31 0.32);
-    --color-info:    color(display-p3 0.00 0.83 0.93);
-
+    --color-success: color(display-p3 0.15 0.78 0.43);
+    --color-warning: color(display-p3 1.00 0.62 0.26);
+    --color-error:   color(display-p3 0.92 0.33 0.33);
+    --color-info:    color(display-p3 0.00 0.81 0.91);
   }
 }
 
@@ -584,6 +579,12 @@ input, select { font-family: inherit; }
   display: flex; align-items: center; justify-content: center;
 }
 .step-circle.is-active { border-color: var(--brand-primary-default); }
+
+/* Pop-in for badge/dot animations */
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1);   }
+}
 
 /* Section label */
 .section-label {
