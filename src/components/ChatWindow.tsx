@@ -79,34 +79,20 @@ export default function ChatWindow() {
         flexShrink: 0,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-          {/* Avatar with online dot */}
-          <div style={{ position: "relative", flexShrink: 0 }}>
-            <div style={{
-              width: 32, height: 32,
-              borderRadius: "var(--radius-md)",
-              background: "var(--brand-primary-tint)",
-              color: "var(--brand-primary-default)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "var(--text-sm)", fontWeight: "var(--weight-bold)",
-            }}>
-              {AGENT_INITIAL}
-            </div>
-            <span style={{
-              position: "absolute", bottom: -2, right: -2,
-              width: 9, height: 9,
-              borderRadius: "var(--radius-full)",
-              background: "var(--color-success)",
-              border: "2px solid var(--bg-surface)",
-            }} />
+          {/* Avatar */}
+          <div style={{
+            width: 32, height: 32, flexShrink: 0,
+            borderRadius: "var(--radius-md)",
+            background: "var(--brand-primary-tint)",
+            color: "var(--brand-primary-default)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: "var(--text-sm)", fontWeight: "var(--weight-bold)",
+          }}>
+            {AGENT_INITIAL}
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)", lineHeight: "var(--leading-tight)" }}>
-              {AGENT_NAME}
-            </span>
-            <span style={{ fontSize: "var(--text-xs)", color: "var(--color-success)", lineHeight: "var(--leading-tight)" }}>
-              Online
-            </span>
-          </div>
+          <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
+            {AGENT_NAME}
+          </span>
         </div>
 
         {phase === "responded" && (
@@ -159,6 +145,8 @@ export default function ChatWindow() {
                   border: "1px solid var(--border-default)",
                   borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm)",
                   overflow: "hidden",
+                  alignSelf: "flex-start",
+                  maxWidth: "85%",
                 }}>
                   <div style={{
                     padding: "var(--spacing-md)",
@@ -213,14 +201,30 @@ export default function ChatWindow() {
           </div>
         )}
 
-        {/* Starter questions — shown before first user message */}
+        {/* Starter questions — agent-style bubbles */}
         {phase === "idle" && messages.length === 1 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
-            {STARTER_QUESTIONS.map(q => (
-              <button key={q} className="starter-q" onClick={() => send(q)}>
-                {q}
-              </button>
-            ))}
+          <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+            <div style={{
+              width: 28, height: 28, flexShrink: 0,
+              borderRadius: "var(--radius-md)",
+              background: "var(--brand-primary-tint)", color: "var(--brand-primary-default)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)",
+            }}>
+              {AGENT_INITIAL}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
+              {STARTER_QUESTIONS.map(q => (
+                <button
+                  key={q}
+                  className="starter-q"
+                  onClick={() => send(q)}
+                  style={{ borderRadius: "var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm)" }}
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
