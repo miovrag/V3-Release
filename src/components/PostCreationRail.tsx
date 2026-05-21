@@ -94,7 +94,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
           <i className="ti ti-sparkles" style={{ fontSize: "var(--text-sm)", color: "var(--brand-primary-default)" }} />
           <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
-            Unlock more from your agent
+            What to set up next
           </span>
         </div>
       </div>
