@@ -45,7 +45,7 @@ export default function ChatPage() {
         gap: "var(--spacing-xl)",
       }}>
         {/* Chat window */}
-        <div style={{ width: "100%", maxWidth: 520 }}>
+        <div style={{ width: "100%", maxWidth: 680 }}>
           <ChatWindow bgColor={bgColor} />
         </div>
 

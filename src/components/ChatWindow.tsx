@@ -2,13 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import PostCreationRail from "./PostCreationRail";
+import ToolCallCard from "./ToolCallCard";
 
-type Phase = "idle" | "typing" | "responded";
+type Phase = "idle" | "typing" | "tool_call" | "responded";
 
 interface Message {
   id: string;
-  role: "agent" | "user";
+  role: "agent" | "user" | "tool_call";
   text: string;
+  action?: string;
+  toolStatus?: "pending" | "approved" | "denied";
   showRail?: boolean;
 }
 
@@ -27,12 +30,26 @@ const WELCOME =
 const MOCK_ANSWER =
   "I analysed your support tickets and CRM data across 3 reasoning steps:\n\n**Top 3 cancellation reasons:**\n1. Pricing — 34% (↑8pp vs Q4, driven by January repricing)\n2. Missing features — 28% (stable; top gaps: bulk export, SSO)\n3. Competitor switch — 21% (↓4pp, mostly to Intercom)\n\n**Key shift:** Pricing complaints nearly doubled after the January repricing. Feature gap complaints stayed flat, suggesting the roadmap is holding retention there.";
 
+const MOCK_TOOL_ACTION = 'query_crm(tickets, range="Q3", limit=500)';
+
 const AVATAR_STYLE = {
   width: 28, height: 28, flexShrink: 0 as const,
   borderRadius: "var(--radius-full)",
   background: "rgba(255,255,255,0.25)", color: "#fff",
   display: "flex", alignItems: "center", justifyContent: "center",
   fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)" as const,
+};
+
+const BUBBLE_STYLE = {
+  display: "flex",
+  width: 574,
+  padding: "8px 16px",
+  flexDirection: "column" as const,
+  justifyContent: "center",
+  alignItems: "flex-start" as const,
+  gap: 8,
+  borderRadius: 8,
+  background: "#FFF",
 };
 
 function hexLuminance(hex: string): number {
@@ -74,12 +91,34 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     setInput("");
     setPhase("typing");
     setTimeout(() => {
+      const toolId = `tc-${Date.now()}`;
+      setMessages(prev => [
+        ...prev,
+        { id: toolId, role: "tool_call", text: "", action: MOCK_TOOL_ACTION, toolStatus: "pending" },
+      ]);
+      setPhase("tool_call");
+    }, 1500);
+  };
+
+  const approve = (toolId: string) => {
+    setMessages(prev =>
+      prev.map(m => m.id === toolId ? { ...m, toolStatus: "approved" as const } : m)
+    );
+    setPhase("typing");
+    setTimeout(() => {
       setMessages(prev => [
         ...prev,
         { id: `a-${Date.now()}`, role: "agent", text: MOCK_ANSWER, showRail: true },
       ]);
       setPhase("responded");
-    }, 1500);
+    }, 1200);
+  };
+
+  const deny = (toolId: string) => {
+    setMessages(prev =>
+      prev.map(m => m.id === toolId ? { ...m, toolStatus: "denied" as const } : m)
+    );
+    setPhase("idle");
   };
 
   const reset = () => {
@@ -137,7 +176,6 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
         {messages.map(msg =>
           msg.role === "user" ? (
-            /* User bubble — frosted right */
             <div key={msg.id} style={{ display: "flex", justifyContent: "flex-end" }}>
               <div style={{
                 maxWidth: "75%",
@@ -150,32 +188,33 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 {msg.text}
               </div>
             </div>
+          ) : msg.role === "tool_call" ? (
+            <div key={msg.id}>
+              <ToolCallCard
+                action={msg.action!}
+                status={msg.toolStatus!}
+                onAllow={() => approve(msg.id)}
+                onDeny={() => deny(msg.id)}
+              />
+            </div>
           ) : (
-            /* Agent bubble — white left */
             <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
               <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
 
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
-                <div style={{
-                  background: "#fff",
-                  borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)",
-                  overflow: "hidden",
-                  alignSelf: "flex-start",
-                  maxWidth: "85%",
-                }}>
+                <div style={BUBBLE_STYLE}>
                   <div style={{
-                    padding: "var(--spacing-md)",
                     fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
-                    color: "var(--text-body)", whiteSpace: "pre-line",
+                    color: "var(--text-body)", whiteSpace: "pre-line", width: "100%",
                   }}>
                     {msg.text}
                   </div>
                   {msg.id !== "welcome" && (
                     <div style={{
                       display: "flex", alignItems: "center", gap: 4,
-                      padding: "var(--spacing-sm) var(--spacing-md)",
                       borderTop: "1px solid var(--border-default)",
-                      background: "var(--bg-canvas)",
+                      paddingTop: "var(--spacing-sm)",
+                      width: "100%",
                       fontSize: "var(--text-xs)", color: "var(--text-muted)",
                     }}>
                       <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
@@ -186,7 +225,6 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
                 {msg.showRail && (
                   <>
-                    {/* Scroll stops here — rail stays below the fold until user scrolls */}
                     <div ref={msgEndRef} />
                     <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
                       <i className="ti ti-sparkles" style={{ fontSize: 11, color: labelColor }} />
@@ -209,10 +247,8 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
           <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
             <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
             <div style={{
-              background: "#fff",
-              borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm)",
-              padding: "var(--spacing-md)",
               display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
+              padding: "12px 16px", borderRadius: 8, background: "#FFF",
             }}>
               <span className="typing-dot" />
               <span className="typing-dot" />
@@ -255,17 +291,17 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter") send(input); }}
           placeholder="Ask anything…"
-          disabled={phase === "typing"}
+          disabled={phase === "typing" || phase === "tool_call"}
         />
         <button
           onClick={() => send(input)}
-          disabled={phase === "typing" || !input.trim()}
+          disabled={phase !== "idle" || !input.trim()}
           style={{
             width: 36, height: 36, flexShrink: 0,
             borderRadius: "var(--radius-full)",
-            background: input.trim() && phase !== "typing" ? "#fff" : "rgba(255,255,255,0.2)",
+            background: input.trim() && phase === "idle" ? "#fff" : "rgba(255,255,255,0.2)",
             border: "none",
-            cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
+            cursor: input.trim() && phase === "idle" ? "pointer" : "default",
             display: "flex", alignItems: "center", justifyContent: "center",
             transition: "background var(--t-state)",
             color: "var(--brand-primary-default)",
