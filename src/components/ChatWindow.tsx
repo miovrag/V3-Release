@@ -95,6 +95,10 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
   const send = (text: string) => {
     if (phase === "typing" || !text.trim()) return;
+    if (showSuggestions) {
+      setRailExiting(true);
+      setTimeout(() => { setRailDismissed(true); setRailExiting(false); }, 600);
+    }
     setMessages(prev => [...prev, { id: `u-${Date.now()}`, role: "user", text }]);
     setInput("");
     setPhase("typing");
@@ -279,7 +283,12 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
         }}>
 
           {showSuggestions && (
-            <>
+            <div style={{
+              display: "flex", flexDirection: "column", gap: 8,
+              opacity: input.trim() ? 0.35 : 1,
+              transition: "opacity 0.25s ease",
+              pointerEvents: input.trim() ? "none" : "auto",
+            }}>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
                 <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
                 <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
@@ -303,7 +312,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 </button>
               </div>
               <PostCreationRail key={railKey} bgColor={bgColor} isExiting={railExiting} />
-            </>
+            </div>
           )}
 
           <div style={{ position: "relative" }}>
