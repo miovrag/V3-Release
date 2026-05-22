@@ -845,3 +845,27 @@ input, select { font-family: inherit; }
   background: var(--brand-primary-tint);
   color: var(--brand-primary-active);
 }
+
+/* ── Animated background gradient ── */
+@property --bg-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 178deg;
+}
+
+@keyframes bg-drift {
+  0%   { --bg-angle: 178deg; }
+  12%  { --bg-angle: 152deg; }
+  25%  { --bg-angle: 204deg; }
+  38%  { --bg-angle: 170deg; }
+  52%  { --bg-angle: 215deg; }
+  65%  { --bg-angle: 160deg; }
+  78%  { --bg-angle: 196deg; }
+  90%  { --bg-angle: 166deg; }
+  100% { --bg-angle: 178deg; }
+}
+
+.bg-animated {
+  background: linear-gradient(var(--bg-angle), #ffffff 0%, var(--bg-end) 100%);
+  animation: bg-drift 22s ease-in-out infinite;
+}

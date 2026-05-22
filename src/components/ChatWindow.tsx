@@ -173,15 +173,17 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   };
 
   return (
-    <div style={{
-      position: "relative",
-      display: "flex", flexDirection: "column",
-      height: "100vh",
-      background: lightBg
-        ? `linear-gradient(178deg, #ffffff 0%, ${bgColor} 100%)`
-        : bgColor,
-      overflow: "hidden",
-    }}>
+    <div
+      className={lightBg ? "bg-animated" : undefined}
+      style={{
+        "--bg-end": bgColor,
+        position: "relative",
+        display: "flex", flexDirection: "column",
+        height: "100vh",
+        background: lightBg ? undefined : bgColor,
+        overflow: "hidden",
+      } as React.CSSProperties}
+    >
 
       {/* ── Header ── */}
       <div style={{ flexShrink: 0 }}>
