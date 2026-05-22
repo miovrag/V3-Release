@@ -71,12 +71,6 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const [streamedChars, setStreamedChars] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const msgEndRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Always play video
-  useEffect(() => {
-    videoRef.current?.play().catch(() => {});
-  }, []);
 
   const lightBg = hexLuminance(bgColor) > 0.4;
   const labelColor = lightBg ? "var(--text-muted)" : "rgba(255,255,255,0.45)";
@@ -120,220 +114,194 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     setStreamedChars(0);
   };
 
-  // dim overlay opacity: low during typing (video shines), high otherwise (video subtle)
-  const dimOpacity = phase === "typing" ? 0.08 : 0.74;
-  // chat UI opacity: hidden while video plays, revealed when answer ready
-  const uiOpacity = phase === "typing" ? 0 : 1;
-
   return (
-    <div style={{ position: "relative", height: "100vh", overflow: "hidden", background: bgColor }}>
+    <div style={{
+      display: "flex", flexDirection: "column",
+      height: "100vh",
+      background: bgColor,
+      overflow: "hidden",
+    }}>
 
-      {/* Layer 0 — video constrained to chat column width */}
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 0,
-        display: "flex", justifyContent: "center",
-        pointerEvents: "none",
-      }}>
-        <div style={{ width: "100%", maxWidth: 756, position: "relative" }}>
-          <video
-            ref={videoRef}
-            src="/thinking.mp4"
-            loop
-            muted
-            playsInline
-            style={{
-              position: "absolute", inset: 0,
-              width: "100%", height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Layer 1 — colour dim, transitions with phase */}
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 1,
-        background: bgColor,
-        opacity: dimOpacity,
-        transition: "opacity 1s ease",
-        pointerEvents: "none",
-      }} />
-
-      {/* Layer 2 — chat UI, fades out while video plays */}
-      <div style={{
-        position: "relative", zIndex: 2,
-        display: "flex", flexDirection: "column",
-        height: "100%",
-        opacity: uiOpacity,
-        transition: "opacity 0.8s ease",
-      }}>
-
-        {/* ── Header ── */}
-        <div style={{ flexShrink: 0 }}>
-          <div style={{
-            maxWidth: 756, margin: "0 auto",
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "var(--spacing-md) var(--spacing-lg)",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-              <div style={{ ...AVATAR_STYLE, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
-                {AGENT_INITIAL}
-              </div>
-              <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "#fff" }}>
-                {AGENT_NAME}
-              </span>
+      {/* ── Header ── */}
+      <div style={{ flexShrink: 0 }}>
+        <div style={{
+          maxWidth: 756, margin: "0 auto",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "var(--spacing-md) var(--spacing-lg)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
+            <div style={{ ...AVATAR_STYLE, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
+              {AGENT_INITIAL}
             </div>
-            {phase === "responded" && (
-              <button
-                onClick={reset}
-                style={{
-                  background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)",
-                  borderRadius: "var(--radius-md)", padding: "var(--spacing-xs) var(--spacing-sm)",
-                  color: "#fff", fontSize: "var(--text-xs)", cursor: "pointer", fontFamily: "inherit",
-                  display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
-                  transition: "background var(--t-state)",
-                }}
-              >
-                <i className="ti ti-refresh" style={{ fontSize: 12 }} />
-                Reset
-              </button>
-            )}
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "#fff" }}>
+              {AGENT_NAME}
+            </span>
           </div>
-        </div>
-
-        {/* ── Messages ── */}
-        <div style={{ flex: 1, overflowY: "auto" }}>
-          <div style={{
-            maxWidth: 756, margin: "0 auto",
-            padding: "var(--spacing-md) var(--spacing-lg)",
-            display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
-            justifyContent: phase === "idle" ? "center" : "flex-start",
-            alignItems: phase === "idle" ? "center" : "stretch",
-            minHeight: "100%",
-          }}>
-
-            {messages.map(msg =>
-              msg.role === "user" ? (
-                <div key={msg.id} style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <div style={{
-                    maxWidth: "75%",
-                    padding: "var(--spacing-sm) var(--spacing-md)",
-                    background: "rgba(255,255,255,0.2)",
-                    color: "#fff",
-                    borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl)",
-                    fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
-                  }}>
-                    {msg.text}
-                  </div>
-                </div>
-              ) : (
-                <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
-                  <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
-
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
-                    <div style={BUBBLE_STYLE}>
-                      <div style={{
-                        fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
-                        color: "var(--text-body)", whiteSpace: "pre-line", width: "100%",
-                      }}>
-                        {msg.id === streamingId ? msg.text.slice(0, streamedChars) : msg.text}
-                        {msg.id === streamingId && <span className="stream-cursor" />}
-                      </div>
-                      {msg.id !== "welcome" && msg.id !== streamingId && (
-                        <div style={{
-                          display: "flex", alignItems: "center", gap: 4,
-                          borderTop: "1px solid var(--border-default)",
-                          paddingTop: "var(--spacing-sm)",
-                          width: "100%",
-                          fontSize: "var(--text-xs)", color: "var(--text-muted)",
-                        }}>
-                          <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
-                          Powered by Enterprise Agents
-                        </div>
-                      )}
-                    </div>
-
-                    {msg.showRail && msg.id !== streamingId && (
-                      <>
-                        <div ref={msgEndRef} />
-                        <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
-                          <i className="ti ti-sparkles" style={{ fontSize: 11, color: labelColor }} />
-                          <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
-                            Your agent can do even more
-                          </span>
-                        </div>
-                        <PostCreationRail key={railKey} bgColor={bgColor} />
-                      </>
-                    )}
-                  </div>
-                </div>
-              )
-            )}
-
-            {/* Starter question cards */}
-            {phase === "idle" && messages.length === 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
-                {STARTER_QUESTIONS.map(q => (
-                  <button
-                    key={q}
-                    className="action-card"
-                    onClick={() => send(q)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 8,
-                      width: 574, padding: "16px",
-                      borderRadius: 8, background: "rgba(255,255,255,0.82)",
-                      fontFamily: "inherit", textAlign: "left", cursor: "pointer",
-                    }}
-                  >
-                    <i className="ti ti-message-question" style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }} />
-                    <span style={{ flex: 1, fontSize: "var(--text-sm)", color: "var(--text-body)", fontWeight: "var(--weight-medium)" }}>
-                      {q}
-                    </span>
-                    <span style={{ color: "var(--text-body)", fontSize: 14, flexShrink: 0 }}>→</span>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div ref={bottomRef} />
-          </div>
-        </div>
-
-        {/* ── Composer ── */}
-        <div style={{ flexShrink: 0 }}>
-          <div style={{
-            maxWidth: 756, margin: "0 auto",
-            display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
-            padding: "var(--spacing-md) var(--spacing-lg)",
-          }}>
-            <input
-              className="chat-input"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => { if (e.key === "Enter") send(input); }}
-              placeholder="Ask anything…"
-              disabled={phase === "typing"}
-            />
+          {phase === "responded" && (
             <button
-              onClick={() => send(input)}
-              disabled={phase === "typing" || !input.trim()}
+              onClick={reset}
               style={{
-                width: 36, height: 36, flexShrink: 0,
-                borderRadius: "var(--radius-full)",
-                background: input.trim() && phase !== "typing" ? "#fff" : "rgba(255,255,255,0.2)",
-                border: "none",
-                cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
-                display: "flex", alignItems: "center", justifyContent: "center",
+                background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)",
+                borderRadius: "var(--radius-md)", padding: "var(--spacing-xs) var(--spacing-sm)",
+                color: "#fff", fontSize: "var(--text-xs)", cursor: "pointer", fontFamily: "inherit",
+                display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
                 transition: "background var(--t-state)",
-                color: "var(--brand-primary-default)",
               }}
             >
-              <i className="ti ti-send" style={{ fontSize: 16 }} />
+              <i className="ti ti-refresh" style={{ fontSize: 12 }} />
+              Reset
             </button>
-          </div>
+          )}
         </div>
-
       </div>
+
+      {/* ── Messages ── */}
+      <div style={{ flex: 1, overflowY: "auto" }}>
+        <div style={{
+          maxWidth: 756, margin: "0 auto",
+          padding: "var(--spacing-md) var(--spacing-lg)",
+          display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
+          justifyContent: phase === "idle" ? "center" : "flex-start",
+          alignItems: phase === "idle" ? "center" : "stretch",
+          minHeight: "100%",
+        }}>
+
+          {messages.map(msg =>
+            msg.role === "user" ? (
+              <div key={msg.id} style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div style={{
+                  maxWidth: "75%",
+                  padding: "var(--spacing-sm) var(--spacing-md)",
+                  background: "rgba(255,255,255,0.2)",
+                  color: "#fff",
+                  borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl)",
+                  fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
+                }}>
+                  {msg.text}
+                </div>
+              </div>
+            ) : (
+              <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+                <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
+
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
+                  <div style={BUBBLE_STYLE}>
+                    <div style={{
+                      fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
+                      color: "var(--text-body)", whiteSpace: "pre-line", width: "100%",
+                    }}>
+                      {msg.id === streamingId ? msg.text.slice(0, streamedChars) : msg.text}
+                      {msg.id === streamingId && <span className="stream-cursor" />}
+                    </div>
+                    {msg.id !== "welcome" && msg.id !== streamingId && (
+                      <div style={{
+                        display: "flex", alignItems: "center", gap: 4,
+                        borderTop: "1px solid var(--border-default)",
+                        paddingTop: "var(--spacing-sm)",
+                        width: "100%",
+                        fontSize: "var(--text-xs)", color: "var(--text-muted)",
+                      }}>
+                        <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
+                        Powered by Enterprise Agents
+                      </div>
+                    )}
+                  </div>
+
+                  {msg.showRail && msg.id !== streamingId && (
+                    <>
+                      <div ref={msgEndRef} />
+                      <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
+                        <i className="ti ti-sparkles" style={{ fontSize: 11, color: labelColor }} />
+                        <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
+                          Your agent can do even more
+                        </span>
+                      </div>
+                      <PostCreationRail key={railKey} bgColor={bgColor} />
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          )}
+
+          {/* Typing indicator */}
+          {phase === "typing" && (
+            <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+              <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
+              <div style={{
+                display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
+                padding: "12px 16px", borderRadius: 8, background: "#FFF",
+              }}>
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+              </div>
+            </div>
+          )}
+
+          {/* Starter question cards */}
+          {phase === "idle" && messages.length === 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
+              {STARTER_QUESTIONS.map(q => (
+                <button
+                  key={q}
+                  className="action-card"
+                  onClick={() => send(q)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    width: 574, padding: "16px",
+                    borderRadius: 8, background: "rgba(255,255,255,0.82)",
+                    fontFamily: "inherit", textAlign: "left", cursor: "pointer",
+                  }}
+                >
+                  <i className="ti ti-message-question" style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }} />
+                  <span style={{ flex: 1, fontSize: "var(--text-sm)", color: "var(--text-body)", fontWeight: "var(--weight-medium)" }}>
+                    {q}
+                  </span>
+                  <span style={{ color: "var(--text-body)", fontSize: 14, flexShrink: 0 }}>→</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div ref={bottomRef} />
+        </div>
+      </div>
+
+      {/* ── Composer ── */}
+      <div style={{ flexShrink: 0 }}>
+        <div style={{
+          maxWidth: 756, margin: "0 auto",
+          display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
+          padding: "var(--spacing-md) var(--spacing-lg)",
+        }}>
+          <input
+            className="chat-input"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") send(input); }}
+            placeholder="Ask anything…"
+            disabled={phase === "typing"}
+          />
+          <button
+            onClick={() => send(input)}
+            disabled={phase === "typing" || !input.trim()}
+            style={{
+              width: 36, height: 36, flexShrink: 0,
+              borderRadius: "var(--radius-full)",
+              background: input.trim() && phase !== "typing" ? "#fff" : "rgba(255,255,255,0.2)",
+              border: "none",
+              cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "background var(--t-state)",
+              color: "var(--brand-primary-default)",
+            }}
+          >
+            <i className="ti ti-send" style={{ fontSize: 16 }} />
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 }
