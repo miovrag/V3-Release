@@ -182,8 +182,6 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
               </div>
             ) : (
               <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
-                <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
-
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
                   <div style={BUBBLE_STYLE}>
                     <div style={{
@@ -227,7 +225,6 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
           {/* Typing indicator */}
           {phase === "typing" && (
             <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
-              <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
               <div style={{
                 display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
                 padding: "12px 16px", borderRadius: 8, background: "#FFF",
