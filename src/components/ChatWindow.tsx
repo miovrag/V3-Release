@@ -65,9 +65,7 @@ interface ChatWindowProps {
 
 export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const [phase, setPhase] = useState<Phase>("idle");
-  const [messages, setMessages] = useState<Message[]>([
-    { id: "welcome", role: "agent", text: WELCOME },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [railKey, setRailKey] = useState(0);
   const [streamingId, setStreamingId] = useState<string | null>(null);
@@ -111,7 +109,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
   const reset = () => {
     setPhase("idle");
-    setMessages([{ id: "welcome", role: "agent", text: WELCOME }]);
+    setMessages([]);
     setRailKey(k => k + 1);
     setStreamingId(null);
     setStreamedChars(0);
@@ -245,7 +243,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
         )}
 
         {/* Starter question cards */}
-        {phase === "idle" && messages.length === 1 && (
+        {phase === "idle" && messages.length === 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
             {STARTER_QUESTIONS.map(q => (
               <button
