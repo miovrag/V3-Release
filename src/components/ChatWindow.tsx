@@ -269,8 +269,8 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       <div style={{ flexShrink: 0 }}>
         <div style={{
           maxWidth: 756, margin: "0 auto",
-          display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
           padding: "var(--spacing-md) var(--spacing-lg)",
+          position: "relative",
         }}>
           <input
             className="chat-input"
@@ -279,14 +279,17 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
             onKeyDown={e => { if (e.key === "Enter") send(input); }}
             placeholder="Ask anything…"
             disabled={phase === "typing"}
+            style={{ paddingRight: 52 }}
           />
           <button
             onClick={() => send(input)}
             disabled={phase === "typing" || !input.trim()}
             style={{
-              width: 36, height: 36, flexShrink: 0,
+              position: "absolute", right: "calc(var(--spacing-lg) + 6px)", top: "50%",
+              transform: "translateY(-50%)",
+              width: 32, height: 32,
               borderRadius: "var(--radius-full)",
-              background: input.trim() && phase !== "typing" ? "#fff" : "rgba(255,255,255,0.2)",
+              background: input.trim() && phase !== "typing" ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
               border: "none",
               cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
               display: "flex", alignItems: "center", justifyContent: "center",
@@ -294,7 +297,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
               color: "var(--brand-primary-default)",
             }}
           >
-            <i className="ti ti-send" style={{ fontSize: 16 }} />
+            <i className="ti ti-send" style={{ fontSize: 15 }} />
           </button>
         </div>
       </div>
