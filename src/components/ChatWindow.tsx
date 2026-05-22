@@ -77,6 +77,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   const [streamedChars, setStreamedChars] = useState(0);
   const [reactions, setReactions] = useState<Record<string, "up" | "down" | null>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [bottomVisible, setBottomVisible] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = (msg: Message) => {
@@ -102,12 +103,23 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   const sendActiveBg = lightBg ? "rgba(0,0,0,0.15)"     : "rgba(255,255,255,0.9)";
   const sendIdleBg   = lightBg ? "rgba(0,0,0,0.06)"     : "rgba(255,255,255,0.15)";
 
-  const showSuggestions = (!railDismissed && phase === "responded" && streamingId === null) || railExiting;
+  const showSuggestions = (!railDismissed && phase === "responded" && streamingId === null && bottomVisible) || railExiting;
   const bottomPanelHeight = showSuggestions ? 340 : 72;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, phase]);
+
+  useEffect(() => {
+    const el = bottomRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setBottomVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!streamingId) return;
@@ -149,6 +161,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
     setDisclaimerSeen(false);
     setStreamingId(null);
     setStreamedChars(0);
+    setBottomVisible(false);
   };
 
   const avatarStyle = {
