@@ -279,7 +279,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
             onKeyDown={e => { if (e.key === "Enter") send(input); }}
             placeholder="Ask anything…"
             disabled={phase === "typing"}
-            style={{ paddingRight: 52 }}
+            style={{ width: "100%", paddingRight: 52, boxSizing: "border-box" }}
           />
           <button
             onClick={() => send(input)}
