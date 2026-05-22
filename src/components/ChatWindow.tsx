@@ -9,7 +9,6 @@ interface Message {
   id: string;
   role: "agent" | "user";
   text: string;
-  showRail?: boolean;
 }
 
 const AGENT_INITIAL = "S";
@@ -20,9 +19,6 @@ const STARTER_QUESTIONS = [
   "How do I set a persona?",
   "How do Smart Tasks work?",
 ];
-
-const WELCOME =
-  "Hi! I'm trained on CustomGPT.ai's knowledge base and ready to help. Try one of the questions below or ask your own.";
 
 const MOCK_ANSWER =
   "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click 'Add integration'\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
@@ -70,14 +66,15 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [streamedChars, setStreamedChars] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const msgEndRef = useRef<HTMLDivElement>(null);
 
   const lightBg = hexLuminance(bgColor) > 0.4;
   const labelColor = lightBg ? "var(--text-muted)" : "rgba(255,255,255,0.45)";
 
+  // show suggestions once streaming is done
+  const showSuggestions = phase === "responded" && streamingId === null;
+
   useEffect(() => {
-    const target = msgEndRef.current ?? bottomRef.current;
-    target?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, phase]);
 
   useEffect(() => {
@@ -99,7 +96,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     setPhase("typing");
     setTimeout(() => {
       const id = `a-${Date.now()}`;
-      setMessages(prev => [...prev, { id, role: "agent", text: MOCK_ANSWER, showRail: true }]);
+      setMessages(prev => [...prev, { id, role: "agent", text: MOCK_ANSWER }]);
       setPhase("responded");
       setStreamingId(id);
       setStreamedChars(0);
@@ -114,8 +111,12 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     setStreamedChars(0);
   };
 
+  // bottom panel height estimate for scroll padding
+  const bottomPanelHeight = showSuggestions ? 340 : 72;
+
   return (
     <div style={{
+      position: "relative",
       display: "flex", flexDirection: "column",
       height: "100vh",
       background: bgColor,
@@ -159,7 +160,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       <div style={{ flex: 1, overflowY: "auto", isolation: "isolate" }}>
         <div style={{
           maxWidth: 756, margin: "0 auto",
-          padding: "var(--spacing-md) var(--spacing-lg)",
+          padding: `var(--spacing-md) var(--spacing-lg) ${bottomPanelHeight + 24}px`,
           display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
           justifyContent: phase === "idle" ? "center" : "flex-start",
           alignItems: phase === "idle" ? "center" : "stretch",
@@ -191,7 +192,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                       {msg.id === streamingId ? msg.text.slice(0, streamedChars) : msg.text}
                       {msg.id === streamingId && <span className="stream-cursor" />}
                     </div>
-                    {msg.id !== "welcome" && msg.id !== streamingId && (
+                    {msg.id !== streamingId && (
                       <div style={{
                         display: "flex", alignItems: "center", gap: 4,
                         borderTop: "1px solid var(--border-default)",
@@ -204,19 +205,6 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                       </div>
                     )}
                   </div>
-
-                  {msg.showRail && msg.id !== streamingId && (
-                    <>
-                      <div ref={msgEndRef} />
-                      <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)", paddingTop: "var(--spacing-xs)" }}>
-                        <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
-                        <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
-                          Your agent can do even more
-                        </span>
-                      </div>
-                      <PostCreationRail key={railKey} bgColor={bgColor} />
-                    </>
-                  )}
                 </div>
               </div>
             )
@@ -224,7 +212,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
           {/* Typing indicator */}
           {phase === "typing" && (
-            <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+            <div style={{ display: "flex", alignItems: "flex-start" }}>
               <div style={{
                 display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
                 padding: "12px 16px", borderRadius: 8, background: "#FFF",
@@ -265,40 +253,61 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
         </div>
       </div>
 
-      {/* ── Composer ── */}
-      <div style={{ flexShrink: 0 }}>
+      {/* ── Floating bottom panel: suggestions + input ── */}
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0,
+        zIndex: 30,
+      }}>
         <div style={{
           maxWidth: 756, margin: "0 auto",
-          padding: "var(--spacing-md) var(--spacing-lg)",
-          position: "relative",
+          padding: "0 var(--spacing-lg) var(--spacing-md)",
+          display: "flex", flexDirection: "column", gap: 8,
         }}>
-          <input
-            className="chat-input"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === "Enter") send(input); }}
-            placeholder="Ask anything…"
-            disabled={phase === "typing"}
-            style={{ width: "100%", paddingRight: 52, boxSizing: "border-box" }}
-          />
-          <button
-            onClick={() => send(input)}
-            disabled={phase === "typing" || !input.trim()}
-            style={{
-              position: "absolute", right: "calc(var(--spacing-lg) + 6px)", top: "50%",
-              transform: "translateY(-50%)",
-              width: 32, height: 32,
-              borderRadius: "var(--radius-full)",
-              background: input.trim() && phase !== "typing" ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
-              border: "none",
-              cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              transition: "background var(--t-state)",
-              color: "var(--brand-primary-default)",
-            }}
-          >
-            <i className="ti ti-send" style={{ fontSize: 15 }} />
-          </button>
+
+          {/* Suggestion cards */}
+          {showSuggestions && (
+            <>
+              <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
+                <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
+                <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
+                  Your agent can do even more
+                </span>
+              </div>
+              <PostCreationRail key={railKey} bgColor={bgColor} />
+            </>
+          )}
+
+          {/* Input */}
+          <div style={{ position: "relative" }}>
+            <input
+              className="chat-input"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter") send(input); }}
+              placeholder="Ask anything…"
+              disabled={phase === "typing"}
+              style={{ width: "100%", paddingRight: 52, boxSizing: "border-box" }}
+            />
+            <button
+              onClick={() => send(input)}
+              disabled={phase === "typing" || !input.trim()}
+              style={{
+                position: "absolute", right: 6, top: "50%",
+                transform: "translateY(-50%)",
+                width: 32, height: 32,
+                borderRadius: "var(--radius-full)",
+                background: input.trim() && phase !== "typing" ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
+                border: "none",
+                cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "background var(--t-state)",
+                color: "var(--brand-primary-default)",
+              }}
+            >
+              <i className="ti ti-send" style={{ fontSize: 15 }} />
+            </button>
+          </div>
+
         </div>
       </div>
 

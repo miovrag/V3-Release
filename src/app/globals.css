@@ -724,6 +724,16 @@ input, select { font-family: inherit; }
   transform: translateX(3px);
 }
 
+/* Suggestion card slide-up entrance */
+@keyframes slide-up-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tip-slide-in {
+  opacity: 0;
+  animation: slide-up-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* Stream cursor */
 @keyframes shimmer-slide {
   0%   { background-position: 250% center; }

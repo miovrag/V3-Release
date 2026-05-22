@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
 interface Tip {
   id: string;
@@ -42,24 +42,6 @@ interface Props {
 export default function PostCreationRail({ onDismissAll }: Props) {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [dismissing, setDismissing] = useState<Set<string>>(new Set());
-  const [inView, setInView] = useState(false);
-  const railRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = railRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   const visible = TIPS.filter(t => !dismissed.has(t.id));
 
@@ -79,50 +61,53 @@ export default function PostCreationRail({ onDismissAll }: Props) {
 
   return (
     <div
-      ref={railRef}
-      className={`rail-container${inView ? " rail-visible" : ""}`}
       style={{ display: "flex", flexDirection: "column", gap: 8 }}
       role="complementary"
       aria-label="Getting started tips"
     >
-      {visible.map((tip) => (
-        <div
-          key={tip.id}
-          className={`tip-row action-card${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
-          style={{
-            display: "flex",
-            width: "100%",
-            padding: "16px",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            gap: 8,
-            borderRadius: 8,
-            background: "rgba(255,255,255,0.82)",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
-            <i
-              className={`ti ${tip.icon}`}
-              style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }}
-            />
+      {visible.map((tip, idx) => {
+        // bottom card = visible.length-1 → delay 0; top card = 0 → longest delay
+        const delay = (visible.length - 1 - idx) * 140;
+        return (
+          <div
+            key={tip.id}
+            className={`tip-row action-card tip-slide-in${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
+            style={{
+              display: "flex",
+              width: "100%",
+              padding: "16px",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              gap: 8,
+              borderRadius: 8,
+              background: "rgba(255,255,255,0.82)",
+              animationDelay: `${delay}ms`,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
+              <i
+                className={`ti ${tip.icon}`}
+                style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }}
+              />
 
-            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-              <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
-                {tip.title}
-              </span>
-              <span style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-normal)" }}>
-                {tip.description}
-              </span>
+              <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+                <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
+                  {tip.title}
+                </span>
+                <span style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-normal)" }}>
+                  {tip.description}
+                </span>
+              </div>
+
+              <button className="cta-btn" style={{ flexShrink: 0 }}>
+                <span>{tip.cta.replace(" →", "")}</span>
+                <span>→</span>
+              </button>
             </div>
-
-            <button className="cta-btn" style={{ flexShrink: 0 }}>
-              <span>{tip.cta.replace(" →", "")}</span>
-              <span>→</span>
-            </button>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
