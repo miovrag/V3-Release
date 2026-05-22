@@ -757,13 +757,23 @@ input, select { font-family: inherit; }
   animation: slide-up-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Suggestion card slide-down exit */
+/* Suggestion card exit */
 @keyframes slide-down-out {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(14px); }
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(6px) scale(0.98); }
 }
 .tip-slide-out {
-  animation: slide-down-out 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: slide-down-out 0.3s cubic-bezier(0.42, 0, 1, 1) forwards;
+}
+
+/* Suggestions container exit */
+@keyframes container-fade-out {
+  0%   { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(8px); }
+}
+.suggestions-exiting {
+  animation: container-fade-out 0.4s cubic-bezier(0.42, 0, 0.8, 0) 0.1s forwards;
+  pointer-events: none;
 }
 
 /* Dim suggestions while user is typing; hover restores full visibility */

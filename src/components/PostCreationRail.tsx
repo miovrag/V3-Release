@@ -74,7 +74,7 @@ export default function PostCreationRail({ onDismissAll, isExiting = false }: Pr
         // bottom card = visible.length-1 → delay 0; top card = 0 → longest delay
         // entrance: bottom card first; exit: top card first
         const entranceDelay = (visible.length - 1 - idx) * 140;
-        const exitDelay     = idx * 110;
+        const exitDelay     = idx * 45;
         return (
           <div
             key={tip.id}

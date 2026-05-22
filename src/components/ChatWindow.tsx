@@ -374,7 +374,10 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
         }}>
 
           {showSuggestions && (
-            <div className={input.trim() ? "suggestions-dimmed" : undefined} style={{
+            <div className={[
+              input.trim() ? "suggestions-dimmed" : "",
+              railExiting ? "suggestions-exiting" : "",
+            ].filter(Boolean).join(" ") || undefined} style={{
               display: "flex", flexDirection: "column", gap: 8,
               padding: "12px 12px 8px",
               borderRadius: 14,
