@@ -41,17 +41,9 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
           <i className="ti ti-info-circle" style={{ fontSize: 14 }} />
           <span>Sources referenced in this response</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {open && (
-            <span style={{ color: "var(--text-muted)", fontWeight: "var(--weight-medium)" }}>
-              Reference {idx + 1}/{total}
-            </span>
-          )}
-          <i
-            className={`ti ti-chevron-${open ? "up" : "down"}`}
-            style={{ fontSize: 13, color: "var(--text-muted)", transition: "transform 0.2s" }}
-          />
-        </div>
+        <span style={{ color: "var(--text-muted)", fontWeight: "var(--weight-medium)" }}>
+          Reference {idx + 1}/{total}
+        </span>
       </button>
 
       {/* Body — only when expanded */}
