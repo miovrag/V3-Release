@@ -278,7 +278,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                 )}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0, maxWidth: 574 }}>
                   {messages.slice(0, msgIdx).every(m => m.role === "user") && (
-                    <span style={{ fontSize: "var(--text-xs)", color: disclaimerColor, paddingLeft: 2 }}>
+                    <span style={{ fontSize: "var(--text-xs)", color: disclaimerColor, paddingLeft: 16 }}>
                       CustomGPT.ai can make mistakes. Always check your answers.
                     </span>
                   )}
