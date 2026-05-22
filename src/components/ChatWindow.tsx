@@ -291,7 +291,17 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
         }}>
 
           {showSuggestions && (
-            <div className={input.trim() ? "suggestions-dimmed" : undefined} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div className={input.trim() ? "suggestions-dimmed" : undefined} style={{
+              display: "flex", flexDirection: "column", gap: 8,
+              padding: "12px 12px 8px",
+              borderRadius: 14,
+              background: "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.14) 100%)",
+              backdropFilter: "blur(28px) saturate(1.8)",
+              WebkitBackdropFilter: "blur(28px) saturate(1.8)",
+              border: "1px solid rgba(255,255,255,0.28)",
+              borderTopColor: "rgba(255,255,255,0.45)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), 0 8px 32px rgba(0,0,0,0.10)",
+            }}>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
                 <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
                 <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
