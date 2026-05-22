@@ -92,6 +92,23 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   };
 
   const lightBg = hexLuminance(bgColor) > 0.4;
+  const bgL = hexLuminance(bgColor);
+
+  // WCAG AA compliant color for disclaimer (≥4.5:1 against bgColor)
+  const disclaimerColor = (() => {
+    const darkContrast  = (bgL + 0.05) / 0.05;   // black on bg
+    const lightContrast = 1.05 / (bgL + 0.05);    // white on bg
+    if (darkContrast >= lightContrast) {
+      // Light background: pick darkest gray that achieves 5:1 (buffer above 4.5)
+      const targetL = Math.max(0, (bgL + 0.05) / 5.0 - 0.05);
+      const s = targetL <= 0.0031308 ? targetL * 12.92 : 1.055 * Math.pow(targetL, 1 / 2.4) - 0.055;
+      const v = Math.round(Math.min(255, s * 255));
+      const h = v.toString(16).padStart(2, "0");
+      return `#${h}${h}${h}`;
+    }
+    // Dark background: white is always the highest available contrast
+    return "#ffffff";
+  })();
 
   // Contrast-aware tokens
   const textOnBg    = lightBg ? "var(--text-body)"      : "#fff";
@@ -261,7 +278,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                 )}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0, maxWidth: 574 }}>
                   {messages.slice(0, msgIdx).every(m => m.role === "user") && (
-                    <span style={{ fontSize: "var(--text-xs)", color: dimTextOnBg, paddingLeft: 2 }}>
+                    <span style={{ fontSize: "var(--text-xs)", color: disclaimerColor, paddingLeft: 2 }}>
                       CustomGPT.ai can make mistakes. Always check your answers.
                     </span>
                   )}
