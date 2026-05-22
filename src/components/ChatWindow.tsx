@@ -263,7 +263,11 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       </div>
 
       {/* ── Floating bottom panel: suggestions + input ── */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 30 }}>
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 30,
+        background: `linear-gradient(to bottom, transparent, ${bgColor} 40%)`,
+        paddingTop: 48,
+      }}>
         <div style={{
           maxWidth: 756, margin: "0 auto",
           padding: "0 var(--spacing-lg) var(--spacing-md)",
