@@ -246,7 +246,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                   onClick={() => send(q)}
                   style={{
                     display: "flex", alignItems: "center", gap: 8,
-                    width: 574, padding: "16px",
+                    width: "100%", padding: "16px",
                     borderRadius: 8, background: "rgba(255,255,255,0.82)",
                     fontFamily: "inherit", textAlign: "left", cursor: "pointer",
                   }}

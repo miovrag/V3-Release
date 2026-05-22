@@ -91,7 +91,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
           className={`tip-row action-card${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
           style={{
             display: "flex",
-            width: 574,
+            width: "100%",
             padding: "16px",
             flexDirection: "column",
             justifyContent: "center",
