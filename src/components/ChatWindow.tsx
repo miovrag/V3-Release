@@ -2,13 +2,21 @@
 
 import { useState, useEffect, useRef } from "react";
 import PostCreationRail from "./PostCreationRail";
+import SourcesCard from "./SourcesCard";
 
 type Phase = "idle" | "typing" | "responded";
+
+interface Source {
+  name: string;
+  url: string;
+  domain: string;
+}
 
 interface Message {
   id: string;
   role: "agent" | "user";
   text: string;
+  sources?: Source[];
 }
 
 const AGENT_INITIAL = "S";
@@ -22,6 +30,12 @@ const STARTER_QUESTIONS = [
 
 const MOCK_ANSWER =
   "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click 'Add integration'\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
+
+const MOCK_SOURCES: Source[] = [
+  { name: "Integrations Setup Guide 2025.pdf", url: "#", domain: "app.customgpt.ai" },
+  { name: "Actions & Permissions Overview.pdf", url: "#", domain: "app.customgpt.ai" },
+  { name: "Agent Builder Documentation.pdf",   url: "#", domain: "app.customgpt.ai" },
+];
 
 const BUBBLE_STYLE = {
   display: "flex",
@@ -118,7 +132,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
     setPhase("typing");
     setTimeout(() => {
       const id = `a-${Date.now()}`;
-      setMessages(prev => [...prev, { id, role: "agent", text: MOCK_ANSWER }]);
+      setMessages(prev => [...prev, { id, role: "agent", text: MOCK_ANSWER, sources: MOCK_SOURCES }]);
       setPhase("responded");
       setStreamingId(id);
       setStreamedChars(0);
@@ -219,7 +233,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                 {showAvatar && (
                   <div style={{ ...avatarStyle, marginTop: 2 }}>{AGENT_INITIAL}</div>
                 )}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0, maxWidth: 574 }}>
                   <div style={BUBBLE_STYLE}>
                     <div style={{
                       fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
@@ -274,6 +288,9 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                       </div>
                     )}
                   </div>
+                  {msg.id !== streamingId && msg.sources && msg.sources.length > 0 && (
+                    <SourcesCard sources={msg.sources} />
+                  )}
                 </div>
               </div>
             )
