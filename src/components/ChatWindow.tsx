@@ -177,7 +177,9 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
       position: "relative",
       display: "flex", flexDirection: "column",
       height: "100vh",
-      background: bgColor,
+      background: lightBg
+        ? `linear-gradient(178deg, #ffffff 0%, ${bgColor} 100%)`
+        : bgColor,
       overflow: "hidden",
     }}>
 

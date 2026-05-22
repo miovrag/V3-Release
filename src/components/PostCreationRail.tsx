@@ -8,6 +8,7 @@ interface Tip {
   title: string;
   description: string;
   cta: string;
+  href: string;
 }
 
 const TIPS: Tip[] = [
@@ -17,6 +18,7 @@ const TIPS: Tip[] = [
     title: "I can act, not just answer",
     description: "Connect me to Slack, GitHub, or your CRM — I'll take actions, not just give advice.",
     cta: "Add integrations →",
+    href: "https://agent-personalize.vercel.app",
   },
   {
     id: "persona",
@@ -24,6 +26,7 @@ const TIPS: Tip[] = [
     title: "I can sound exactly like you",
     description: "Give me a tone, a name, and guardrails — every reply will feel like it came from your team.",
     cta: "Set my voice →",
+    href: "https://agent-personalize-persona-blue.vercel.app",
   },
   {
     id: "smart-tasks",
@@ -31,6 +34,7 @@ const TIPS: Tip[] = [
     title: "I can send this to you automatically",
     description: "Turn any question into a recurring report — daily, weekly, or whenever something changes.",
     cta: "Schedule it →",
+    href: "https://agent-personalize-intelligence-eta.vercel.app",
   },
 ];
 
@@ -103,10 +107,16 @@ export default function PostCreationRail({ onDismissAll, isExiting = false }: Pr
                 </span>
               </div>
 
-              <button className="cta-btn" style={{ flexShrink: 0 }}>
+              <a
+                href={tip.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cta-btn"
+                style={{ flexShrink: 0, textDecoration: "none" }}
+              >
                 <span>{tip.cta.replace(" →", "")}</span>
                 <span>→</span>
-              </button>
+              </a>
             </div>
           </div>
         );
