@@ -124,11 +124,12 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     }}>
 
       {/* ── Header ── */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "var(--spacing-md) var(--spacing-lg)",
-        flexShrink: 0,
-      }}>
+      <div style={{ flexShrink: 0 }}>
+        <div style={{
+          maxWidth: 960, margin: "0 auto",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "var(--spacing-md) var(--spacing-lg)",
+        }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
           <div style={{ ...AVATAR_STYLE, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
             {AGENT_INITIAL}
@@ -152,16 +153,19 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
             Reset
           </button>
         )}
+        </div>
       </div>
 
       {/* ── Messages ── */}
-      <div style={{
-        flex: 1, overflowY: "auto",
-        padding: "var(--spacing-md) var(--spacing-lg)",
-        display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
-        justifyContent: phase === "idle" ? "center" : "flex-start",
-        alignItems: phase === "idle" ? "center" : "stretch",
-      }}>
+      <div style={{ flex: 1, overflowY: "auto" }}>
+        <div style={{
+          maxWidth: 960, margin: "0 auto",
+          padding: "var(--spacing-md) var(--spacing-lg)",
+          display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
+          justifyContent: phase === "idle" ? "center" : "flex-start",
+          alignItems: phase === "idle" ? "center" : "stretch",
+          minHeight: "100%",
+        }}>
 
         {messages.map(msg =>
           msg.role === "user" ? (
@@ -267,15 +271,17 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
           </div>
         )}
 
-        <div ref={bottomRef} />
+          <div ref={bottomRef} />
+        </div>
       </div>
 
       {/* ── Composer ── */}
-      <div style={{
-        display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
-        padding: "var(--spacing-md) var(--spacing-lg)",
-        flexShrink: 0,
-      }}>
+      <div style={{ flexShrink: 0 }}>
+        <div style={{
+          maxWidth: 960, margin: "0 auto",
+          display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
+          padding: "var(--spacing-md) var(--spacing-lg)",
+        }}>
         <input
           className="chat-input"
           value={input}
@@ -300,6 +306,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
         >
           <i className="ti ti-send" style={{ fontSize: 16 }} />
         </button>
+        </div>
       </div>
 
     </div>
