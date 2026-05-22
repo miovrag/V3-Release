@@ -283,12 +283,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
         }}>
 
           {showSuggestions && (
-            <div style={{
-              display: "flex", flexDirection: "column", gap: 8,
-              opacity: input.trim() ? 0.35 : 1,
-              transition: "opacity 0.25s ease",
-              pointerEvents: input.trim() ? "none" : "auto",
-            }}>
+            <div className={input.trim() ? "suggestions-dimmed" : undefined} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
                 <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
                 <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>

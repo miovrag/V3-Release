@@ -766,6 +766,15 @@ input, select { font-family: inherit; }
   animation: slide-down-out 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
+/* Dim suggestions while user is typing; hover restores full visibility */
+.suggestions-dimmed {
+  opacity: 0.35;
+  transition: opacity 0.25s ease;
+}
+.suggestions-dimmed:hover {
+  opacity: 1;
+}
+
 /* Stream cursor */
 @keyframes shimmer-slide {
   0%   { background-position: 250% center; }
