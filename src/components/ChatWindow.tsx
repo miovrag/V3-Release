@@ -240,7 +240,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
           minHeight: "100%",
         }}>
 
-          {messages.map(msg =>
+          {messages.map((msg, msgIdx) =>
             msg.role === "user" ? (
               <div key={msg.id} style={{ display: "flex", justifyContent: "flex-end" }}>
                 <div style={{
@@ -260,6 +260,11 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                   <div style={{ ...avatarStyle, marginTop: 2 }}>{AGENT_INITIAL}</div>
                 )}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0, maxWidth: 574 }}>
+                  {msgIdx === 0 && (
+                    <span style={{ fontSize: "var(--text-xs)", color: dimTextOnBg, paddingLeft: 2 }}>
+                      CustomGPT.ai can make mistakes. Always check your answers.
+                    </span>
+                  )}
                   <div style={BUBBLE_STYLE}>
                     <div style={{
                       fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
@@ -333,11 +338,6 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                 <span className="typing-dot" />
                 <span className="typing-dot" />
               </div>
-              {!disclaimerSeen && (
-                <span style={{ fontSize: "var(--text-xs)", color: dimTextOnBg, paddingLeft: 4 }}>
-                  CustomGPT.ai can make mistakes. Always check your answers.
-                </span>
-              )}
             </div>
           )}
 
