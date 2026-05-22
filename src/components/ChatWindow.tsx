@@ -72,6 +72,18 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const [streamedChars, setStreamedChars] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const msgEndRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+    if (phase === "typing") {
+      vid.currentTime = 0;
+      vid.play().catch(() => {});
+    } else {
+      vid.pause();
+    }
+  }, [phase]);
 
   const lightBg = hexLuminance(bgColor) > 0.4;
   const labelColor = lightBg ? "var(--text-muted)" : "rgba(255,255,255,0.45)";
@@ -117,11 +129,29 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
   return (
     <div style={{
+      position: "relative",
       display: "flex", flexDirection: "column",
       height: "100vh",
       background: bgColor,
       overflow: "hidden",
     }}>
+
+      {/* ── Thinking video overlay ── */}
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 20,
+        opacity: phase === "typing" ? 1 : 0,
+        pointerEvents: phase === "typing" ? "all" : "none",
+        transition: "opacity 0.5s ease",
+      }}>
+        <video
+          ref={videoRef}
+          src="/thinking.mp4"
+          loop
+          muted
+          playsInline
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </div>
 
       {/* ── Header ── */}
       <div style={{ flexShrink: 0 }}>
