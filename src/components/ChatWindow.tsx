@@ -78,6 +78,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   const [reactions, setReactions] = useState<Record<string, "up" | "down" | null>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [bottomVisible, setBottomVisible] = useState(false);
+  const [hasReachedBottom, setHasReachedBottom] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = (msg: Message) => {
@@ -103,7 +104,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   const sendActiveBg = lightBg ? "rgba(0,0,0,0.15)"     : "rgba(255,255,255,0.9)";
   const sendIdleBg   = lightBg ? "rgba(0,0,0,0.06)"     : "rgba(255,255,255,0.15)";
 
-  const showSuggestions = (!railDismissed && phase === "responded" && streamingId === null && bottomVisible) || railExiting;
+  const showSuggestions = (!railDismissed && phase === "responded" && streamingId === null && hasReachedBottom) || railExiting;
   const bottomPanelHeight = showSuggestions ? 340 : 72;
 
   useEffect(() => {
@@ -120,6 +121,13 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  // Latch: once user has scrolled to bottom after answer streams, stay latched
+  useEffect(() => {
+    if (phase === "responded" && streamingId === null && bottomVisible) {
+      setHasReachedBottom(true);
+    }
+  }, [phase, streamingId, bottomVisible]);
 
   useEffect(() => {
     if (!streamingId) return;
@@ -162,6 +170,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
     setStreamingId(null);
     setStreamedChars(0);
     setBottomVisible(false);
+    setHasReachedBottom(false);
   };
 
   const avatarStyle = {
