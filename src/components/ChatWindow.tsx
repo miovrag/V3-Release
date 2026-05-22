@@ -120,9 +120,8 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   return (
     <div style={{
       display: "flex", flexDirection: "column",
-      height: "calc(100vh - 104px)",
+      height: "100vh",
       background: bgColor,
-      borderRadius: "var(--radius-xl)",
       overflow: "hidden",
     }}>
 
