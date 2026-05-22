@@ -301,11 +301,15 @@ export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
                   }}
                   style={{
                     marginLeft: "auto",
-                    background: "none", border: "none", padding: "2px 6px",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.10)",
+                    backdropFilter: "blur(16px) saturate(1.6)",
+                    WebkitBackdropFilter: "blur(16px) saturate(1.6)",
+                    padding: "2px 8px",
                     fontSize: "var(--text-xs)", color: dimTextOnBg,
                     cursor: "pointer", fontFamily: "inherit",
                     borderRadius: "var(--radius-sm)",
-                    transition: "color var(--t-state)",
+                    transition: "background var(--t-state), border-color var(--t-state), color var(--t-state)",
                   }}
                 >
                   Not now
