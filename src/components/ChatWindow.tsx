@@ -57,6 +57,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
   const [railKey, setRailKey] = useState(0);
   const [railDismissed, setRailDismissed] = useState(false);
   const [railExiting, setRailExiting] = useState(false);
+  const [disclaimerSeen, setDisclaimerSeen] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [streamedChars, setStreamedChars] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -108,6 +109,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
       setPhase("responded");
       setStreamingId(id);
       setStreamedChars(0);
+      setDisclaimerSeen(true);
     }, 5000);
   };
 
@@ -117,6 +119,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
     setRailKey(k => k + 1);
     setRailDismissed(false);
     setRailExiting(false);
+    setDisclaimerSeen(false);
     setStreamingId(null);
     setStreamedChars(0);
   };
@@ -235,9 +238,11 @@ export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
                 <span className="typing-dot" />
                 <span className="typing-dot" />
               </div>
-              <span style={{ fontSize: "var(--text-xs)", color: dimTextOnBg, paddingLeft: 4 }}>
-                CustomGPT.ai can make mistakes. Always check your answers.
-              </span>
+              {!disclaimerSeen && (
+                <span style={{ fontSize: "var(--text-xs)", color: dimTextOnBg, paddingLeft: 4 }}>
+                  CustomGPT.ai can make mistakes. Always check your answers.
+                </span>
+              )}
             </div>
           )}
 
