@@ -100,7 +100,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       setPhase("responded");
       setStreamingId(id);
       setStreamedChars(0);
-    }, 3000);
+    }, 5000);
   };
 
   const reset = () => {
