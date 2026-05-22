@@ -895,3 +895,18 @@ input, select { font-family: inherit; }
   background: linear-gradient(var(--bg-angle), #ffffff 0%, var(--bg-end) 100%);
   animation: bg-drift 22s ease-in-out infinite;
 }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .chat-layout-header,
+  .chat-layout-messages,
+  .chat-layout-panel {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+
+  .bubble-footer {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}

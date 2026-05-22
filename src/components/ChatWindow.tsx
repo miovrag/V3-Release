@@ -39,7 +39,7 @@ const MOCK_SOURCES: Source[] = [
 
 const BUBBLE_STYLE = {
   display: "flex",
-  width: 574,
+  width: "100%",
   padding: "16px",
   flexDirection: "column" as const,
   justifyContent: "center",
@@ -196,7 +196,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
 
       {/* ── Header ── */}
       <div style={{ flexShrink: 0 }}>
-        <div style={{
+        <div className="chat-layout-header" style={{
           maxWidth: 756, margin: "0 auto",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "var(--spacing-md) var(--spacing-lg)",
@@ -231,7 +231,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
 
       {/* ── Messages ── */}
       <div style={{ flex: 1, overflowY: "auto", isolation: "isolate" }}>
-        <div style={{
+        <div className="chat-layout-messages" style={{
           maxWidth: 756, margin: "0 auto",
           padding: `var(--spacing-md) var(--spacing-lg) ${bottomPanelHeight + 24}px`,
           display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
@@ -269,7 +269,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                       {msg.id === streamingId && <span className="stream-cursor" />}
                     </div>
                     {msg.id !== streamingId && (
-                      <div style={{
+                      <div className="bubble-footer" style={{
                         display: "flex", alignItems: "center", justifyContent: "space-between",
                         borderTop: "1px solid var(--border-default)",
                         paddingTop: "var(--spacing-sm)", width: "100%",
@@ -376,7 +376,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
         background: `linear-gradient(to bottom, transparent, ${bgColor} 40%)`,
         paddingTop: 48,
       }}>
-        <div style={{
+        <div className="chat-layout-panel" style={{
           maxWidth: 756, margin: "0 auto",
           padding: "0 var(--spacing-lg) var(--spacing-md)",
           display: "flex", flexDirection: "column", gap: 8,
