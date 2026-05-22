@@ -90,7 +90,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   }, [streamingId, streamedChars, messages]);
 
   const send = (text: string) => {
-    if (phase !== "idle" || !text.trim()) return;
+    if (phase === "typing" || !text.trim()) return;
     setMessages(prev => [...prev, { id: `u-${Date.now()}`, role: "user", text }]);
     setInput("");
     setPhase("typing");
