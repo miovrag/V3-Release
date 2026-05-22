@@ -212,7 +212,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
           {/* Typing indicator */}
           {phase === "typing" && (
-            <div style={{ display: "flex", alignItems: "flex-start" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
               <div style={{
                 display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
                 padding: "12px 16px", borderRadius: 8, background: "#FFF",
@@ -221,6 +221,9 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 <span className="typing-dot" />
                 <span className="typing-dot" />
               </div>
+              <span style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.4)", paddingLeft: 4 }}>
+                CustomGPT.ai can make mistakes. Always check your answers.
+              </span>
             </div>
           )}
 
