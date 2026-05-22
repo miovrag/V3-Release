@@ -27,6 +27,7 @@ function hexLuminance(hex: string): number {
 
 export default function ChatPage() {
   const [bgColor, setBgColor] = useState("#FAFAFA");
+  const [showAvatar, setShowAvatar] = useState(true);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -56,7 +57,7 @@ export default function ChatPage() {
 
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <ChatWindow bgColor={bgColor} />
+      <ChatWindow bgColor={bgColor} showAvatar={showAvatar} />
 
       {/* Floating colour picker */}
       <div ref={ref} style={{ position: "absolute", top: 16, right: 16, zIndex: 100 }}>
@@ -128,6 +129,33 @@ export default function ChatPage() {
                 </span>
               </div>
             </div>
+
+            {/* Avatar toggle */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>Agent avatar</span>
+              <button
+                onClick={() => setShowAvatar(v => !v)}
+                style={{
+                  width: 36, height: 20, padding: 0,
+                  borderRadius: 10, border: "none", cursor: "pointer",
+                  background: showAvatar ? "var(--brand-primary-default)" : "var(--border-emphasis)",
+                  position: "relative",
+                  transition: "background var(--t-state)",
+                  flexShrink: 0,
+                }}
+                aria-label="Toggle agent avatar"
+              >
+                <span style={{
+                  position: "absolute", top: 2,
+                  left: showAvatar ? 18 : 2,
+                  width: 16, height: 16,
+                  borderRadius: "50%", background: "#fff",
+                  transition: "left var(--t-state)",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                }} />
+              </button>
+            </div>
+
           </div>
         )}
       </div>

@@ -48,9 +48,10 @@ function hexLuminance(hex: string): number {
 
 interface ChatWindowProps {
   bgColor?: string;
+  showAvatar?: boolean;
 }
 
-export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
+export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: ChatWindowProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -149,9 +150,11 @@ export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
           padding: "var(--spacing-md) var(--spacing-lg)",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-            <div style={{ ...avatarStyle, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
-              {AGENT_INITIAL}
-            </div>
+            {showAvatar && (
+              <div style={{ ...avatarStyle, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
+                {AGENT_INITIAL}
+              </div>
+            )}
             <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: textOnBg }}>
               {AGENT_NAME}
             </span>
