@@ -723,7 +723,7 @@ input, select { font-family: inherit; }
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer-slide 5.2s ease-in-out 1.2s infinite alternate;
+  animation: shimmer-slide 8s ease-in-out 1.2s infinite;
 }
 
 @keyframes blink {
