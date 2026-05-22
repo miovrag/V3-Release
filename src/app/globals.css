@@ -712,6 +712,18 @@ input, select { font-family: inherit; }
   background: rgba(255,255,255,0.95) !important;
 }
 
+@media (dynamic-range: high) {
+  .action-card:hover {
+    border-color: color(display-p3 1.4 1.4 1.4);
+    box-shadow:
+      0 4px 20px rgba(0,0,0,0.14),
+      0 0 0 1px color(display-p3 1.2 1.2 1.2),
+      0 0 18px color(display-p3 1.6 1.5 2.2),
+      0 0 6px  color(display-p3 1.8 1.8 1.8);
+    background: color(display-p3 1.05 1.05 1.05) !important;
+  }
+}
+
 /* Ghost CTA button inside action cards */
 .cta-btn {
   background: none;
