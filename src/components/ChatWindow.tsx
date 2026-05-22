@@ -156,7 +156,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       </div>
 
       {/* ── Messages ── */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
+      <div style={{ flex: 1, overflowY: "auto", isolation: "isolate" }}>
         <div style={{
           maxWidth: 756, margin: "0 auto",
           padding: "var(--spacing-md) var(--spacing-lg)",
