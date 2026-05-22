@@ -706,8 +706,8 @@ input, select { font-family: inherit; }
 
 /* Stream cursor */
 @keyframes shimmer-slide {
-  0%   { background-position: 250% center; }
-  100% { background-position: -250% center; }
+  0%   { background-position: -250% center; }
+  100% { background-position: 250% center; }
 }
 .shimmer-label {
   display: inline-block;
