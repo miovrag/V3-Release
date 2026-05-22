@@ -74,7 +74,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const sendActiveBg = lightBg ? "rgba(0,0,0,0.15)"     : "rgba(255,255,255,0.9)";
   const sendIdleBg   = lightBg ? "rgba(0,0,0,0.06)"     : "rgba(255,255,255,0.15)";
 
-  const showSuggestions = phase === "responded" && streamingId === null && !railDismissed;
+  const showSuggestions = (!railDismissed && phase === "responded" && streamingId === null) || railExiting;
   const bottomPanelHeight = showSuggestions ? 340 : 72;
 
   useEffect(() => {
