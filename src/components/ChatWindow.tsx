@@ -126,7 +126,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       {/* ── Header ── */}
       <div style={{ flexShrink: 0 }}>
         <div style={{
-          maxWidth: 960, margin: "0 auto",
+          maxWidth: 756, margin: "0 auto",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "var(--spacing-md) var(--spacing-lg)",
         }}>
@@ -159,7 +159,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       {/* ── Messages ── */}
       <div style={{ flex: 1, overflowY: "auto" }}>
         <div style={{
-          maxWidth: 960, margin: "0 auto",
+          maxWidth: 756, margin: "0 auto",
           padding: "var(--spacing-md) var(--spacing-lg)",
           display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
           justifyContent: phase === "idle" ? "center" : "flex-start",
@@ -278,7 +278,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       {/* ── Composer ── */}
       <div style={{ flexShrink: 0 }}>
         <div style={{
-          maxWidth: 960, margin: "0 auto",
+          maxWidth: 756, margin: "0 auto",
           display: "flex", gap: "var(--spacing-sm)", alignItems: "center",
           padding: "var(--spacing-md) var(--spacing-lg)",
         }}>
