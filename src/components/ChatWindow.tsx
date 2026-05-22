@@ -55,6 +55,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [railKey, setRailKey] = useState(0);
+  const [railDismissed, setRailDismissed] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [streamedChars, setStreamedChars] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -72,7 +73,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const sendActiveBg = lightBg ? "rgba(0,0,0,0.15)"     : "rgba(255,255,255,0.9)";
   const sendIdleBg   = lightBg ? "rgba(0,0,0,0.06)"     : "rgba(255,255,255,0.15)";
 
-  const showSuggestions = phase === "responded" && streamingId === null;
+  const showSuggestions = phase === "responded" && streamingId === null && !railDismissed;
   const bottomPanelHeight = showSuggestions ? 340 : 72;
 
   useEffect(() => {
@@ -109,6 +110,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     setPhase("idle");
     setMessages([]);
     setRailKey(k => k + 1);
+    setRailDismissed(false);
     setStreamingId(null);
     setStreamedChars(0);
   };
@@ -281,6 +283,19 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
                   Your agent can do even more
                 </span>
+                <button
+                  onClick={() => setRailDismissed(true)}
+                  style={{
+                    marginLeft: "auto",
+                    background: "none", border: "none", padding: "2px 6px",
+                    fontSize: "var(--text-xs)", color: dimTextOnBg,
+                    cursor: "pointer", fontFamily: "inherit",
+                    borderRadius: "var(--radius-sm)",
+                    transition: "color var(--t-state)",
+                  }}
+                >
+                  Not now
+                </button>
               </div>
               <PostCreationRail key={railKey} bgColor={bgColor} />
             </>
