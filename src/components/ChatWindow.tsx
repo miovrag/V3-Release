@@ -39,7 +39,7 @@ const AVATAR_STYLE = {
 const BUBBLE_STYLE = {
   display: "flex",
   width: 574,
-  padding: "8px 16px",
+  padding: "16px",
   flexDirection: "column" as const,
   justifyContent: "center",
   alignItems: "flex-start" as const,
@@ -256,7 +256,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 onClick={() => send(q)}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
-                  width: 574, padding: "8px 16px",
+                  width: 574, padding: "16px",
                   borderRadius: 8, background: "rgba(255,255,255,0.82)",
                   fontFamily: "inherit", textAlign: "left", cursor: "pointer",
                 }}

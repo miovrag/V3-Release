@@ -92,7 +92,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
           style={{
             display: "flex",
             width: 574,
-            padding: "8px 16px",
+            padding: "16px",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "flex-start",
