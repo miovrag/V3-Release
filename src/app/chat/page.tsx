@@ -5,13 +5,13 @@ import ChatWindow from "@/components/ChatWindow";
 
 const PRESETS = [
   { label: "Brand purple",  value: "#7367F0" },
-  { label: "Deep navy",     value: "#1e2a4a" },
-  { label: "Forest",        value: "#1b4332" },
-  { label: "Midnight",      value: "#0f0f1a" },
-  { label: "Ocean",         value: "#0369a1" },
-  { label: "Rose",          value: "#9f1239" },
-  { label: "Slate",         value: "#334155" },
-  { label: "Graphite",      value: "#27272a" },
+  { label: "Brand active",  value: "#5C53C0" },
+  { label: "Success",       value: "#28C76F" },
+  { label: "Warning",       value: "#FF9F43" },
+  { label: "Error",         value: "#EA5455" },
+  { label: "Info",          value: "#00CFE8" },
+  { label: "Heading",       value: "#171717" },
+  { label: "Body",          value: "#404040" },
 ];
 
 export default function ChatPage() {
