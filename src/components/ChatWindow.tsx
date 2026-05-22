@@ -174,7 +174,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
       setStreamingId(id);
       setStreamedChars(0);
       setDisclaimerSeen(true);
-    }, 5000);
+    }, 1000);
   };
 
   const reset = () => {
