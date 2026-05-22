@@ -161,6 +161,8 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
         flex: 1, overflowY: "auto",
         padding: "var(--spacing-md) var(--spacing-lg)",
         display: "flex", flexDirection: "column", gap: "var(--spacing-md)",
+        justifyContent: phase === "idle" ? "center" : "flex-start",
+        alignItems: phase === "idle" ? "center" : "stretch",
       }}>
 
         {messages.map(msg =>
@@ -176,6 +178,12 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
               }}>
                 {msg.text}
               </div>
+            </div>
+          ) : msg.id === "welcome" && phase === "idle" ? (
+            <div key={msg.id} style={{ maxWidth: 574, textAlign: "center" }}>
+              <p style={{ margin: 0, fontSize: "var(--text-sm)", color: "rgba(255,255,255,0.85)", lineHeight: "var(--leading-relaxed)" }}>
+                {msg.text}
+              </p>
             </div>
           ) : (
             <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
@@ -238,29 +246,26 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
 
         {/* Starter question cards */}
         {phase === "idle" && messages.length === 1 && (
-          <div style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
-            <div style={AVATAR_STYLE}>{AGENT_INITIAL}</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
-              {STARTER_QUESTIONS.map(q => (
-                <button
-                  key={q}
-                  className="action-card"
-                  onClick={() => send(q)}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 8,
-                    width: 574, padding: "8px 16px",
-                    borderRadius: 8, background: "rgba(255,255,255,0.82)",
-                    fontFamily: "inherit", textAlign: "left", cursor: "pointer",
-                  }}
-                >
-                  <i className="ti ti-message-question" style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }} />
-                  <span style={{ flex: 1, fontSize: "var(--text-sm)", color: "var(--text-body)", fontWeight: "var(--weight-medium)" }}>
-                    {q}
-                  </span>
-                  <span style={{ color: "var(--text-body)", fontSize: 14, flexShrink: 0 }}>→</span>
-                </button>
-              ))}
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
+            {STARTER_QUESTIONS.map(q => (
+              <button
+                key={q}
+                className="action-card"
+                onClick={() => send(q)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  width: 574, padding: "8px 16px",
+                  borderRadius: 8, background: "rgba(255,255,255,0.82)",
+                  fontFamily: "inherit", textAlign: "left", cursor: "pointer",
+                }}
+              >
+                <i className="ti ti-message-question" style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }} />
+                <span style={{ flex: 1, fontSize: "var(--text-sm)", color: "var(--text-body)", fontWeight: "var(--weight-medium)" }}>
+                  {q}
+                </span>
+                <span style={{ color: "var(--text-body)", fontSize: 14, flexShrink: 0 }}>→</span>
+              </button>
+            ))}
           </div>
         )}
 
