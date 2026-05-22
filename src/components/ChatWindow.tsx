@@ -61,7 +61,19 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   const [disclaimerSeen, setDisclaimerSeen] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [streamedChars, setStreamedChars] = useState(0);
+  const [reactions, setReactions] = useState<Record<string, "up" | "down" | null>>({});
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const handleCopy = (msg: Message) => {
+    navigator.clipboard.writeText(msg.text);
+    setCopiedId(msg.id);
+    setTimeout(() => setCopiedId(id => id === msg.id ? null : id), 1800);
+  };
+
+  const handleReaction = (id: string, vote: "up" | "down") => {
+    setReactions(prev => ({ ...prev, [id]: prev[id] === vote ? null : vote }));
+  };
 
   const lightBg = hexLuminance(bgColor) > 0.4;
 
@@ -215,13 +227,47 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                     </div>
                     {msg.id !== streamingId && (
                       <div style={{
-                        display: "flex", alignItems: "center", gap: 4,
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
                         borderTop: "1px solid var(--border-default)",
                         paddingTop: "var(--spacing-sm)", width: "100%",
-                        fontSize: "var(--text-xs)", color: "var(--text-muted)",
                       }}>
-                        <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
-                        Powered by Enterprise Agents
+                        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+                          {[
+                            { key: "copy", icon: copiedId === msg.id ? "ti-check" : "ti-copy", onClick: () => handleCopy(msg), active: copiedId === msg.id },
+                            { key: "up",   icon: reactions[msg.id] === "up"   ? "ti-thumb-up-filled"   : "ti-thumb-up",   onClick: () => handleReaction(msg.id, "up"),   active: reactions[msg.id] === "up" },
+                            { key: "down", icon: reactions[msg.id] === "down" ? "ti-thumb-down-filled" : "ti-thumb-down", onClick: () => handleReaction(msg.id, "down"), active: reactions[msg.id] === "down" },
+                          ].map(btn => (
+                            <button key={btn.key} onClick={btn.onClick} style={{
+                              background: "none", border: "none", cursor: "pointer",
+                              padding: "4px 5px", borderRadius: 6,
+                              color: btn.active ? "var(--brand-primary-default)" : "var(--text-muted)",
+                              fontSize: 15, display: "flex", alignItems: "center",
+                              transition: "color 0.15s, background 0.15s",
+                            }}
+                            onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,0,0,0.05)")}
+                            onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                            >
+                              <i className={`ti ${btn.icon}`} />
+                            </button>
+                          ))}
+                          <div style={{ width: 1, height: 14, background: "var(--border-default)", margin: "0 3px" }} />
+                          <button style={{
+                            background: "none", border: "none", cursor: "pointer",
+                            padding: "4px 5px", borderRadius: 6,
+                            color: "var(--text-muted)", fontSize: 15,
+                            display: "flex", alignItems: "center",
+                            transition: "color 0.15s, background 0.15s",
+                          }}
+                          onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,0,0,0.05)")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                          >
+                            <i className="ti ti-shield-check" />
+                          </button>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>
+                          <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
+                          Powered by Enterprise Agents
+                        </div>
                       </div>
                     )}
                   </div>
