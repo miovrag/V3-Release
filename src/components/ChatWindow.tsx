@@ -50,7 +50,7 @@ interface ChatWindowProps {
   bgColor?: string;
 }
 
-export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
+export default function ChatWindow({ bgColor = "#FAFAFA" }: ChatWindowProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");

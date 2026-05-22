@@ -26,7 +26,7 @@ function hexLuminance(hex: string): number {
 }
 
 export default function ChatPage() {
-  const [bgColor, setBgColor] = useState("#7367F0");
+  const [bgColor, setBgColor] = useState("#FAFAFA");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
