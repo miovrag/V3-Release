@@ -15,10 +15,16 @@ interface SourcesCardProps {
 export default function SourcesCard({ sources }: SourcesCardProps) {
   const [idx, setIdx] = useState(0);
   const [open, setOpen] = useState(false);
+  const [dir, setDir] = useState<"left" | "right">("right");
   if (!sources.length) return null;
 
   const src = sources[idx];
   const total = sources.length;
+
+  const go = (next: number, direction: "left" | "right") => {
+    setDir(direction);
+    setIdx(next);
+  };
 
   return (
     <div style={{
@@ -27,7 +33,7 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
       overflow: "hidden",
       fontSize: "var(--text-xs)",
     }}>
-      {/* Header — always visible, acts as toggle */}
+      {/* Header */}
       <button
         onClick={() => setOpen(o => !o)}
         style={{
@@ -46,16 +52,13 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
         </span>
       </button>
 
-      {/* Body — only when expanded */}
+      {/* Body */}
       {open && (
         <>
           <div style={{ height: 1, background: "var(--border-default)", margin: "0 14px" }} />
-          <div style={{
-            display: "flex", alignItems: "center", gap: 8,
-            padding: "10px 10px",
-          }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 10px" }}>
             <button
-              onClick={() => setIdx(i => Math.max(0, i - 1))}
+              onClick={() => go(Math.max(0, idx - 1), "left")}
               disabled={idx === 0}
               style={{
                 background: "none", border: "none", cursor: idx === 0 ? "default" : "pointer",
@@ -67,7 +70,12 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
               <i className="ti ti-chevron-left" />
             </button>
 
-            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+            {/* Animated content — key forces remount on each change */}
+            <div
+              key={idx}
+              className={dir === "right" ? "source-enter-right" : "source-enter-left"}
+              style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}
+            >
               <a
                 href={src.url}
                 target="_blank"
@@ -91,7 +99,7 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
             </div>
 
             <button
-              onClick={() => setIdx(i => Math.min(total - 1, i + 1))}
+              onClick={() => go(Math.min(total - 1, idx + 1), "right")}
               disabled={idx === total - 1}
               style={{
                 background: "none", border: "none", cursor: idx === total - 1 ? "default" : "pointer",
