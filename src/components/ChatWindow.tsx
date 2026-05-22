@@ -56,6 +56,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const [input, setInput] = useState("");
   const [railKey, setRailKey] = useState(0);
   const [railDismissed, setRailDismissed] = useState(false);
+  const [railExiting, setRailExiting] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [streamedChars, setStreamedChars] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -111,6 +112,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     setMessages([]);
     setRailKey(k => k + 1);
     setRailDismissed(false);
+    setRailExiting(false);
     setStreamingId(null);
     setStreamedChars(0);
   };
@@ -284,7 +286,10 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                   Your agent can do even more
                 </span>
                 <button
-                  onClick={() => setRailDismissed(true)}
+                  onClick={() => {
+                    setRailExiting(true);
+                    setTimeout(() => { setRailDismissed(true); setRailExiting(false); }, 600);
+                  }}
                   style={{
                     marginLeft: "auto",
                     background: "none", border: "none", padding: "2px 6px",
@@ -297,7 +302,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                   Not now
                 </button>
               </div>
-              <PostCreationRail key={railKey} bgColor={bgColor} />
+              <PostCreationRail key={railKey} bgColor={bgColor} isExiting={railExiting} />
             </>
           )}
 

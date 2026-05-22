@@ -37,9 +37,10 @@ const TIPS: Tip[] = [
 interface Props {
   onDismissAll?: () => void;
   bgColor?: string;
+  isExiting?: boolean;
 }
 
-export default function PostCreationRail({ onDismissAll }: Props) {
+export default function PostCreationRail({ onDismissAll, isExiting = false }: Props) {
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [dismissing, setDismissing] = useState<Set<string>>(new Set());
 
@@ -67,11 +68,13 @@ export default function PostCreationRail({ onDismissAll }: Props) {
     >
       {visible.map((tip, idx) => {
         // bottom card = visible.length-1 → delay 0; top card = 0 → longest delay
-        const delay = (visible.length - 1 - idx) * 140;
+        // entrance: bottom card first; exit: top card first
+        const entranceDelay = (visible.length - 1 - idx) * 140;
+        const exitDelay     = idx * 110;
         return (
           <div
             key={tip.id}
-            className={`tip-row action-card tip-slide-in${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
+            className={`tip-row action-card${isExiting ? " tip-slide-out" : " tip-slide-in"}${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
             style={{
               display: "flex",
               width: "100%",
@@ -82,7 +85,7 @@ export default function PostCreationRail({ onDismissAll }: Props) {
               gap: 8,
               borderRadius: 8,
               background: "rgba(255,255,255,0.82)",
-              animationDelay: `${delay}ms`,
+              animationDelay: isExiting ? `${exitDelay}ms` : `${entranceDelay}ms`,
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>

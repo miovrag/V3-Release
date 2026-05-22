@@ -749,6 +749,15 @@ input, select { font-family: inherit; }
   animation: slide-up-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Suggestion card slide-down exit */
+@keyframes slide-down-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(14px); }
+}
+.tip-slide-out {
+  animation: slide-down-out 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
 /* Stream cursor */
 @keyframes shimmer-slide {
   0%   { background-position: 250% center; }
