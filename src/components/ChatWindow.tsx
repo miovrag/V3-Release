@@ -23,14 +23,6 @@ const STARTER_QUESTIONS = [
 const MOCK_ANSWER =
   "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click 'Add integration'\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
 
-const AVATAR_STYLE = {
-  width: 28, height: 28, flexShrink: 0 as const,
-  borderRadius: "var(--radius-full)",
-  background: "rgba(255,255,255,0.25)", color: "#fff",
-  display: "flex", alignItems: "center", justifyContent: "center",
-  fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)" as const,
-};
-
 const BUBBLE_STYLE = {
   display: "flex",
   width: 574,
@@ -68,10 +60,20 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const lightBg = hexLuminance(bgColor) > 0.4;
-  const labelColor = lightBg ? "var(--text-muted)" : "rgba(255,255,255,0.45)";
 
-  // show suggestions once streaming is done
+  // Contrast-aware tokens
+  const textOnBg    = lightBg ? "var(--text-body)"      : "#fff";
+  const dimTextOnBg = lightBg ? "rgba(0,0,0,0.35)"      : "rgba(255,255,255,0.4)";
+  const labelColor  = lightBg ? "var(--text-muted)"     : "rgba(255,255,255,0.45)";
+  const avatarBg    = lightBg ? "rgba(0,0,0,0.10)"      : "rgba(255,255,255,0.25)";
+  const userMsgBg   = lightBg ? "rgba(0,0,0,0.08)"      : "rgba(255,255,255,0.2)";
+  const glassBtnBg  = lightBg ? "rgba(0,0,0,0.08)"      : "rgba(255,255,255,0.15)";
+  const glassBtnBdr = lightBg ? "rgba(0,0,0,0.15)"      : "rgba(255,255,255,0.3)";
+  const sendActiveBg = lightBg ? "rgba(0,0,0,0.15)"     : "rgba(255,255,255,0.9)";
+  const sendIdleBg   = lightBg ? "rgba(0,0,0,0.06)"     : "rgba(255,255,255,0.15)";
+
   const showSuggestions = phase === "responded" && streamingId === null;
+  const bottomPanelHeight = showSuggestions ? 340 : 72;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -111,8 +113,13 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
     setStreamedChars(0);
   };
 
-  // bottom panel height estimate for scroll padding
-  const bottomPanelHeight = showSuggestions ? 340 : 72;
+  const avatarStyle = {
+    width: 28, height: 28, flexShrink: 0 as const,
+    borderRadius: "var(--radius-full)",
+    background: avatarBg, color: textOnBg,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: "var(--text-xs)", fontWeight: "var(--weight-bold)" as const,
+  };
 
   return (
     <div style={{
@@ -131,10 +138,10 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
           padding: "var(--spacing-md) var(--spacing-lg)",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-sm)" }}>
-            <div style={{ ...AVATAR_STYLE, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
+            <div style={{ ...avatarStyle, width: 32, height: 32, fontSize: "var(--text-sm)" }}>
               {AGENT_INITIAL}
             </div>
-            <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: "#fff" }}>
+            <span style={{ fontSize: "var(--text-sm)", fontWeight: "var(--weight-semibold)", color: textOnBg }}>
               {AGENT_NAME}
             </span>
           </div>
@@ -142,9 +149,9 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
             <button
               onClick={reset}
               style={{
-                background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)",
+                background: glassBtnBg, border: `1px solid ${glassBtnBdr}`,
                 borderRadius: "var(--radius-md)", padding: "var(--spacing-xs) var(--spacing-sm)",
-                color: "#fff", fontSize: "var(--text-xs)", cursor: "pointer", fontFamily: "inherit",
+                color: textOnBg, fontSize: "var(--text-xs)", cursor: "pointer", fontFamily: "inherit",
                 display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
                 transition: "background var(--t-state)",
               }}
@@ -173,8 +180,8 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 <div style={{
                   maxWidth: "75%",
                   padding: "var(--spacing-sm) var(--spacing-md)",
-                  background: "rgba(255,255,255,0.2)",
-                  color: "#fff",
+                  background: userMsgBg,
+                  color: textOnBg,
                   borderRadius: "var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl)",
                   fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
                 }}>
@@ -182,7 +189,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 </div>
               </div>
             ) : (
-              <div key={msg.id} style={{ display: "flex", gap: "var(--spacing-sm)", alignItems: "flex-start" }}>
+              <div key={msg.id} style={{ display: "flex", alignItems: "flex-start" }}>
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
                   <div style={BUBBLE_STYLE}>
                     <div style={{
@@ -196,8 +203,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                       <div style={{
                         display: "flex", alignItems: "center", gap: 4,
                         borderTop: "1px solid var(--border-default)",
-                        paddingTop: "var(--spacing-sm)",
-                        width: "100%",
+                        paddingTop: "var(--spacing-sm)", width: "100%",
                         fontSize: "var(--text-xs)", color: "var(--text-muted)",
                       }}>
                         <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
@@ -221,7 +227,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 <span className="typing-dot" />
                 <span className="typing-dot" />
               </div>
-              <span style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.4)", paddingLeft: 4 }}>
+              <span style={{ fontSize: "var(--text-xs)", color: dimTextOnBg, paddingLeft: 4 }}>
                 CustomGPT.ai can make mistakes. Always check your answers.
               </span>
             </div>
@@ -257,17 +263,13 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
       </div>
 
       {/* ── Floating bottom panel: suggestions + input ── */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0,
-        zIndex: 30,
-      }}>
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 30 }}>
         <div style={{
           maxWidth: 756, margin: "0 auto",
           padding: "0 var(--spacing-lg) var(--spacing-md)",
           display: "flex", flexDirection: "column", gap: 8,
         }}>
 
-          {/* Suggestion cards */}
           {showSuggestions && (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
@@ -280,10 +282,9 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
             </>
           )}
 
-          {/* Input */}
           <div style={{ position: "relative" }}>
             <input
-              className="chat-input"
+              className={`chat-input${lightBg ? " chat-input-light" : ""}`}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter") send(input); }}
@@ -299,7 +300,7 @@ export default function ChatWindow({ bgColor = "#7367F0" }: ChatWindowProps) {
                 transform: "translateY(-50%)",
                 width: 32, height: 32,
                 borderRadius: "var(--radius-full)",
-                background: input.trim() && phase !== "typing" ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
+                background: input.trim() && phase !== "typing" ? sendActiveBg : sendIdleBg,
                 border: "none",
                 cursor: input.trim() && phase !== "typing" ? "pointer" : "default",
                 display: "flex", alignItems: "center", justifyContent: "center",

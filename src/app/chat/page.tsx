@@ -14,10 +14,37 @@ const PRESETS = [
   { label: "Body",          value: "#404040" },
 ];
 
+function hexLuminance(hex: string): number {
+  const c = hex.replace("#", "");
+  if (c.length !== 6) return 0;
+  const toLinear = (x: number) =>
+    x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+  const r = toLinear(parseInt(c.slice(0, 2), 16) / 255);
+  const g = toLinear(parseInt(c.slice(2, 4), 16) / 255);
+  const b = toLinear(parseInt(c.slice(4, 6), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
 export default function ChatPage() {
   const [bgColor, setBgColor] = useState("#7367F0");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  const lightBg = hexLuminance(bgColor) > 0.4;
+  const iconColor = lightBg ? "var(--text-body)" : "#fff";
+  const btnBg     = lightBg ? "rgba(0,0,0,0.08)"  : "rgba(255,255,255,0.15)";
+  const btnBdr    = lightBg ? "rgba(0,0,0,0.15)"  : "rgba(255,255,255,0.3)";
+
+  // Sync Safari / PWA theme-color with chat background
+  useEffect(() => {
+    let tag = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!tag) {
+      tag = document.createElement("meta");
+      tag.name = "theme-color";
+      document.head.appendChild(tag);
+    }
+    tag.content = bgColor;
+  }, [bgColor]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -39,13 +66,13 @@ export default function ChatPage() {
           style={{
             width: 36, height: 36,
             borderRadius: "var(--radius-full)",
-            background: "rgba(255,255,255,0.15)",
-            border: "1px solid rgba(255,255,255,0.3)",
+            background: btnBg,
+            border: `1px solid ${btnBdr}`,
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", color: "#fff",
-            transition: "background var(--t-state)",
+            cursor: "pointer", color: iconColor,
+            transition: "background var(--t-state), color var(--t-state)",
           }}
         >
           <i className="ti ti-palette" style={{ fontSize: 16 }} />
