@@ -215,7 +215,10 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                 </div>
               </div>
             ) : (
-              <div key={msg.id} style={{ display: "flex", alignItems: "flex-start" }}>
+              <div key={msg.id} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                {showAvatar && (
+                  <div style={{ ...avatarStyle, marginTop: 2 }}>{AGENT_INITIAL}</div>
+                )}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0 }}>
                   <div style={BUBBLE_STYLE}>
                     <div style={{
