@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import PostCreationRail from "./PostCreationRail";
 import SourcesCard from "./SourcesCard";
+
+const SplineBackground = dynamic(() => import("./SplineBackground"), { ssr: false });
 
 type Phase = "idle" | "typing" | "responded";
 
@@ -45,9 +48,18 @@ const BUBBLE_STYLE = {
   justifyContent: "center",
   alignItems: "flex-start" as const,
   gap: 8,
-  borderRadius: 8,
+  borderRadius: "var(--radius-md)",
   background: "#FFF",
 };
+
+function hexToRgba(hex: string, alpha: number): string {
+  const c = hex.replace("#", "");
+  if (c.length !== 6) return `rgba(0,0,0,${alpha})`;
+  const r = parseInt(c.slice(0, 2), 16);
+  const g = parseInt(c.slice(2, 4), 16);
+  const b = parseInt(c.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 
 function hexLuminance(hex: string): number {
   const c = hex.replace("#", "");
@@ -63,9 +75,10 @@ function hexLuminance(hex: string): number {
 interface ChatWindowProps {
   bgColor?: string;
   showAvatar?: boolean;
+  videoUrl?: string | null;
 }
 
-export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: ChatWindowProps) {
+export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, videoUrl = null }: ChatWindowProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -199,14 +212,39 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
   };
 
   return (
+    <div style={{ position: "relative", height: "100vh", overflow: "hidden" }}>
+
+      {/* Spline background layer */}
+      {videoUrl && (
+        <>
+          <iframe
+            src={videoUrl}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              border: "none", pointerEvents: "none",
+              transform: "scale(1.6)",
+              transformOrigin: "center center",
+            }}
+            allow="autoplay"
+          />
+          <div style={{
+            position: "absolute", inset: 0,
+            background: hexToRgba(bgColor, 0.55),
+            pointerEvents: "none",
+          }} />
+        </>
+      )}
+
     <div
-      className={lightBg ? "bg-animated" : undefined}
+      className={!videoUrl && lightBg ? "bg-animated" : undefined}
       style={{
         "--bg-end": bgColor,
         position: "relative",
+        zIndex: 1,
         display: "flex", flexDirection: "column",
         height: "100vh",
-        background: lightBg ? undefined : bgColor,
+        background: videoUrl ? "transparent" : (lightBg ? undefined : bgColor),
         overflow: "hidden",
       } as React.CSSProperties}
     >
@@ -304,7 +342,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                           ].map(btn => (
                             <button key={btn.key} onClick={btn.onClick} style={{
                               background: "none", border: "none", cursor: "pointer",
-                              padding: "4px 5px", borderRadius: 6,
+                              padding: "4px 5px", borderRadius: "var(--radius-sm)",
                               color: btn.active ? "var(--brand-primary-default)" : "var(--text-muted)",
                               fontSize: 15, display: "flex", alignItems: "center",
                               transition: "color 0.15s, background 0.15s",
@@ -318,7 +356,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                           <div style={{ width: 1, height: 14, background: "var(--border-default)", margin: "0 3px" }} />
                           <button style={{
                             background: "none", border: "none", cursor: "pointer",
-                            padding: "4px 5px", borderRadius: 6,
+                            padding: "4px 5px", borderRadius: "var(--radius-sm)",
                             color: "var(--text-muted)", fontSize: 15,
                             display: "flex", alignItems: "center",
                             transition: "color 0.15s, background 0.15s",
@@ -349,7 +387,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
             <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
               <div style={{
                 display: "flex", alignItems: "center", gap: "var(--spacing-xs)",
-                padding: "12px 16px", borderRadius: 8, background: "#FFF",
+                padding: "12px 16px", borderRadius: "var(--radius-md)", background: "#FFF",
               }}>
                 <span className="typing-dot" />
                 <span className="typing-dot" />
@@ -369,7 +407,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
                   style={{
                     display: "flex", alignItems: "center", gap: 8,
                     width: "100%", padding: "16px",
-                    borderRadius: 8, background: "rgba(255,255,255,0.82)",
+                    borderRadius: "var(--radius-md)", background: "rgba(255,255,255,0.82)",
                     fontFamily: "inherit", textAlign: "left", cursor: "pointer",
                   }}
                 >
@@ -390,8 +428,10 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
       {/* ── Floating bottom panel: suggestions + input ── */}
       <div style={{
         position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 30,
-        background: `linear-gradient(to bottom, transparent, ${bgColor} 40%)`,
-        paddingTop: 48,
+        background: videoUrl
+          ? `linear-gradient(to bottom, transparent 0%, ${hexToRgba(bgColor, 0.55)} 55%)`
+          : `linear-gradient(to bottom, transparent 0%, ${bgColor} 52%)`,
+        paddingTop: 32,
       }}>
         <div className="chat-layout-panel" style={{
           maxWidth: 756, margin: "0 auto",
@@ -406,7 +446,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
             ].filter(Boolean).join(" ") || undefined} style={{
               display: "flex", flexDirection: "column", gap: 8,
               padding: "12px 12px 8px",
-              borderRadius: 14,
+              borderRadius: "var(--radius-xl)",
               background: "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.14) 100%)",
               backdropFilter: "blur(28px) saturate(1.8)",
               WebkitBackdropFilter: "blur(28px) saturate(1.8)",
@@ -477,6 +517,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true }: C
         </div>
       </div>
 
+    </div>
     </div>
   );
 }

@@ -29,7 +29,7 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
   return (
     <div style={{
       background: "#F5F5F5",
-      borderRadius: 12,
+      borderRadius: "var(--radius-lg)",
       overflow: "hidden",
       fontSize: "var(--text-xs)",
     }}>
@@ -63,7 +63,7 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
               style={{
                 background: "none", border: "none", cursor: idx === 0 ? "default" : "pointer",
                 color: idx === 0 ? "var(--border-emphasis)" : "var(--text-muted)",
-                padding: "4px 6px", borderRadius: 6, fontSize: 14, flexShrink: 0,
+                padding: "4px 6px", borderRadius: "var(--radius-sm)", fontSize: 14, flexShrink: 0,
                 transition: "color 0.15s",
               }}
             >
@@ -104,7 +104,7 @@ export default function SourcesCard({ sources }: SourcesCardProps) {
               style={{
                 background: "none", border: "none", cursor: idx === total - 1 ? "default" : "pointer",
                 color: idx === total - 1 ? "var(--border-emphasis)" : "var(--text-muted)",
-                padding: "4px 6px", borderRadius: 6, fontSize: 14, flexShrink: 0,
+                padding: "4px 6px", borderRadius: "var(--radius-sm)", fontSize: 14, flexShrink: 0,
                 transition: "color 0.15s",
               }}
             >

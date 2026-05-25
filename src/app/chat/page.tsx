@@ -14,6 +14,15 @@ const PRESETS = [
   { label: "Body",          value: "#404040" },
 ];
 
+const VIDEO_PRESETS = [
+  {
+    id: "spline-cubic",
+    label: "Cubic 3D",
+    url: "https://my.spline.design/cubic-RH7OkaF0aXz8K9ihSxCrHKkb/",
+    thumb: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+  },
+];
+
 function hexLuminance(hex: string): number {
   const c = hex.replace("#", "");
   if (c.length !== 6) return 0;
@@ -28,6 +37,7 @@ function hexLuminance(hex: string): number {
 export default function ChatPage() {
   const [bgColor, setBgColor] = useState("#FAFAFA");
   const [showAvatar, setShowAvatar] = useState(true);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -57,7 +67,7 @@ export default function ChatPage() {
 
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <ChatWindow bgColor={bgColor} showAvatar={showAvatar} />
+      <ChatWindow bgColor={bgColor} showAvatar={showAvatar} videoUrl={videoUrl} />
 
       {/* Floating colour picker */}
       <div ref={ref} style={{ position: "absolute", top: 16, right: 16, zIndex: 100 }}>
@@ -137,7 +147,7 @@ export default function ChatPage() {
                 onClick={() => setShowAvatar(v => !v)}
                 style={{
                   width: 36, height: 20, padding: 0,
-                  borderRadius: 10, border: "none", cursor: "pointer",
+                  borderRadius: "var(--radius-full)", border: "none", cursor: "pointer",
                   background: showAvatar ? "var(--brand-primary-default)" : "var(--border-emphasis)",
                   position: "relative",
                   transition: "background var(--t-state)",
@@ -154,6 +164,58 @@ export default function ChatPage() {
                   boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                 }} />
               </button>
+            </div>
+
+            {/* Divider */}
+            <div style={{ height: 1, background: "var(--border-default)", margin: "0 -4px" }} />
+
+            {/* Video background section */}
+            <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
+              Video background
+            </span>
+            <div style={{ display: "flex", gap: "var(--spacing-xs)" }}>
+              {/* None swatch */}
+              <button
+                title="No video"
+                onClick={() => setVideoUrl(null)}
+                style={{
+                  width: 40, height: 40,
+                  borderRadius: "var(--radius-sm)",
+                  background: "var(--bg-canvas)",
+                  border: videoUrl === null
+                    ? "2px solid var(--brand-primary-default)"
+                    : "2px solid var(--border-default)",
+                  cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "var(--text-muted)",
+                  transition: "border-color var(--t-state)",
+                  flexShrink: 0,
+                }}
+              >
+                <i className="ti ti-ban" style={{ fontSize: 13 }} />
+              </button>
+
+              {VIDEO_PRESETS.map(v => (
+                <button
+                  key={v.id}
+                  title={v.label}
+                  onClick={() => setVideoUrl(v.url)}
+                  style={{
+                    width: 40, height: 40,
+                    borderRadius: "var(--radius-sm)",
+                    background: v.thumb,
+                    border: videoUrl === v.url
+                      ? "2px solid var(--brand-primary-default)"
+                      : "2px solid transparent",
+                    cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "border-color var(--t-state)",
+                    flexShrink: 0,
+                  }}
+                >
+                  <i className="ti ti-3d-cube-sphere" style={{ fontSize: 14, color: "rgba(255,255,255,0.85)" }} />
+                </button>
+              ))}
             </div>
 
           </div>

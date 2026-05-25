@@ -87,7 +87,7 @@ export default function PostCreationRail({ onDismissAll, isExiting = false }: Pr
               justifyContent: "center",
               alignItems: "flex-start",
               gap: 8,
-              borderRadius: 8,
+              borderRadius: "var(--radius-md)",
               background: "rgba(255,255,255,0.82)",
               animationDelay: isExiting ? `${exitDelay}ms` : `${entranceDelay}ms`,
             }}
