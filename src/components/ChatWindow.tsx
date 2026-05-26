@@ -310,16 +310,17 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
                 </div>
               </div>
             ) : (
-              <div key={msg.id} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                {showAvatar && (
-                  <div style={{ ...avatarStyle, marginTop: 2 }}>{AGENT_INITIAL}</div>
+              <div key={msg.id} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {messages.slice(0, msgIdx).every(m => m.role === "user") && (
+                  <span style={{ fontSize: "var(--text-xs)", color: disclaimerColor, display: "block", textAlign: "left", paddingLeft: showAvatar ? 52 : 16 }}>
+                    CustomGPT.ai can make mistakes. Always check your answers.
+                  </span>
                 )}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0, maxWidth: 574 }}>
-                  {messages.slice(0, msgIdx).every(m => m.role === "user") && (
-                    <span style={{ fontSize: "var(--text-xs)", color: disclaimerColor, paddingLeft: 16 }}>
-                      CustomGPT.ai can make mistakes. Always check your answers.
-                    </span>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                  {showAvatar && (
+                    <div style={{ ...avatarStyle, marginTop: 2 }}>{AGENT_INITIAL}</div>
                   )}
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--spacing-sm)", minWidth: 0, maxWidth: 574 }}>
                   <div style={BUBBLE_STYLE}>
                     <div style={{
                       fontSize: "var(--text-sm)", lineHeight: "var(--leading-relaxed)",
@@ -377,6 +378,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
                   {msg.id !== streamingId && msg.sources && msg.sources.length > 0 && (
                     <SourcesCard sources={msg.sources} />
                   )}
+                  </div>
                 </div>
               </div>
             )
