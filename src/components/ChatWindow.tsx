@@ -370,7 +370,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>
                           <i className="ti ti-bolt" style={{ fontSize: 12, color: "var(--brand-primary-default)" }} />
-                          Powered by Enterprise Agents
+                          Enterprise Agents
                         </div>
                       </div>
                     )}

@@ -253,7 +253,7 @@ export default function Home() {
             Discovery rail after first response
           </h2>
           <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-relaxed)", marginBottom: "var(--spacing-lg)" }}>
-            After the agent answers its first Starter Question, a 3-card rail appears inline: MCPs, Persona, Smart Tasks. Cards dismiss individually. Adding future tips is a one-liner in the <code style={{ fontSize: "var(--text-xs)", background: "var(--bg-selected)", padding: "1px 5px", borderRadius: "var(--radius-sm)" }}>TIPS</code> array. Hit <i className="ti ti-refresh" style={{ fontSize: 11 }} /> to reset the rail.
+            After the agent answers its first Starter Question, a 3-card rail appears inline: Actions, Personalize, Enterprise Agents. Cards dismiss individually. Adding future tips is a one-liner in the <code style={{ fontSize: "var(--text-xs)", background: "var(--bg-selected)", padding: "1px 5px", borderRadius: "var(--radius-sm)" }}>TIPS</code> array. Hit <i className="ti ti-refresh" style={{ fontSize: 11 }} /> to reset the rail.
           </p>
           <ChatSurface isEnterpriseAgents={true} plan={plan} />
         </section>
