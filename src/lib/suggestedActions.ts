@@ -110,7 +110,7 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
   const msg = conversation.user_message.toLowerCase();
   const dismissed = new Set(session.dismissed_categories);
 
-  if (/persona|tone|voice|personali[sz]e/.test(msg)) {
+  if (/persona|tone|voice|personali[sz]e|guardrail|instruction/.test(msg)) {
     if (dismissed.has("persona") || current_section === "persona") return noShow("persona", 0.91);
     if (!agent_state.persona_configured) {
       return {
@@ -169,7 +169,7 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
     }
   }
 
-  if (/automat|workflow|schedule|trigger/.test(msg)) {
+  if (/automat|workflow|schedule|trigger|smart.?task/.test(msg)) {
     if (dismissed.has("automations") || current_section === "automations") return noShow("automations", 0.80);
     if (agent_state.automations_count === 0) {
       return {

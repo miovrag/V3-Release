@@ -31,10 +31,19 @@ interface Message {
 const AGENT_INITIAL = "S";
 const AGENT_NAME = "Support Agent";
 
-const STARTER_QUESTIONS = [
+function pickRandom<T>(arr: T[], n: number): T[] {
+  return [...arr].sort(() => Math.random() - 0.5).slice(0, n);
+}
+
+const ALL_STARTER_QUESTIONS = [
   "How do I connect my tools?",
   "How do I set a persona?",
   "How do Smart Tasks work?",
+  "How do I add a knowledge source?",
+  "How do I publish my agent?",
+  "How do I automate tasks?",
+  "How do I share my agent?",
+  "How do I add guardrails?",
 ];
 
 const MOCK_ANSWER =
@@ -44,12 +53,29 @@ const MOCK_ANSWER_PERSONA =
   "Setting up your agent's Persona shapes how it sounds and behaves in every reply:\n\n**1. Open Persona settings** in the Agent Builder\n\n**2. Give your agent a role** — define what it does and what it knows\n\n**3. Set the tone** — formal, casual, technical, or brand-friendly\n\n**4. Add guardrails** — topics to avoid, how to handle edge cases, response length\n\nOnce configured, every answer will reflect the personality and boundaries you've defined.";
 
 const MOCK_ANSWER_SMART_TASKS =
-  "Smart Tasks let your agent execute multi-step workflows automatically.\n\nWhen a user request triggers a Smart Task:\n\n**1. Planning** — the agent breaks the request into steps\n**2. Execution** — each step runs in sequence using connected tools\n**3. Error handling** — failed steps retry automatically or surface a clear message\n\nYou configure Smart Tasks in the Automations section: define triggers, set conditions, and choose which tools the agent can use at each step.";
+  "Smart Tasks let your agent execute multi-step workflows automatically.\n\nWhen a user request triggers a Smart Task:\n\n**1. Planning** — the agent breaks the request into steps\n**2. Execution** — each step runs in sequence using connected tools\n**3. Error handling** — failed steps retry automatically or surface a clear message\n\nOpen Automations in the builder to define triggers, set conditions, and choose which tools the agent can use at each step.";
+
+const MOCK_ANSWER_KNOWLEDGE =
+  "Adding a knowledge source gives your agent trusted content to answer from:\n\n**1. Open the Sources tab** in your agent builder\n\n**2. Choose a source type** — upload a PDF, paste a URL, connect Google Drive, or add a sitemap\n\n**3. Let it process** — the agent indexes the content and starts citing it immediately\n\nOnce added, answers will reference your content directly and show citations so users can verify.";
+
+const MOCK_ANSWER_PUBLISH =
+  "Publishing makes your agent live and accessible to users:\n\n**1. Review your setup** — make sure Persona, sources, and any actions are configured\n\n**2. Open the Publish tab** and click 'Publish agent'\n\n**3. Copy the share link or embed code** — share it via email, embed it on your site, or add it to your app\n\nYou can re-publish any time after making changes. Users always get the latest version automatically.";
+
+const MOCK_ANSWER_AUTOMATE =
+  "Automations let your agent take action on a schedule or in response to events:\n\n**1. Open Automations** in the builder\n\n**2. Choose a trigger** — a schedule, an incoming webhook, or a user action\n\n**3. Define the steps** — the agent runs them in sequence using any connected tools\n\nOnce enabled, the automation runs without any user prompt — useful for recurring reports, alerts, or data syncs.";
+
+const MOCK_ANSWER_GUARDRAILS =
+  "Guardrails keep your agent focused and on-brand:\n\n**1. Open Persona settings** in the Agent Builder\n\n**2. Add a system instruction** — describe what topics to avoid, how to handle sensitive questions, and what tone to maintain\n\n**3. Set a fallback response** — what the agent says when a question is out of scope\n\nGuardrails are enforced on every reply, so your agent stays consistent even with unexpected questions.";
 
 const SCENARIO_ANSWERS: Record<string, string> = {
   "How do I connect my tools?": MOCK_ANSWER,
   "How do I set a persona?": MOCK_ANSWER_PERSONA,
   "How do Smart Tasks work?": MOCK_ANSWER_SMART_TASKS,
+  "How do I add a knowledge source?": MOCK_ANSWER_KNOWLEDGE,
+  "How do I publish my agent?": MOCK_ANSWER_PUBLISH,
+  "How do I automate tasks?": MOCK_ANSWER_AUTOMATE,
+  "How do I share my agent?": MOCK_ANSWER_PUBLISH,
+  "How do I add guardrails?": MOCK_ANSWER_GUARDRAILS,
 };
 
 const DEFAULT_AGENT_STATE: AgentState = {
@@ -62,12 +88,15 @@ const DEFAULT_AGENT_STATE: AgentState = {
   citations_tested: false,
 };
 
-// Each starter question gets a tailored agent_state so the right cards fire
 const SCENARIO_STATES: Record<string, AgentState> = {
-  "How do I connect my tools?": { ...DEFAULT_AGENT_STATE, actions_connected_count: 0 },
-  "How do I set a persona?": { ...DEFAULT_AGENT_STATE, persona_configured: false },
-  // Smart Tasks is informational — a fully-configured state still returns show:false (unknown intent)
-  "How do Smart Tasks work?": { ...DEFAULT_AGENT_STATE, persona_configured: true, knowledge_sources_count: 3, actions_connected_count: 2 },
+  "How do I connect my tools?":      { ...DEFAULT_AGENT_STATE },
+  "How do I set a persona?":         { ...DEFAULT_AGENT_STATE },
+  "How do Smart Tasks work?":        { ...DEFAULT_AGENT_STATE },
+  "How do I add a knowledge source?":{ ...DEFAULT_AGENT_STATE },
+  "How do I publish my agent?":      { ...DEFAULT_AGENT_STATE },
+  "How do I automate tasks?":        { ...DEFAULT_AGENT_STATE },
+  "How do I share my agent?":        { ...DEFAULT_AGENT_STATE },
+  "How do I add guardrails?":        { ...DEFAULT_AGENT_STATE },
 };
 
 const MOCK_SOURCES: Source[] = [
@@ -129,6 +158,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [bottomVisible, setBottomVisible] = useState(false);
   const [hasReachedBottom, setHasReachedBottom] = useState(false);
+  const [starterQuestions, setStarterQuestions] = useState(() => pickRandom(ALL_STARTER_QUESTIONS, 3));
   const [suggestResult, setSuggestResult] = useState<SuggestedActionsResult | null>(null);
   const [isLoadingCards, setIsLoadingCards] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -288,6 +318,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
     setSuggestResult(null);
     setIsLoadingCards(false);
     lastSentTextRef.current = "";
+    setStarterQuestions(pickRandom(ALL_STARTER_QUESTIONS, 3));
   };
 
   const avatarStyle = {
@@ -488,7 +519,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
           {/* Starter question cards */}
           {phase === "idle" && messages.length === 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-xs)" }}>
-              {STARTER_QUESTIONS.map(q => (
+              {starterQuestions.map(q => (
                 <button
                   key={q}
                   className="action-card"
