@@ -132,7 +132,7 @@ export default function PostCreationRail({ result, isExiting = false, onDismissA
               aria-label="Dismiss"
               style={{
                 background: "none", border: "none", cursor: "pointer",
-                padding: "2px 1px",
+                padding: "6px 4px",
                 borderRadius: "var(--radius-sm)",
                 color: "var(--text-disabled)",
                 display: "flex", alignItems: "center",

@@ -35,6 +35,19 @@ function pickRandom<T>(arr: T[], n: number): T[] {
   return [...arr].sort(() => Math.random() - 0.5).slice(0, n);
 }
 
+const DISMISSED_KEY = "cg_dismissed_intents";
+function getDismissed(): string[] {
+  try { return JSON.parse(sessionStorage.getItem(DISMISSED_KEY) || "[]"); }
+  catch { return []; }
+}
+function addDismissed(intent: string) {
+  if (!intent || intent === "unknown") return;
+  const current = getDismissed();
+  if (!current.includes(intent)) {
+    sessionStorage.setItem(DISMISSED_KEY, JSON.stringify([...current, intent]));
+  }
+}
+
 const ALL_STARTER_QUESTIONS = [
   "How do I connect my tools?",
   "How do I set a persona?",
@@ -257,7 +270,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
         },
         agent_state: agentState,
         current_section: "chat",
-        session: { dismissed_categories: [] },
+        session: { dismissed_categories: getDismissed() },
       };
 
       if (useApiModeRef.current) {
@@ -319,6 +332,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
     setIsLoadingCards(false);
     lastSentTextRef.current = "";
     setStarterQuestions(pickRandom(ALL_STARTER_QUESTIONS, 3));
+    try { sessionStorage.removeItem(DISMISSED_KEY); } catch { /* noop */ }
   };
 
   const avatarStyle = {
@@ -576,12 +590,13 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
                 <i className="ti ti-sparkles" style={{ fontSize: 11, color: labelColor }} />
-                <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
+                <span className={isLoadingCards ? "shimmer-label" : undefined} style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
                   {isLoadingCards ? "Analyzing…" : (suggestResult?.header ?? "Next step")}
                 </span>
                 {!isLoadingCards && (
                   <button
                     onClick={() => {
+                      addDismissed(suggestResult?.intent ?? "");
                       setRailExiting(true);
                       setTimeout(() => { setRailDismissed(true); setRailExiting(false); setSuggestResult(null); }, 600);
                     }}
@@ -615,6 +630,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
                   result={suggestResult}
                   isExiting={railExiting}
                   onDismissAll={() => {
+                    addDismissed(suggestResult?.intent ?? "");
                     setRailExiting(true);
                     setTimeout(() => { setRailDismissed(true); setRailExiting(false); setSuggestResult(null); }, 600);
                   }}

@@ -110,6 +110,11 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
   const msg = conversation.user_message.toLowerCase();
   const dismissed = new Set(session.dismissed_categories);
 
+  // Suppress cards for informational openers — these are definitional questions, not action requests
+  if (/^(what\s+is|what\s+are|what\s+does|what\s+do|explain|tell\s+me|describe|why\s+is|why\s+do)/i.test(conversation.user_message.trim())) {
+    return noShow("unknown", 0.3);
+  }
+
   if (/persona|tone|voice|personali[sz]e|guardrail|instruction/.test(msg)) {
     if (dismissed.has("persona") || current_section === "persona") return noShow("persona", 0.91);
     if (!agent_state.persona_configured) {
