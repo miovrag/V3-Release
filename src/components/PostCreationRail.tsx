@@ -97,12 +97,13 @@ export default function PostCreationRail({ result, isExiting = false, onDismissA
                   display: "inline-flex", alignItems: "center",
                   padding: "4px 10px",
                   borderRadius: "var(--radius-sm)",
-                  background: "var(--brand-primary-default)",
-                  color: "#fff",
+                  background: "transparent",
+                  color: "var(--brand-primary-default)",
+                  border: "1px solid var(--brand-primary-default)",
                   fontSize: "var(--text-xs)",
                   fontWeight: "var(--weight-semibold)",
                   whiteSpace: "nowrap",
-                  transition: "background var(--t-state)",
+                  transition: "background var(--t-state), color var(--t-state)",
                 }}>
                   {card.cta}
                 </span>

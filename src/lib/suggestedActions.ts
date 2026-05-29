@@ -119,7 +119,6 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
         reason: "Persona not configured and answer described setting the agent's tone.",
         cards: [
           resolveCard({ priority: "primary", title: "Open Persona settings", description: "Set the agent's role, tone, instructions, and response boundaries.", cta: "Open Persona", target: "persona" }),
-          resolveCard({ priority: "secondary", title: "Test Persona response", description: "Ask a sample question and check the answer matches the expected voice.", cta: "Test response", target: "testing" }),
         ],
       };
     }
