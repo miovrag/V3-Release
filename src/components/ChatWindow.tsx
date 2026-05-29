@@ -59,38 +59,6 @@ const ALL_STARTER_QUESTIONS = [
   "How do I add guardrails?",
 ];
 
-const MOCK_ANSWER =
-  "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click 'Add integration'\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
-
-const MOCK_ANSWER_PERSONA =
-  "Setting up your agent's Persona shapes how it sounds and behaves in every reply:\n\n**1. Open Persona settings** in the Agent Builder\n\n**2. Give your agent a role** — define what it does and what it knows\n\n**3. Set the tone** — formal, casual, technical, or brand-friendly\n\n**4. Add guardrails** — topics to avoid, how to handle edge cases, response length\n\nOnce configured, every answer will reflect the personality and boundaries you've defined.";
-
-const MOCK_ANSWER_SMART_TASKS =
-  "Smart Tasks let your agent execute multi-step workflows automatically.\n\nWhen a user request triggers a Smart Task:\n\n**1. Planning** — the agent breaks the request into steps\n**2. Execution** — each step runs in sequence using connected tools\n**3. Error handling** — failed steps retry automatically or surface a clear message\n\nOpen Automations in the builder to define triggers, set conditions, and choose which tools the agent can use at each step.";
-
-const MOCK_ANSWER_KNOWLEDGE =
-  "Adding a knowledge source gives your agent trusted content to answer from:\n\n**1. Open the Sources tab** in your agent builder\n\n**2. Choose a source type** — upload a PDF, paste a URL, connect Google Drive, or add a sitemap\n\n**3. Let it process** — the agent indexes the content and starts citing it immediately\n\nOnce added, answers will reference your content directly and show citations so users can verify.";
-
-const MOCK_ANSWER_PUBLISH =
-  "Publishing makes your agent live and accessible to users:\n\n**1. Review your setup** — make sure Persona, sources, and any actions are configured\n\n**2. Open the Publish tab** and click 'Publish agent'\n\n**3. Copy the share link or embed code** — share it via email, embed it on your site, or add it to your app\n\nYou can re-publish any time after making changes. Users always get the latest version automatically.";
-
-const MOCK_ANSWER_AUTOMATE =
-  "Automations let your agent take action on a schedule or in response to events:\n\n**1. Open Automations** in the builder\n\n**2. Choose a trigger** — a schedule, an incoming webhook, or a user action\n\n**3. Define the steps** — the agent runs them in sequence using any connected tools\n\nOnce enabled, the automation runs without any user prompt — useful for recurring reports, alerts, or data syncs.";
-
-const MOCK_ANSWER_GUARDRAILS =
-  "Guardrails keep your agent focused and on-brand:\n\n**1. Open Persona settings** in the Agent Builder\n\n**2. Add a system instruction** — describe what topics to avoid, how to handle sensitive questions, and what tone to maintain\n\n**3. Set a fallback response** — what the agent says when a question is out of scope\n\nGuardrails are enforced on every reply, so your agent stays consistent even with unexpected questions.";
-
-const SCENARIO_ANSWERS: Record<string, string> = {
-  "How do I connect my tools?": MOCK_ANSWER,
-  "How do I set a persona?": MOCK_ANSWER_PERSONA,
-  "How do Smart Tasks work?": MOCK_ANSWER_SMART_TASKS,
-  "How do I add a knowledge source?": MOCK_ANSWER_KNOWLEDGE,
-  "How do I publish my agent?": MOCK_ANSWER_PUBLISH,
-  "How do I automate tasks?": MOCK_ANSWER_AUTOMATE,
-  "How do I share my agent?": MOCK_ANSWER_PUBLISH,
-  "How do I add guardrails?": MOCK_ANSWER_GUARDRAILS,
-};
-
 const DEFAULT_AGENT_STATE: AgentState = {
   persona_configured: false,
   knowledge_sources_count: 0,
@@ -100,23 +68,6 @@ const DEFAULT_AGENT_STATE: AgentState = {
   published: false,
   citations_tested: false,
 };
-
-const SCENARIO_STATES: Record<string, AgentState> = {
-  "How do I connect my tools?":      { ...DEFAULT_AGENT_STATE },
-  "How do I set a persona?":         { ...DEFAULT_AGENT_STATE },
-  "How do Smart Tasks work?":        { ...DEFAULT_AGENT_STATE },
-  "How do I add a knowledge source?":{ ...DEFAULT_AGENT_STATE },
-  "How do I publish my agent?":      { ...DEFAULT_AGENT_STATE },
-  "How do I automate tasks?":        { ...DEFAULT_AGENT_STATE },
-  "How do I share my agent?":        { ...DEFAULT_AGENT_STATE },
-  "How do I add guardrails?":        { ...DEFAULT_AGENT_STATE },
-};
-
-const MOCK_SOURCES: Source[] = [
-  { name: "Integrations Setup Guide 2025.pdf", url: "#", domain: "app.customgpt.ai" },
-  { name: "Actions & Permissions Overview.pdf", url: "#", domain: "app.customgpt.ai" },
-  { name: "Agent Builder Documentation.pdf",   url: "#", domain: "app.customgpt.ai" },
-];
 
 const BUBBLE_STYLE = {
   display: "flex",
@@ -174,10 +125,20 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
   const [starterQuestions, setStarterQuestions] = useState(() => pickRandom(ALL_STARTER_QUESTIONS, 3));
   const [suggestResult, setSuggestResult] = useState<SuggestedActionsResult | null>(null);
   const [isLoadingCards, setIsLoadingCards] = useState(false);
+  const [liveAgentState, setLiveAgentState] = useState<AgentState | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const lastSentTextRef = useRef<string>("");
+  const conversationIdRef = useRef<number | null>(null);
   const useApiModeRef = useRef(useApiModeProp);
   useEffect(() => { useApiModeRef.current = useApiModeProp; }, [useApiModeProp]);
+
+  // Fetch real agent state on mount
+  useEffect(() => {
+    fetch("/api/agent-state")
+      .then(r => r.json())
+      .then(state => { if (!state.error) setLiveAgentState(state); })
+      .catch(() => {});
+  }, []);
 
   const handleCopy = (msg: Message) => {
     navigator.clipboard.writeText(msg.text);
@@ -260,7 +221,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
 
       // Compute contextual suggested actions after streaming completes
       const userText = lastSentTextRef.current;
-      const agentState = SCENARIO_STATES[userText] ?? DEFAULT_AGENT_STATE;
+      const agentState = liveAgentState ?? DEFAULT_AGENT_STATE;
       const suggestInput: SuggestInput = {
         locale: "en",
         conversation: {
@@ -296,25 +257,44 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
     if (phase === "typing" || !text.trim()) return;
     lastSentTextRef.current = text;
     if (showSuggestions) {
+      addDismissed(suggestResult?.intent ?? "");
       setRailExiting(true);
-      setTimeout(() => {
-        setRailDismissed(true);
-        setRailExiting(false);
-        setSuggestResult(null);
-      }, 600);
+      setTimeout(() => { setRailDismissed(true); setRailExiting(false); setSuggestResult(null); }, 600);
     }
     setMessages(prev => [...prev, { id: `u-${Date.now()}`, role: "user", text }]);
     setInput("");
     setPhase("typing");
-    setTimeout(() => {
-      const id = `a-${Date.now()}`;
-      const answer = SCENARIO_ANSWERS[text] ?? MOCK_ANSWER;
-      setMessages(prev => [...prev, { id, role: "agent", text: answer, sources: MOCK_SOURCES }]);
-      setPhase("responded");
-      setStreamingId(id);
-      setStreamedChars(0);
-      setDisclaimerSeen(true);
-    }, 1000);
+
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ message: text, conversationId: conversationIdRef.current }),
+    })
+      .then(r => r.json())
+      .then(({ reply, conversationId: convId, citations }) => {
+        conversationIdRef.current = convId;
+        const id = `a-${Date.now()}`;
+        const sources: Source[] = Array.isArray(citations) && citations.length > 0
+          ? citations.slice(0, 3).map((c: { title?: string; url?: string }) => ({
+              name: c.title ?? "Source",
+              url: c.url ?? "#",
+              domain: "app.customgpt.ai",
+            }))
+          : [];
+        setMessages(prev => [...prev, { id, role: "agent", text: reply, sources }]);
+        setPhase("responded");
+        setStreamingId(id);
+        setStreamedChars(0);
+        setDisclaimerSeen(true);
+      })
+      .catch(() => {
+        const id = `a-${Date.now()}`;
+        setMessages(prev => [...prev, { id, role: "agent", text: "I'm having trouble connecting right now. Please try again.", sources: [] }]);
+        setPhase("responded");
+        setStreamingId(id);
+        setStreamedChars(0);
+        setDisclaimerSeen(true);
+      });
   };
 
   const reset = () => {
@@ -332,6 +312,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
     setIsLoadingCards(false);
     lastSentTextRef.current = "";
     setStarterQuestions(pickRandom(ALL_STARTER_QUESTIONS, 3));
+    conversationIdRef.current = null;
     try { sessionStorage.removeItem(DISMISSED_KEY); } catch { /* noop */ }
   };
 
