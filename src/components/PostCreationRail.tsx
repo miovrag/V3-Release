@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { SuggestedActionsResult } from "@/lib/suggestedActions";
 
 interface Props {
@@ -12,17 +12,8 @@ interface Props {
 export default function PostCreationRail({ result, isExiting = false, onDismissAll }: Props) {
   const [dismissed, setDismissed] = useState<Set<number>>(new Set());
   const [dismissing, setDismissing] = useState<Set<number>>(new Set());
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 600);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  // On mobile show only the primary card
-  const cards = isMobile ? result.cards.slice(0, 1) : result.cards;
+  const cards = result.cards;
 
   function dismiss(idx: number) {
     setDismissing(prev => new Set(prev).add(idx));
