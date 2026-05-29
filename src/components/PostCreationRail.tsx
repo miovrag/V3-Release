@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { SuggestedActionsResult } from "@/lib/suggestedActions";
 
 interface Props {
@@ -12,25 +12,36 @@ interface Props {
 export default function PostCreationRail({ result, isExiting = false, onDismissAll }: Props) {
   const [dismissed, setDismissed] = useState<Set<number>>(new Set());
   const [dismissing, setDismissing] = useState<Set<number>>(new Set());
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 600);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // On mobile show only the primary card
+  const cards = isMobile ? result.cards.slice(0, 1) : result.cards;
 
   function dismiss(idx: number) {
     setDismissing(prev => new Set(prev).add(idx));
     setTimeout(() => {
       setDismissed(prev => {
         const next = new Set(prev).add(idx);
-        if (next.size === result.cards.length) onDismissAll?.();
+        if (next.size === cards.length) onDismissAll?.();
         return next;
       });
       setDismissing(prev => { const s = new Set(prev); s.delete(idx); return s; });
     }, 150);
   }
 
-  const visible = result.cards.filter((_, i) => !dismissed.has(i));
+  const visible = cards.filter((_, i) => !dismissed.has(i));
   if (visible.length === 0) return null;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }} role="list">
-      {result.cards.map((card, idx) => {
+      {cards.map((card, idx) => {
         if (dismissed.has(idx)) return null;
         const isDismissing = dismissing.has(idx);
         const isPrimary = card.priority === "primary";
