@@ -4,6 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import PostCreationRail from "./PostCreationRail";
 import SourcesCard from "./SourcesCard";
+import {
+  classifyStatic,
+  type SuggestedActionsResult,
+  type AgentState,
+  type SuggestInput,
+} from "@/lib/suggestedActions";
 
 const SplineBackground = dynamic(() => import("./SplineBackground"), { ssr: false });
 
@@ -33,6 +39,36 @@ const STARTER_QUESTIONS = [
 
 const MOCK_ANSWER =
   "Connecting tools to your agent takes just a few steps:\n\n**1. Open the Actions tab** in your agent builder and click 'Add integration'\n\n**2. Pick from 100+ integrations** — Slack, Gmail, HubSpot, GitHub, Notion, and more\n\n**3. Set permissions** — decide exactly which actions your agent can take\n\nOnce connected, your agent can send Slack messages, create tasks, update CRM records — not just answer questions.";
+
+const MOCK_ANSWER_PERSONA =
+  "Setting up your agent's Persona shapes how it sounds and behaves in every reply:\n\n**1. Open Persona settings** in the Agent Builder\n\n**2. Give your agent a role** — define what it does and what it knows\n\n**3. Set the tone** — formal, casual, technical, or brand-friendly\n\n**4. Add guardrails** — topics to avoid, how to handle edge cases, response length\n\nOnce configured, every answer will reflect the personality and boundaries you've defined.";
+
+const MOCK_ANSWER_SMART_TASKS =
+  "Smart Tasks let your agent execute multi-step workflows automatically.\n\nWhen a user request triggers a Smart Task:\n\n**1. Planning** — the agent breaks the request into steps\n**2. Execution** — each step runs in sequence using connected tools\n**3. Error handling** — failed steps retry automatically or surface a clear message\n\nYou configure Smart Tasks in the Automations section: define triggers, set conditions, and choose which tools the agent can use at each step.";
+
+const SCENARIO_ANSWERS: Record<string, string> = {
+  "How do I connect my tools?": MOCK_ANSWER,
+  "How do I set a persona?": MOCK_ANSWER_PERSONA,
+  "How do Smart Tasks work?": MOCK_ANSWER_SMART_TASKS,
+};
+
+const DEFAULT_AGENT_STATE: AgentState = {
+  persona_configured: false,
+  knowledge_sources_count: 0,
+  actions_connected_count: 0,
+  automations_count: 0,
+  branding_configured: false,
+  published: false,
+  citations_tested: false,
+};
+
+// Each starter question gets a tailored agent_state so the right cards fire
+const SCENARIO_STATES: Record<string, AgentState> = {
+  "How do I connect my tools?": { ...DEFAULT_AGENT_STATE, actions_connected_count: 0 },
+  "How do I set a persona?": { ...DEFAULT_AGENT_STATE, persona_configured: false },
+  // Smart Tasks is informational — a fully-configured state still returns show:false (unknown intent)
+  "How do Smart Tasks work?": { ...DEFAULT_AGENT_STATE, persona_configured: true, knowledge_sources_count: 3, actions_connected_count: 2 },
+};
 
 const MOCK_SOURCES: Source[] = [
   { name: "Integrations Setup Guide 2025.pdf", url: "#", domain: "app.customgpt.ai" },
@@ -76,9 +112,10 @@ interface ChatWindowProps {
   bgColor?: string;
   showAvatar?: boolean;
   videoUrl?: string | null;
+  useApiMode?: boolean;
 }
 
-export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, videoUrl = null }: ChatWindowProps) {
+export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, videoUrl = null, useApiMode: useApiModeProp = false }: ChatWindowProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -92,7 +129,12 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [bottomVisible, setBottomVisible] = useState(false);
   const [hasReachedBottom, setHasReachedBottom] = useState(false);
+  const [suggestResult, setSuggestResult] = useState<SuggestedActionsResult | null>(null);
+  const [isLoadingCards, setIsLoadingCards] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const lastSentTextRef = useRef<string>("");
+  const useApiModeRef = useRef(useApiModeProp);
+  useEffect(() => { useApiModeRef.current = useApiModeProp; }, [useApiModeProp]);
 
   const handleCopy = (msg: Message) => {
     navigator.clipboard.writeText(msg.text);
@@ -134,8 +176,15 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
   const sendActiveBg = lightBg ? "rgba(0,0,0,0.15)"     : "rgba(255,255,255,0.9)";
   const sendIdleBg   = lightBg ? "rgba(0,0,0,0.06)"     : "rgba(255,255,255,0.15)";
 
-  const showSuggestions = (!railDismissed && phase === "responded" && streamingId === null && hasReachedBottom) || railExiting;
-  const bottomPanelHeight = showSuggestions ? 340 : 72;
+  const containerVisible =
+    (!railDismissed && phase === "responded" && streamingId === null && hasReachedBottom &&
+      (isLoadingCards || suggestResult?.show === true)) ||
+    railExiting;
+  const showSuggestions = containerVisible; // alias used throughout JSX
+  const cardCount = suggestResult?.show ? suggestResult.cards.length : 0;
+  const bottomPanelHeight = containerVisible
+    ? isLoadingCards ? 160 : 72 + 44 + cardCount * 68 + 16
+    : 72;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -165,6 +214,35 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
     if (!msg) return;
     if (streamedChars >= msg.text.length) {
       setStreamingId(null);
+
+      // Compute contextual suggested actions after streaming completes
+      const userText = lastSentTextRef.current;
+      const agentState = SCENARIO_STATES[userText] ?? DEFAULT_AGENT_STATE;
+      const suggestInput: SuggestInput = {
+        locale: "en",
+        conversation: {
+          user_message: userText,
+          assistant_answer: msg.text,
+          recent_user_messages: [],
+        },
+        agent_state: agentState,
+        current_section: "chat",
+        session: { dismissed_categories: [] },
+      };
+
+      if (useApiModeRef.current) {
+        setIsLoadingCards(true);
+        fetch("/api/suggest", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(suggestInput),
+        })
+          .then(r => r.json())
+          .then(result => { setSuggestResult(result); setIsLoadingCards(false); })
+          .catch(() => { setSuggestResult(classifyStatic(suggestInput)); setIsLoadingCards(false); });
+      } else {
+        setSuggestResult(classifyStatic(suggestInput));
+      }
       return;
     }
     const t = setTimeout(() => setStreamedChars(c => Math.min(c + 2, msg.text.length)), 12);
@@ -173,16 +251,22 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
 
   const send = (text: string) => {
     if (phase === "typing" || !text.trim()) return;
+    lastSentTextRef.current = text;
     if (showSuggestions) {
       setRailExiting(true);
-      setTimeout(() => { setRailDismissed(true); setRailExiting(false); }, 600);
+      setTimeout(() => {
+        setRailDismissed(true);
+        setRailExiting(false);
+        setSuggestResult(null);
+      }, 600);
     }
     setMessages(prev => [...prev, { id: `u-${Date.now()}`, role: "user", text }]);
     setInput("");
     setPhase("typing");
     setTimeout(() => {
       const id = `a-${Date.now()}`;
-      setMessages(prev => [...prev, { id, role: "agent", text: MOCK_ANSWER, sources: MOCK_SOURCES }]);
+      const answer = SCENARIO_ANSWERS[text] ?? MOCK_ANSWER;
+      setMessages(prev => [...prev, { id, role: "agent", text: answer, sources: MOCK_SOURCES }]);
       setPhase("responded");
       setStreamingId(id);
       setStreamedChars(0);
@@ -201,6 +285,9 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
     setStreamedChars(0);
     setBottomVisible(false);
     setHasReachedBottom(false);
+    setSuggestResult(null);
+    setIsLoadingCards(false);
+    lastSentTextRef.current = "";
   };
 
   const avatarStyle = {
@@ -457,32 +544,51 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.22), 0 8px 32px rgba(0,0,0,0.10)",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-xs)" }}>
-                <i className="ti ti-bulb" style={{ fontSize: 11, color: labelColor }} />
+                <i className="ti ti-sparkles" style={{ fontSize: 11, color: labelColor }} />
                 <span className="shimmer-label" style={{ fontSize: "var(--text-xs)", color: labelColor, fontWeight: "var(--weight-medium)" }}>
-                  Your agent can do even more
+                  {isLoadingCards ? "Analyzing…" : (suggestResult?.header ?? "Next step")}
                 </span>
-                <button
-                  onClick={() => {
-                    setRailExiting(true);
-                    setTimeout(() => { setRailDismissed(true); setRailExiting(false); }, 600);
-                  }}
-                  style={{
-                    marginLeft: "auto",
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.10)",
-                    backdropFilter: "blur(16px) saturate(1.6)",
-                    WebkitBackdropFilter: "blur(16px) saturate(1.6)",
-                    padding: "2px 8px",
-                    fontSize: "var(--text-xs)", color: dimTextOnBg,
-                    cursor: "pointer", fontFamily: "inherit",
-                    borderRadius: "var(--radius-sm)",
-                    transition: "background var(--t-state), border-color var(--t-state), color var(--t-state)",
-                  }}
-                >
-                  Not now
-                </button>
+                {!isLoadingCards && (
+                  <button
+                    onClick={() => {
+                      setRailExiting(true);
+                      setTimeout(() => { setRailDismissed(true); setRailExiting(false); setSuggestResult(null); }, 600);
+                    }}
+                    style={{
+                      marginLeft: "auto",
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.10)",
+                      backdropFilter: "blur(16px) saturate(1.6)",
+                      WebkitBackdropFilter: "blur(16px) saturate(1.6)",
+                      padding: "2px 8px",
+                      fontSize: "var(--text-xs)", color: dimTextOnBg,
+                      cursor: "pointer", fontFamily: "inherit",
+                      borderRadius: "var(--radius-sm)",
+                      transition: "background var(--t-state), border-color var(--t-state), color var(--t-state)",
+                    }}
+                  >
+                    Not now
+                  </button>
+                )}
               </div>
-              <PostCreationRail key={railKey} bgColor={bgColor} isExiting={railExiting} />
+
+              {isLoadingCards ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 4px" }}>
+                  <span className="typing-dot" />
+                  <span className="typing-dot" />
+                  <span className="typing-dot" />
+                </div>
+              ) : suggestResult?.show && (
+                <PostCreationRail
+                  key={railKey}
+                  result={suggestResult}
+                  isExiting={railExiting}
+                  onDismissAll={() => {
+                    setRailExiting(true);
+                    setTimeout(() => { setRailDismissed(true); setRailExiting(false); setSuggestResult(null); }, 600);
+                  }}
+                />
+              )}
             </div>
           )}
 

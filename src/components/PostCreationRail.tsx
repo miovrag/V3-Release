@@ -1,123 +1,138 @@
 "use client";
 
 import { useState } from "react";
-
-interface Tip {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-  cta: string;
-  href: string;
-}
-
-const TIPS: Tip[] = [
-  {
-    id: "actions",
-    icon: "ti-apps",
-    title: "Extend your agent in Actions",
-    description: "Turn on Web Search, Lead Capture, Drive Conversions and more — built-in actions ready to enable.",
-    cta: "Open Actions →",
-    href: "https://agent-personalize.vercel.app",
-  },
-  {
-    id: "persona",
-    icon: "ti-user-circle",
-    title: "Shape my voice in Personalize",
-    description: "Set my name, tone, and guardrails so every reply sounds exactly like your brand.",
-    cta: "Open Personalize →",
-    href: "https://agent-personalize-persona-blue.vercel.app",
-  },
-  {
-    id: "enterprise-agents",
-    icon: "ti-bolt",
-    title: "Enable Enterprise Agents",
-    description: "Unlock multi-step reasoning so your agent breaks down complex questions and plans across your knowledge base.",
-    cta: "Open Intelligence →",
-    href: "https://agent-personalize-intelligence-eta.vercel.app",
-  },
-];
+import type { SuggestedActionsResult } from "@/lib/suggestedActions";
 
 interface Props {
-  onDismissAll?: () => void;
-  bgColor?: string;
+  result: SuggestedActionsResult;
   isExiting?: boolean;
+  onDismissAll?: () => void;
 }
 
-export default function PostCreationRail({ onDismissAll, isExiting = false }: Props) {
-  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
-  const [dismissing, setDismissing] = useState<Set<string>>(new Set());
+export default function PostCreationRail({ result, isExiting = false, onDismissAll }: Props) {
+  const [dismissed, setDismissed] = useState<Set<number>>(new Set());
+  const [dismissing, setDismissing] = useState<Set<number>>(new Set());
 
-  const visible = TIPS.filter(t => !dismissed.has(t.id));
-
-  const dismiss = (id: string) => {
-    setDismissing(prev => new Set(prev).add(id));
+  function dismiss(idx: number) {
+    setDismissing(prev => new Set(prev).add(idx));
     setTimeout(() => {
       setDismissed(prev => {
-        const next = new Set(prev).add(id);
-        if (next.size === TIPS.length) onDismissAll?.();
+        const next = new Set(prev).add(idx);
+        if (next.size === result.cards.length) onDismissAll?.();
         return next;
       });
-      setDismissing(prev => { const s = new Set(prev); s.delete(id); return s; });
+      setDismissing(prev => { const s = new Set(prev); s.delete(idx); return s; });
     }, 150);
-  };
+  }
 
+  const visible = result.cards.filter((_, i) => !dismissed.has(i));
   if (visible.length === 0) return null;
 
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", gap: 8 }}
-      role="complementary"
-      aria-label="Getting started tips"
-    >
-      {visible.map((tip, idx) => {
-        // bottom card = visible.length-1 → delay 0; top card = 0 → longest delay
-        // entrance: bottom card first; exit: top card first
-        const entranceDelay = (visible.length - 1 - idx) * 140;
-        const exitDelay     = idx * 45;
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }} role="list">
+      {result.cards.map((card, idx) => {
+        if (dismissed.has(idx)) return null;
+        const isDismissing = dismissing.has(idx);
+        const isPrimary = card.priority === "primary";
+        const entranceDelay = idx * 110;
+        const exitDelay = idx * 45;
+
         return (
           <div
-            key={tip.id}
-            className={`tip-row action-card${isExiting ? " tip-slide-out" : " tip-slide-in"}${dismissing.has(tip.id) ? " tip-exiting" : ""}`}
+            key={idx}
+            role="listitem"
+            className={`action-card${isExiting ? " tip-slide-out" : " tip-slide-in"}${isDismissing ? " tip-exiting" : ""}`}
             style={{
-              display: "flex",
-              width: "100%",
-              padding: "10px 14px",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "flex-start",
-              gap: 8,
-              borderRadius: "var(--radius-md)",
-              background: "rgba(255,255,255,0.82)",
               animationDelay: isExiting ? `${exitDelay}ms` : `${entranceDelay}ms`,
+              display: "flex",
+              alignItems: "flex-start",
+              padding: isPrimary ? "11px 12px 11px 13px" : "8px 10px 8px 13px",
+              borderRadius: "var(--radius-md)",
+              background: isPrimary ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.72)",
+              gap: 10,
+              width: "100%",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
-              <i
-                className={`ti ${tip.icon}`}
-                style={{ fontSize: 16, color: "var(--brand-primary-active)", flexShrink: 0 }}
-              />
+            {/* Intent icon */}
+            <i
+              className={`ti ${card.icon}`}
+              style={{
+                fontSize: isPrimary ? 15 : 14,
+                color: "var(--brand-primary-active)",
+                flexShrink: 0,
+                marginTop: isPrimary ? 2 : 1,
+              }}
+            />
 
-              <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-                <span style={{ fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-heading)" }}>
-                  {tip.title}
+            {/* Text block */}
+            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: isPrimary ? 3 : 0 }}>
+              <span style={{
+                fontSize: isPrimary ? "var(--text-sm)" : "var(--text-xs)",
+                fontWeight: "var(--weight-semibold)",
+                color: "var(--text-heading)",
+                lineHeight: "var(--leading-tight)",
+              }}>
+                {card.title}
+              </span>
+              {isPrimary && (
+                <span style={{
+                  fontSize: "var(--text-xs)",
+                  color: "var(--text-muted)",
+                  lineHeight: "var(--leading-normal)",
+                }}>
+                  {card.description}
                 </span>
-                <span style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-normal)" }}>
-                  {tip.description}
-                </span>
-              </div>
-
-              <a
-                href={tip.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cta-btn"
-                style={{ flexShrink: 0, textDecoration: "none" }}
-              >
-                <span>{tip.cta.replace(" →", "")}</span>
-                <span>→</span>
-              </a>
+              )}
             </div>
+
+            {/* CTA */}
+            <a
+              href={card.target_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none", flexShrink: 0 }}
+            >
+              {isPrimary ? (
+                <span style={{
+                  display: "inline-flex", alignItems: "center",
+                  padding: "4px 10px",
+                  borderRadius: "var(--radius-sm)",
+                  background: "var(--brand-primary-default)",
+                  color: "#fff",
+                  fontSize: "var(--text-xs)",
+                  fontWeight: "var(--weight-semibold)",
+                  whiteSpace: "nowrap",
+                  transition: "background var(--t-state)",
+                }}>
+                  {card.cta}
+                </span>
+              ) : (
+                <span className="cta-btn">
+                  <span>{card.cta}</span>
+                  <span>→</span>
+                </span>
+              )}
+            </a>
+
+            {/* Per-card dismiss */}
+            <button
+              onClick={() => dismiss(idx)}
+              aria-label="Dismiss"
+              style={{
+                background: "none", border: "none", cursor: "pointer",
+                padding: "2px 1px",
+                borderRadius: "var(--radius-sm)",
+                color: "var(--text-disabled)",
+                display: "flex", alignItems: "center",
+                flexShrink: 0,
+                transition: "color var(--t-state)",
+                marginTop: isPrimary ? 1 : 0,
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-muted)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-disabled)")}
+            >
+              <i className="ti ti-x" style={{ fontSize: 11 }} />
+            </button>
           </div>
         );
       })}

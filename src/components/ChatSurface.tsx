@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import PostCreationRail from "./PostCreationRail";
+import type { SuggestedActionsResult } from "@/lib/suggestedActions";
 
 type View = "empty" | "response";
 
@@ -10,6 +11,34 @@ interface Props {
   plan?: "standard" | "premium" | "enterprise";
   onUpgrade?: () => void;
 }
+
+const DEMO_SUGGEST_RESULT: SuggestedActionsResult = {
+  show: true,
+  intent: "analytics",
+  confidence: 0.86,
+  header: "Based on this answer",
+  reason: "User asked about churn data; Analytics has richer trend views.",
+  cards: [
+    {
+      priority: "primary",
+      title: "Review analytics dashboard",
+      description: "See churn trends, retention curves, and cancellation reasons over time.",
+      cta: "Open Analytics",
+      target: "analytics",
+      target_url: "https://app.customgpt.ai/",
+      icon: "ti-chart-bar",
+    },
+    {
+      priority: "secondary",
+      title: "Export conversation data",
+      description: "Download raw conversation logs for further analysis.",
+      cta: "Export data",
+      target: "analytics",
+      target_url: "https://app.customgpt.ai/",
+      icon: "ti-download",
+    },
+  ],
+};
 
 const MOCK_QUESTION = "What are our top 3 cancellation reasons and how do they compare to last quarter?";
 const MOCK_ANSWER_STANDARD = "Based on your knowledge base, the top cancellation reasons are: 1) Pricing (34%), 2) Missing features (28%), 3) Switching to competitor (21%). I don't have last quarter's data available to make a direct comparison.";
@@ -219,8 +248,8 @@ export default function ChatSurface({ isEnterpriseAgents = false, plan = "standa
               </div>
             </div>
 
-            {/* Post-creation discovery rail */}
-            <PostCreationRail key={railKey} />
+            {/* Post-creation suggested actions */}
+            <PostCreationRail key={railKey} result={DEMO_SUGGEST_RESULT} />
           </>
         )}
       </div>
