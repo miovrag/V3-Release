@@ -115,13 +115,26 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
     return noShow("unknown", 0.3);
   }
 
+  // Detect explicit action requests ("how do I", "how can I", "how to")
+  const isActionRequest = /^how\s+(do\s+i|can\s+i|to\s+)/i.test(conversation.user_message.trim());
+
   if (/persona|tone|voice|personali[sz]e|guardrail|instruction/.test(msg)) {
     if (dismissed.has("persona") || current_section === "persona") return noShow("persona", 0.91);
     if (!agent_state.persona_configured) {
       return {
         show: true, intent: "persona", confidence: 0.93,
         header: "Recommended next action",
-        reason: "Persona not configured and answer described setting the agent's tone.",
+        reason: "Persona not configured.",
+        cards: [
+          resolveCard({ priority: "primary", title: "Open Persona settings", description: "Set the agent's role, tone, instructions, and response boundaries.", cta: "Open Persona", target: "persona" }),
+        ],
+      };
+    }
+    if (isActionRequest) {
+      return {
+        show: true, intent: "persona", confidence: 0.88,
+        header: "Next step",
+        reason: "Explicit action request — shortcut to Persona settings.",
         cards: [
           resolveCard({ priority: "primary", title: "Open Persona settings", description: "Set the agent's role, tone, instructions, and response boundaries.", cta: "Open Persona", target: "persona" }),
         ],
@@ -135,10 +148,20 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
       return {
         show: true, intent: "actions", confidence: 0.88,
         header: "Next step",
-        reason: "No actions connected and user asked how to connect tools.",
+        reason: "No actions connected.",
         cards: [
           resolveCard({ priority: "primary", title: "Connect your first tool", description: "Link an external app so the agent can act outside the chat.", cta: "Open Actions", target: "actions" }),
           resolveCard({ priority: "secondary", title: "Set action permissions", description: "Control which tools the agent can use and when confirmation is required.", cta: "Set permissions", target: "permissions" }),
+        ],
+      };
+    }
+    if (isActionRequest) {
+      return {
+        show: true, intent: "actions", confidence: 0.84,
+        header: "Next step",
+        reason: "Explicit action request — shortcut to Actions.",
+        cards: [
+          resolveCard({ priority: "primary", title: "Open Actions", description: "Link an external app so the agent can act outside the chat.", cta: "Open Actions", target: "actions" }),
         ],
       };
     }
@@ -150,10 +173,20 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
       return {
         show: true, intent: "knowledge_sources", confidence: 0.85,
         header: "Next step",
-        reason: "No knowledge sources and user asked about adding content.",
+        reason: "No knowledge sources.",
         cards: [
           resolveCard({ priority: "primary", title: "Add knowledge source", description: "Upload files or connect approved content so the agent answers from trusted information.", cta: "Add source", target: "knowledge_sources" }),
           resolveCard({ priority: "secondary", title: "Review citations", description: "Check whether answers show clear references to the source content.", cta: "Review citations", target: "citations" }),
+        ],
+      };
+    }
+    if (isActionRequest) {
+      return {
+        show: true, intent: "knowledge_sources", confidence: 0.82,
+        header: "Next step",
+        reason: "Explicit action request — shortcut to knowledge sources.",
+        cards: [
+          resolveCard({ priority: "primary", title: "Add knowledge source", description: "Upload files or connect approved content so the agent answers from trusted information.", cta: "Add source", target: "knowledge_sources" }),
         ],
       };
     }
@@ -165,10 +198,20 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
       return {
         show: true, intent: "publishing", confidence: 0.82,
         header: "Continue setup",
-        reason: "Agent not published and user asked about publishing.",
+        reason: "Agent not published.",
         cards: [
           resolveCard({ priority: "primary", title: "Publish agent", description: "Make the latest version available to users.", cta: "Publish agent", target: "publishing" }),
           resolveCard({ priority: "secondary", title: "Preview live version", description: "Check what users will see before sharing.", cta: "Preview agent", target: "publishing" }),
+        ],
+      };
+    }
+    if (isActionRequest) {
+      return {
+        show: true, intent: "publishing", confidence: 0.79,
+        header: "Next step",
+        reason: "Explicit action request — shortcut to publish.",
+        cards: [
+          resolveCard({ priority: "primary", title: "Publish agent", description: "Make the latest version available to users.", cta: "Publish agent", target: "publishing" }),
         ],
       };
     }
@@ -180,9 +223,19 @@ export function classifyStatic(input: SuggestInput): SuggestedActionsResult {
       return {
         show: true, intent: "automations", confidence: 0.80,
         header: "Next step",
-        reason: "No automations and user asked about workflows.",
+        reason: "No automations.",
         cards: [
           resolveCard({ priority: "primary", title: "Create your first automation", description: "Set up triggers and actions to automate recurring workflows.", cta: "Open Automations", target: "automations" }),
+        ],
+      };
+    }
+    if (isActionRequest) {
+      return {
+        show: true, intent: "automations", confidence: 0.77,
+        header: "Next step",
+        reason: "Explicit action request — shortcut to automations.",
+        cards: [
+          resolveCard({ priority: "primary", title: "Open Automations", description: "Set up triggers and actions to automate recurring workflows.", cta: "Open Automations", target: "automations" }),
         ],
       };
     }
