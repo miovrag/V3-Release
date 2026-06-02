@@ -10,6 +10,7 @@ import {
   type AgentState,
   type SuggestInput,
 } from "@/lib/suggestedActions";
+import { clarityEvent } from "@/lib/clarity";
 
 const SplineBackground = dynamic(() => import("./SplineBackground"), { ssr: false });
 
@@ -281,10 +282,24 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
           body: JSON.stringify(suggestInput),
         })
           .then(r => r.json())
-          .then(result => { setSuggestResult(result); setIsLoadingCards(false); })
-          .catch(() => { setSuggestResult(classifyStatic(suggestInput)); setIsLoadingCards(false); });
+          .then(result => {
+            clarityEvent("sna_classified", { sna_intent: result.intent, sna_show: String(result.show) });
+            if (result.show) clarityEvent("sna_shown", { sna_intent: result.intent, sna_cards: String(result.cards?.length ?? 0) });
+            setSuggestResult(result);
+            setIsLoadingCards(false);
+          })
+          .catch(() => {
+            const fallback = classifyStatic(suggestInput);
+            clarityEvent("sna_classified", { sna_intent: fallback.intent, sna_show: String(fallback.show) });
+            if (fallback.show) clarityEvent("sna_shown", { sna_intent: fallback.intent, sna_cards: String(fallback.cards.length) });
+            setSuggestResult(fallback);
+            setIsLoadingCards(false);
+          });
       } else {
-        setSuggestResult(classifyStatic(suggestInput));
+        const staticResult = classifyStatic(suggestInput);
+        clarityEvent("sna_classified", { sna_intent: staticResult.intent, sna_show: String(staticResult.show) });
+        if (staticResult.show) clarityEvent("sna_shown", { sna_intent: staticResult.intent, sna_cards: String(staticResult.cards.length) });
+        setSuggestResult(staticResult);
       }
       return;
     }
@@ -296,6 +311,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
     if (phase === "typing" || !text.trim()) return;
     lastSentTextRef.current = text;
     if (showSuggestions) {
+      clarityEvent("sna_ignored", { sna_intent: suggestResult?.intent ?? "unknown" });
       setRailExiting(true);
       setTimeout(() => {
         setRailDismissed(true);
@@ -596,6 +612,7 @@ export default function ChatWindow({ bgColor = "#FAFAFA", showAvatar = true, vid
                 {!isLoadingCards && (
                   <button
                     onClick={() => {
+                      clarityEvent("sna_dismissed_notnow", { sna_intent: suggestResult?.intent ?? "unknown" });
                       addDismissed(suggestResult?.intent ?? "");
                       setRailExiting(true);
                       setTimeout(() => { setRailDismissed(true); setRailExiting(false); setSuggestResult(null); }, 600);

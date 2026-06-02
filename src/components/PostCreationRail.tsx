@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { SuggestedActionsResult } from "@/lib/suggestedActions";
+import { clarityEvent } from "@/lib/clarity";
 
 interface Props {
   result: SuggestedActionsResult;
@@ -16,6 +17,7 @@ export default function PostCreationRail({ result, isExiting = false, onDismissA
   const cards = result.cards;
 
   function dismiss(idx: number) {
+    clarityEvent("sna_dismissed_card", { sna_intent: cards[idx]?.target ?? "unknown", sna_card_priority: cards[idx]?.priority ?? "primary" });
     setDismissing(prev => new Set(prev).add(idx));
     setTimeout(() => {
       setDismissed(prev => {
@@ -93,6 +95,7 @@ export default function PostCreationRail({ result, isExiting = false, onDismissA
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: "none", flexShrink: 0 }}
+              onClick={() => clarityEvent("sna_cta_tapped", { sna_intent: card.target, sna_card_priority: card.priority })}
             >
               {isPrimary ? (
                 <span style={{
